@@ -8,7 +8,7 @@ on:
     branches:
       - main
     paths:
-      - distros/archlinux/*
+      - distros/archlinux/**
 jobs:
   push:
     name: "archlinux:${{ matrix.oses }}"

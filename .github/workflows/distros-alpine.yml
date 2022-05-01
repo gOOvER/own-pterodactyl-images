@@ -8,7 +8,7 @@ on:
     branches:
       - main
     paths:
-      - distros/alpine/*
+      - distros/alpine/**
 jobs:
   push:
     name: "alpine:${{ matrix.oses }}"

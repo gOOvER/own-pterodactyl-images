@@ -8,10 +8,10 @@ on:
     branches:
       - main
     paths:
-      - java-shenandoah/**
+      - java/shenandoah/**
 jobs:
   push:
-    name: "yolks:java-shenandoah_${{ matrix.tag }}"
+    name: "java:shenandoah_${{ matrix.tag }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -34,9 +34,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - uses: docker/build-push-action@v2
         with:
-          context: ./java-shenandoah
-          file: ./java-shenandoah/${{ matrix.tag }}/Dockerfile
+          context: ./java/shenandoah
+          file: ./java/shenandoah/${{ matrix.tag }}/Dockerfile
           platforms: linux/amd64
           push: true
           tags: |
-            ghcr.io/goover/yolks:java-shenandoah_${{ matrix.tag }}
+            ghcr.io/goover/java:shenandoah_${{ matrix.tag }}

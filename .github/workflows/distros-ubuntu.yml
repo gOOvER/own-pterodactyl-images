@@ -8,7 +8,7 @@ on:
     branches:
       - main
     paths:
-      - distros/ubuntu/*
+      - distros/ubuntu/**
 jobs:
   push:
     name: "ubuntu:${{ matrix.oses }}"

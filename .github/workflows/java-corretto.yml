@@ -8,10 +8,10 @@ on:
     branches:
       - main
     paths:
-      - java-corretto/**
+      - java/corretto/**
 jobs:
   push:
-    name: "yolks:java-corretto_${{ matrix.tag }}"
+    name: "java:corretto_${{ matrix.tag }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -36,9 +36,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - uses: docker/build-push-action@v2
         with:
-          context: ./java-corretto
-          file: ./java-corretto/${{ matrix.tag }}/Dockerfile
+          context: ./java/corretto
+          file: ./java/corretto/${{ matrix.tag }}/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/goover/yolks:java-corretto_${{ matrix.tag }}
+            ghcr.io/goover/java:corretto_${{ matrix.tag }}
