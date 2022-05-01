@@ -32,8 +32,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - uses: docker/build-push-action@v2
         with:
-          context: ./debian/${{ matrix.oses }}
-          file: ./debian/${{ matrix.oses }}/Dockerfile
+          context: ./distros/debian/${{ matrix.oses }}
+          file: ./distros/debian/${{ matrix.oses }}/Dockerfile
           platforms: linux/amd64
           push: true
           tags: |
