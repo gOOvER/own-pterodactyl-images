@@ -11,7 +11,7 @@ on:
       - wine/*
 jobs:
   push:
-    name: "wine_${{ matrix.tag }}"
+    name: "wine:${{ matrix.tag }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
