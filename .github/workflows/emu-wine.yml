@@ -11,7 +11,7 @@ on:
       - wine/*
 jobs:
   push:
-    name: "yolks:wine_${{ matrix.tag }}"
+    name: "wine_${{ matrix.tag }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -38,4 +38,4 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ghcr.io/goover/yolks:wine_${{ matrix.tag }}
+            ghcr.io/pteroforge/wine:${{ matrix.tag }}
