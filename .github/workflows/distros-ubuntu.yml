@@ -39,4 +39,4 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ghcr.io/pteroforge/distro:${{ matrix.oses }}
+            ghcr.io/pteroforge/distro:ubuntu:${{ matrix.oses }}
