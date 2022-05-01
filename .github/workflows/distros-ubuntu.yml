@@ -17,7 +17,6 @@ jobs:
       fail-fast: false
       matrix:
         oses:
-          - '16-xenial'
           - '18-bionic'
           - '20-focal'
           - '22-jammy'
