@@ -2,9 +2,9 @@ FROM        --platform=$BUILDPLATFORM archlinux:base
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 
-RUN 		pacman -Fy
-RUN 		pacman -Syu
-RUN         pacman -Sy ca-certificates tzdata
+RUN 		pacman -Fy --noconfirm
+RUN 		pacman -Syu --noconfirm
+RUN         pacman -Sy --noconfirm ca-certificates tzdata
 
 RUN 		adduser -D -h /home/container container
 
