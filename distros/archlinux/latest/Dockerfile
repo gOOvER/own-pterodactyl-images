@@ -2,7 +2,7 @@ FROM        --platform=$BUILDPLATFORM archlinux:base
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 
-RRUN 		pacman -Fy
+RUN 		pacman -Fy
 RUN 		pacman -Syu
 RUN         pacman -Sy ca-certificates tzdata
 
