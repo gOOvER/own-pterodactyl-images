@@ -6,7 +6,7 @@ RUN 		pacman -Fy --noconfirm
 RUN 		pacman -Syu --noconfirm
 RUN         pacman -Sy --noconfirm ca-certificates tzdata
 
-RUN 		adduser -D -h /home/container container
+RUN 		useradd -D -h /home/container container
 
 USER        container
 ENV         USER=container HOME=/home/container
