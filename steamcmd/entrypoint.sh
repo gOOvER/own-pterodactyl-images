@@ -31,7 +31,8 @@ sleep 1
 TZ=${TZ:-CET}
 export TZ
 
-echo "Timezone is set to: " $TZ
+echo "Timezone is set to: "
+date
 
 # Set environment variable that holds the Internal Docker IP
 INTERNAL_IP=$(ip route get 1 | awk '{print $NF;exit}')
