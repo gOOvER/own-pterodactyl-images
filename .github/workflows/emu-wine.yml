@@ -8,7 +8,7 @@ on:
     branches:
       - main
     paths:
-      - wine/*
+      - wine/**
 jobs:
   push:
     name: "wine:${{ matrix.tag }}"
