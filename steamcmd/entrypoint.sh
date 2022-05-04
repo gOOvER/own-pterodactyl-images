@@ -28,8 +28,10 @@ cd /home/container
 sleep 1
 
 # Default the TZ environment variable to UTC.
-TZ=${TZ:-UTC}
+TZ=${TZ:-CET}
 export TZ
+
+echo "Timezone is set to: " $TZ
 
 # Set environment variable that holds the Internal Docker IP
 INTERNAL_IP=$(ip route get 1 | awk '{print $NF;exit}')
