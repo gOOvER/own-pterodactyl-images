@@ -19,7 +19,7 @@ RUN         cd /tmp/ \
 
 USER        container
 ENV         USER=container HOME=/home/container
-ENV         TZ Europe/Vienna
+ENV         TZ="Europe/Vienna"
 WORKDIR     /home/container
 
 COPY        ./entrypoint.sh /entrypoint.sh
