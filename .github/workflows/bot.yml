@@ -8,10 +8,10 @@ on:
     branches:
       - main
     paths:
-      - bot/**
+      - bots/**
 jobs:
   push:
-    name: "bot_${{ matrix.tag }}"
+    name: "bot:${{ matrix.tag }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -35,8 +35,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - uses: docker/build-push-action@v2
         with:
-          context: ./bot/${{ matrix.tag }}
-          file: ./bot/${{ matrix.tag }}/Dockerfile
+          context: ./bots/${{ matrix.tag }}
+          file: ./bots/${{ matrix.tag }}/Dockerfile
           platforms: linux/amd64
           push: true
           tags: |
