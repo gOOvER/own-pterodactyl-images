@@ -1,4 +1,4 @@
-name: build nodejs
+name: build redis
 on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -8,28 +8,23 @@ on:
     branches:
       - main
     paths:
-      - nodejs/*
+      - database/redis/**
 jobs:
   push:
-    name: "yolks:nodejs_${{ matrix.tag }}"
+    name: "redis:${{ matrix.tag }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         tag:
-          - 12
-          - 14
-          - 14pptr
-          - 16
-          - 17
-          - 18
+          - 5
+          - 6
     steps:
       - uses: actions/checkout@v2
-      # Setup QEMU for ARM64 Build
       - uses: docker/setup-qemu-action@v1
       - uses: docker/setup-buildx-action@v1
         with:
-          version: "v0.5.1"
+          version: "v0.8.2"
           buildkitd-flags: --debug
       - uses: docker/login-action@v1
         with:
@@ -38,9 +33,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - uses: docker/build-push-action@v2
         with:
-          context: ./nodejs
-          file: ./nodejs/${{ matrix.tag }}/Dockerfile
+          context: ./database/redis
+          file: ./database/redis/${{ matrix.tag }}/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/goover/yolks:nodejs_${{ matrix.tag }}
+            ghcr.io/pteroforge/redis:${{ matrix.tag }}
