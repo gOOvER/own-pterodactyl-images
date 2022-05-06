@@ -1,9 +1,9 @@
-FROM    node:16-bullseye
+FROM    node:16-buster
 
 LABEL   author="Michael Parker" maintainer="parker@pterodactyl.io"
 ## install mongo
 RUN     apt update
-RUN     apt install -y wget sudo gnupg
+RUN     apt install -y wget curl sudo git libtool gnupg
 RUN     wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | sudo tee -a /etc/apt/trusted.gpg.d/server-5.0.asc
 RUN     echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/5.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-5.0.list
 RUN     apt update
