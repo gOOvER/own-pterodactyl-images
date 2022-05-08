@@ -1,7 +1,7 @@
 # ---------------------------------------------
 # Generic Wine image with Steam support
 # ---------------------------------------------
-FROM    --platform=$BUILDPLATFORM debian:stable-slim
+FROM    ghcr.io/pteroforge/debian:11-bullseye
 
 LABEL   author="Torsten Widmann" maintainer="info@goover.de"
 
