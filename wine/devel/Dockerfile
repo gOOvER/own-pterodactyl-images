@@ -1,7 +1,7 @@
-# ----------------------------------
-# Generic Wine 6 image
-# ----------------------------------
-FROM    ghcr.io/parkervcp/yolks:debian
+## ---------------------------------------------
+# Generic Wine image with Steam support
+# ---------------------------------------------
+FROM    --platform=$BUILDPLATFORM debian:stable-slim
 
 LABEL   author="Torsten Widmann" maintainer="info@goover.de"
 
@@ -12,7 +12,7 @@ RUN     apt install -y --no-install-recommends --no-install-suggests gnupg2 soft
 
 # Install winehq-stable and with recommends
 RUN     wget -nc https://dl.winehq.org/wine-builds/winehq.key
-RUN     apt-key add winehq.key
+RUN     mv winehq.key /usr/share/keyrings/winehq-archive.key
 RUN     apt-add-repository 'deb http://dl.winehq.org/wine-builds/debian/ bullseye main'
 RUN     apt update
 RUN     apt install --install-recommends --no-install-suggests winehq-devel cabextract -y
