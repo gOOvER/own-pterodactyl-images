@@ -8,7 +8,7 @@ LABEL   author="Torsten Widmann" maintainer="info@goover.de"
 ## install required packages
 RUN     dpkg --add-architecture i386
 RUN     apt update
-RUN     apt install -y --install-recommends gnupg2 software-properties-common libntlm0 winbind xvfb xauth python3 libncurses5:i386 libncurses6:i386 dbus lib32-alsa-plugins libpulse-dev libasound2-plugins
+RUN     apt install -y --install-recommends gnupg2 software-properties-common libntlm0 winbind xvfb xauth python3 libncurses5:i386 libncurses6:i386 dbus alsa-plugins libpulse-dev libasound2-plugins
 
 # Install winehq-stable and with recommends
 RUN     wget -nc https://dl.winehq.org/wine-builds/winehq.key
