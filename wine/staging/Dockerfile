@@ -14,8 +14,10 @@ RUN     apt install -y alsa-tools libpulse-dev libasound2 libao-common
 # Install winehq-stable and with recommends
 RUN     wget -nc https://dl.winehq.org/wine-builds/winehq.key
 RUN     mv winehq.key /usr/share/keyrings/winehq-archive.key
-RUN     apt-add-repository 'deb http://dl.winehq.org/wine-builds/debian/ bullseye main'
-RUN     apt install --install-recommends winehq-staging cabextract -y
+RUN     wget -nc https://dl.winehq.org/wine-builds/debian/dists/bullseye/winehq-bullseye.sources
+RUN     mv winehq-bullseye.sources /etc/apt/sources.list.d/
+RUN     apt update
+RUN     apt install --install-recommends winehq-stable cabextract -y
 
 # Set up Winetricks
 RUN	    wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
