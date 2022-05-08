@@ -1,23 +1,19 @@
 # ----------------------------------
 # Generic Wine image
 # ----------------------------------
-FROM    ghcr.io/parkervcp/yolks:debian
+FROM    --platform=$BUILDPLATFORM debian:stable-slim
 
-LABEL   author="Michael Parker" maintainer="parker@pterodactyl.io"
+LABEL   author="Torsten Widmann" maintainer="info@goover.de"
 
 ## install required packages
 RUN     dpkg --add-architecture i386
 RUN     apt update
-RUN     apt install -y --no-install-recommends gnupg2 software-properties-common libntlm0 winbind xvfb xauth python3 libncurses5:i386 libncurses6:i386 dbus
+RUN     apt install -y --install-recommends gnupg2 software-properties-common libntlm0 winbind xvfb xauth python3 libncurses5:i386 libncurses6:i386 dbus lib32-alsa-plugins lib32-libpulse lib32-openal libasound2-plugins
 
 # Install winehq-stable and with recommends
 RUN     wget -nc https://dl.winehq.org/wine-builds/winehq.key
 RUN     apt-key add winehq.key
 RUN     apt-add-repository 'deb http://dl.winehq.org/wine-builds/debian/ bullseye main'
-RUN     apt update
-RUN     wget -O- -q https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/Debian_11/Release.key | apt-key add -
-RUN     echo "deb http://download.opensuse.org/repositories/Emulators:/Wine:/Debian/Debian_11 ./" | tee /etc/apt/sources.list.d/wine-obs.list
-RUN     apt update
 RUN     apt install --install-recommends winehq-staging cabextract -y
 
 # Set up Winetricks
@@ -39,3 +35,4 @@ WORKDIR	/home/container
 
 COPY    ./entrypoint.sh /entrypoint.sh
 CMD	    ["/bin/bash", "/entrypoint.sh"]
+
