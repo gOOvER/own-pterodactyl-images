@@ -20,6 +20,10 @@ RUN         cd /tmp/ \
 USER        container
 ENV         USER=container HOME=/home/container
 ENV         TZ="Europe/Vienna"
+ENV         DISPLAY=:0
+ENV         DISPLAY_WIDTH=1024
+ENV         DISPLAY_HEIGHT=768
+ENV         DISPLAY_DEPTH=16
 WORKDIR     /home/container
 
 COPY        ./entrypoint.sh /entrypoint.sh
