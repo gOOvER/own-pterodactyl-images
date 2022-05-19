@@ -13,7 +13,7 @@ RUN     apt update -y \
           && apt update -y \
           && apt install -y dotnet-sdk-2.1 libgdiplus
 
-RUN     useradd -g 1000 -m -d /home/container container      
+RUN     useradd -g 1000 -d /home/container -m container
 
 USER    container
 ENV     USER=container HOME=/home/container

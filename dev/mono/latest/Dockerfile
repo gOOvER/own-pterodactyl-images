@@ -14,7 +14,7 @@ RUN         sh -c 'echo "deb https://download.mono-project.com/repo/debian stabl
 RUN         apt update
 RUN         apt install mono-complete -y
 
-RUN         useradd -g 1000 -m -d /home/container container
+RUN         useradd -g 1000 -d /home/container -m container
 
 USER        container
 ENV         USER=container HOME=/home/container

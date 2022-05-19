@@ -9,7 +9,7 @@ RUN         apt update \
             && apt -y install libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates \
             && apt -y install fonts-liberation libnss3 lsb-release xdg-utils wget libgbm1 autoconf automake g++ libtool build-essential
 RUN         npm -g install npm@latest
-RUN         useradd -g 1000 -m -d /home/container container
+RUN         useradd -g 1000 -d /home/container -m container
 
 RUN         echo 'kernel.unprivileged_userns_clone=1' > /etc/sysctl.d/userns.conf
 
