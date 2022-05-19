@@ -2,7 +2,7 @@
 # Mono Latest Image
 # Minimum Panel Version: 1.2.x
 # ----------------------------------
-FROM        ghcr.io/parkervcp/yolks:debian
+FROM        debian:bullseye-slim
 
 LABEL       author="Torsten Widmann" maintainer="support@goover.de"
 
@@ -14,7 +14,7 @@ RUN         sh -c 'echo "deb https://download.mono-project.com/repo/debian stabl
 RUN         apt update
 RUN         apt install mono-complete -y
 
-RUN         useradd -g 1000 -d /home/container -m container
+RUN         useradd -d /home/container -m container
 
 USER        container
 ENV         USER=container HOME=/home/container

@@ -1,4 +1,4 @@
-FROM    ghcr.io/goover/yolks_os:debian11
+FROM    debian:bullseye-slim
 
 LABEL   author="Torsten Widmann" maintainer="info@goover.de"
 
@@ -7,7 +7,7 @@ RUN     dpkg --add-architecture i386
 RUN     apt update
 RUN     apt install -y --no-install-recommends gnupg2 software-properties-common libntlm0 winbind xvfb xauth python3 libncurses5:i386 libncurses6:i386 dbus
 
-RUN     useradd -g 1000 -d /home/container -m container
+RUN     useradd -d /home/container -m container
 
 # Install winehq-stable and with recommends
 RUN     wget -nc https://dl.winehq.org/wine-builds/winehq.key
