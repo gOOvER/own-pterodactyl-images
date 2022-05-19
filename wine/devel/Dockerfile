@@ -10,6 +10,7 @@ RUN     dpkg --add-architecture i386
 RUN     apt update
 RUN     apt install -y --no-install-recommends wget iproute2 gnupg2 software-properties-common libntlm0 winbind xvfb xauth python3 libncurses5-dev:i386 libncurses6 dbus libgdiplus lib32gcc-s1
 RUN     apt install -y alsa-tools libpulse-dev libasound2 libao-common
+RUN     useradd -m -d -g 1000 /home/container container
 
 # Install winehq-stable and with recommends
 RUN     wget -nc https://dl.winehq.org/wine-builds/winehq.key
@@ -35,7 +36,8 @@ ENV     AUTO_UPDATE=1
 ENV     XVFB=1
 
 USER    container
-WORKDIR	/home/container
+ENV     USER=container HOME=/home/container
+WORKDIR /home/container
 
 COPY    ./entrypoint.sh /entrypoint.sh
 CMD	    ["/bin/bash", "/entrypoint.sh"]
