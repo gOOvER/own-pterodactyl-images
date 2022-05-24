@@ -46,6 +46,7 @@ PARSED=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g' | eval echo "$(cat
 # Check for CoreKeeper
 if [ $STEAM_APPID == 1963720 ]; then
         Xvfb :99 -screen 0 1x1x24 -nolisten tcp &
+        echo "Setting Display for CoreKeeper.... "
 fi
 
 ## just in case someone removed the defaults.
