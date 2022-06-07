@@ -1,8 +1,9 @@
-FROM ghcr.io/parkervcp/yolks:alpine
+FROM alpine:latest
 
 # Install wine and wget
 RUN apk update
-RUN apk add wine winetricks wget
+RUN apk upgrade
+RUN apk add --no-cache wine winetricks wget
 
 RUN adduser -D -h /home/container container
 
