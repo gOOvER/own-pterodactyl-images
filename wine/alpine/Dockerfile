@@ -1,10 +1,8 @@
 FROM ghcr.io/parkervcp/yolks:alpine
 
 # Install wine and wget
-RUN apk update \
- && apk add --update --no-cache wine \
- && apk add --update --no-cache winetricks --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/ \
- && apk add --update --no-cache wget
+RUN apk update
+RUN apk add --update --no-cache wine winetricks wget
 
 RUN adduser -D -h /home/container container
 
@@ -25,4 +23,4 @@ WORKDIR	/home/container
 
 #
 COPY ./entrypoint.sh /entrypoint.sh
-CMD	["/bin/bash", "/entrypoint.sh"]
+CMD	["/bin/ash", "/entrypoint.sh"]
