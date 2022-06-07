@@ -3,9 +3,8 @@ FROM alpine:latest
 # Install wine and wget
 RUN apk update
 RUN apk upgrade
-RUN apk add --no-cache wine
+RUN apk add --no-cache wine tzdata xvfb wget
 RUN apk add winetricks --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ --allow-untrusted
-RUN apk add --no-cache wget
 
 RUN adduser -D -h /home/container container
 
