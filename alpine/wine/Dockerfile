@@ -10,7 +10,7 @@ RUN adduser -D -h /home/container container
 
 # ENV
 ENV HOME=/home/container
-ENV WINEPREFIX=/home/container/.mine
+ENV WINEPREFIX=/home/container/.wine
 ENV WINEDLLOVERRIDES="mscoree,mshtml="
 ENV DISPLAY=:0
 ENV DISPLAY_WIDTH=1024
