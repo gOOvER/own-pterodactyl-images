@@ -2,8 +2,6 @@
 cd /home/container
 
 # Information output
-echo "Running on Debian $(cat /etc/debian_version)"
-echo "Current timezone: $(cat /etc/timezone)"
 wine64 --version
 
 # Set environment variable that holds the Internal Docker IP
