@@ -6,7 +6,6 @@ RUN         apt update \
             && apt -y install git gcc g++ ca-certificates dnsutils curl iproute2 ffmpeg procps \
             && useradd -d /home/container -m container
 RUN         pip install --upgrade pip
-RUN         pip install MySQL-python
 
 USER        container
 ENV         USER=container HOME=/home/container
