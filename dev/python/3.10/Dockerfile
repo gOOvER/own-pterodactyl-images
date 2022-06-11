@@ -4,7 +4,7 @@ LABEL       author="Michael Parker" maintainer="parker@pterodactyl.io"
 
 RUN         apt update \
             && apt -y install git gcc g++ ca-certificates dnsutils curl iproute2 ffmpeg procps \
-            && useradd -g 1000 -d /home/container -m container
+            && useradd -d /home/container -m container
 RUN         pip install --upgrade pip
 RUN         pip install MySQL-python
 

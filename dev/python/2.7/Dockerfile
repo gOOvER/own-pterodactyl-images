@@ -4,7 +4,7 @@ LABEL       author="Michael Parker" maintainer="parker@pterodactyl.io"
 
 RUN         apt update \
             && apt -y install git gcc g++ ca-certificates dnsutils curl iproute2 ffmpeg procps \
-            && useradd -g 1000 -d /home/container -m container
+            && useradd -d /home/container -m container
 
 USER        container
 ENV         USER=container HOME=/home/container
