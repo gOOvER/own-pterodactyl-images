@@ -19,6 +19,7 @@ jobs:
         game:
           - altv
           - arma3
+          - conan
           - fivem
           - interstellarrift
           - riskofrain2
