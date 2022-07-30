@@ -1,7 +1,7 @@
 # ---------------------------------------------
 # Conan Exile Wine image with Mod support
 # ---------------------------------------------
-FROM    ghcr.io/pteroforge/installers:debian
+FROM    ghcr.io/pteroforge/debian:11-bullseye
 
 LABEL   author="Torsten Widmann" maintainer="info@goover.de"
 
