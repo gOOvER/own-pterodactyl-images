@@ -1,7 +1,7 @@
 # ---------------------------------------------
-# Generic Wine image with Steam support
+# Conan Exile Wine image with Mod support
 # ---------------------------------------------
-FROM    debian:bullseye-slim
+FROM    ghcr.io/pteroforge/installers:debian
 
 LABEL   author="Torsten Widmann" maintainer="info@goover.de"
 

@@ -1,7 +1,7 @@
 # ----------------------------------
-# Generic Wine 6 image
+# Risk of Rain 2 Wine image
 # ----------------------------------
-FROM    ghcr.io/parkervcp/yolks:debian
+FROM    ghcr.io/pteroforge/installers:debian
 
 LABEL   author="Torsten Widmann" maintainer="info@goover.de"
 

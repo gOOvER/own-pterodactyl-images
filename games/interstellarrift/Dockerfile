@@ -1,4 +1,4 @@
-FROM    debian:bullseye-slim
+FROM    ghcr.io/pteroforge/installers:debian
 
 LABEL   author="Torsten Widmann" maintainer="info@goover.de"
 
