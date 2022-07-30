@@ -44,14 +44,14 @@ STEAMSERVERID=440900
 GAMEMODDIR=/mnt/server/ConanSandbox/Mods
 GAMEMODLIST=${GAMEMODDIR}/modlist.txt
 
-if [ ! -f /mnt/server/modlist.txt ]; then
-    echo "No modlist, creating empty /mnt/server/modlist.txt"
-    touch /mnt/server/modlist.txt
+if [ ! -f /home/container/modlist.txt ]; then
+    echo "No modlist, creating empty modlist.txt"
+    touch /home/container/modlist.txt
 fi
 
 # Clear server modlist so we don't end up with duplicates
 echo "" > ${GAMEMODLIST}
-MODS=$(awk '{print $1}' /mnt/server/modlist.txt)
+MODS=$(awk '{print $1}' /home/container/modlist.txt)
 
 MODCMD="./steamcmd/steamcmd.sh +@sSteamCmdForcePlatformType windows +login anonymous"
 for MODID in ${MODS}
@@ -67,7 +67,7 @@ mkdir -p ${GAMEMODDIR}
 for MODID in ${MODS}
 do
     echo "Linking $MODID..."
-    MODDIR=/mnt/server/Steam/steamapps/workshop/content/${STEAMSERVERID}/${MODID}/
+    MODDIR=/home/container/Steam/steamapps/workshop/content/${STEAMSERVERID}/${MODID}/
     find "${MODDIR}" -iname '*.pak' >> ${GAMEMODLIST}
 done
 fi

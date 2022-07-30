@@ -5,7 +5,7 @@ LABEL   author="Torsten Widmann" maintainer="info@goover.de"
 ## install required packages
 RUN     dpkg --add-architecture i386
 RUN     apt update
-RUN     apt install -y --no-install-recommends gnupg2 software-properties-common libntlm0 winbind xvfb xauth python3 libncurses5:i386 libncurses6:i386 dbus
+RUN     apt install -y --no-install-recommends gnupg2 software-properties-common libntlm0 winbind xvfb xauth python3 libncurses5:i386 libncurses6:i386 dbus wget curl
 
 RUN     useradd -d /home/container -m container
 
@@ -15,7 +15,7 @@ RUN     mv winehq.key /usr/share/keyrings/winehq-archive.key
 RUN     wget -nc https://dl.winehq.org/wine-builds/debian/dists/bullseye/winehq-bullseye.sources
 RUN     mv winehq-bullseye.sources /etc/apt/sources.list.d/
 RUN     apt update
-RUN     apt install --install-recommends winehq-devel cabextract -y
+RUN     apt install --install-recommends winehq-staging cabextract -y
 
 # Set up Winetricks
 RUN	    wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
