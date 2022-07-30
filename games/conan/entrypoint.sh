@@ -65,7 +65,7 @@ MODCMD="${MODCMD} +quit"
 echo "DUBUG START--------------------------------------------------------------------------------"
 echo "${MODCMD}"
 echo "DEBUG END----------------------------------------------------------------------------------"
-"${MODCMD}"
+${MODCMD}
 
 echo "Linking mods..."
 mkdir -p ${GAMEMODDIR}

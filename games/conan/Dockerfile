@@ -3,7 +3,7 @@
 # ---------------------------------------------
 FROM    ghcr.io/pteroforge/debian:11-bullseye
 
-LABEL   author="Torsten Widmann" maintainer="info@goover.de"
+LABEL org.opencontainers.image.authors="info@goover.de"
 
 ## install required packages
 RUN     dpkg --add-architecture i386
