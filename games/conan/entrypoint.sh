@@ -34,11 +34,11 @@ else
 fi
 
 if [ -z ${MODS_UPDATE} ] || [ "${MODS_UPDATE}" == "1" ]; then
-echo "
+echo " 
 ------------------------------------
 Updating mods
-------------------------------------
-"
+------------------------------------"
+
 STEAMSERVERID=440900
 
 GAMEMODDIR=/mnt/server/ConanSandbox/Mods
@@ -60,7 +60,7 @@ do
     MODCMD="${MODCMD}  +workshop_download_item ${STEAMSERVERID} ${MODID}"
 done
 MODCMD="${MODCMD} +quit"
-su steam -c "${MODCMD}"
+"${MODCMD}"
 
 echo "Linking mods..."
 mkdir -p ${GAMEMODDIR}
