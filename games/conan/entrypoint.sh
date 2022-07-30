@@ -70,6 +70,8 @@ echo "DEBUG END-----------------------------------------------------------------
 echo "Linking mods..."
 mkdir -p ${GAMEMODDIR}
 mkdir -p /Steam/steamapps/workshop
+mkdir -p /steamapps/workshop
+mkdir -p /.steam/steamapps/workshop
 for MODID in ${MODS}
 do
     echo "Linking $MODID..."

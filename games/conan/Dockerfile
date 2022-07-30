@@ -10,7 +10,6 @@ RUN     dpkg --add-architecture i386
 RUN     apt update
 RUN     apt install -y --no-install-recommends wget iproute2 gnupg2 software-properties-common libntlm0 winbind xvfb xauth python3 libncurses5-dev:i386 libncurses6 dbus libgdiplus lib32gcc-s1
 RUN     apt install -y alsa-tools libpulse-dev libasound2 libao-common gnutls-bin
-RUN     useradd -d /home/container -m container
 
 # Install winehq-stable and with recommends
 RUN     wget -nc https://dl.winehq.org/wine-builds/winehq.key
