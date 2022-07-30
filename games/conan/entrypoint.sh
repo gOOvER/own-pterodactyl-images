@@ -41,7 +41,7 @@ Updating mods
 
 STEAMSERVERID=440900
 
-GAMEMODDIR=/mnt/server/ConanSandbox/Mods
+GAMEMODDIR=/home/container/ConanSandbox/Mods
 GAMEMODLIST=${GAMEMODDIR}/modlist.txt
 
 if [ ! -f /home/container/modlist.txt ]; then
