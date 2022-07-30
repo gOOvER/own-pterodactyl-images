@@ -62,16 +62,16 @@ do
     MODCMD="${MODCMD} +workshop_download_item ${STEAMSERVERID} ${MODID}"
 done
 MODCMD="${MODCMD} +quit"
-echo "DUBUG START--------------------------------------------------------------------------------"
-echo "${MODCMD}"
-echo "DEBUG END----------------------------------------------------------------------------------"
+#echo "DUBUG START--------------------------------------------------------------------------------"
+#echo "${MODCMD}"
+#echo "DEBUG END----------------------------------------------------------------------------------"
 ${MODCMD}
 
 echo "Linking mods..."
 mkdir -p ${GAMEMODDIR}
-mkdir -p /Steam/steamapps/workshop
-mkdir -p /steamapps/workshop
-mkdir -p /.steam/steamapps/workshop
+# make dir to prevent errors
+mkdir -p /home/container/Steam/steamapps/workshop
+
 for MODID in ${MODS}
 do
     echo "Linking $MODID..."
