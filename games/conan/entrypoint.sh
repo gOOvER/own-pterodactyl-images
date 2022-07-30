@@ -41,19 +41,19 @@ Updating mods
 
 STEAMSERVERID=440900
 
-GAMEMODDIR=/home/container/ConanSandbox/Mods
+GAMEMODDIR=./ConanSandbox/Mods
 GAMEMODLIST=${GAMEMODDIR}/modlist.txt
 
-if [ ! -f /home/container/modlist.txt ]; then
+if [ ! -f ./modlist.txt ]; then
     echo "No modlist, creating empty modlist.txt"
-    touch /home/container/modlist.txt
+    touch ./modlist.txt
 fi
 
 # Clear server modlist so we don't end up with duplicates
 echo "" > ${GAMEMODLIST}
-MODS=$(awk '{print $1}' /home/container/modlist.txt)
+MODS=$(awk '{print $1}' ./modlist.txt)
 
-MODCMD="/home/container/steamcmd/steamcmd.sh +force_install_dir /home/container +@sSteamCmdForcePlatformType windows +login anonymous"
+MODCMD="./steamcmd/steamcmd.sh +force_install_dir /home/container +@sSteamCmdForcePlatformType windows +login anonymous"
 for MODID in ${MODS}
 do
     echo "Adding $MODID to update list..."
@@ -67,7 +67,7 @@ mkdir -p ${GAMEMODDIR}
 for MODID in ${MODS}
 do
     echo "Linking $MODID..."
-    MODDIR=/home/container/Steam/steamapps/workshop/content/${STEAMSERVERID}/${MODID}/
+    MODDIR=./.steam/steamapps/workshop/content/${STEAMSERVERID}/${MODID}/
     find "${MODDIR}" -iname '*.pak' >> ${GAMEMODLIST}
 done
 fi
