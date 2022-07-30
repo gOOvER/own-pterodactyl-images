@@ -15,7 +15,7 @@ RUN     wget -nc https://dl.winehq.org/wine-builds/winehq.key
 RUN     apt-key add winehq.key
 RUN     apt-add-repository 'deb http://dl.winehq.org/wine-builds/debian/ bullseye main'
 RUN     apt update
-RUN     apt install --install-recommends --no-install-suggests winehq-devel cabextract -y
+RUN     apt install --install-recommends --no-install-suggests winehq-staging cabextract -y
 
 # Set up Winetricks
 RUN	    wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
