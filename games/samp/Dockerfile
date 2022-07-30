@@ -1,4 +1,4 @@
-FROM        ubuntu:16.04
+FROM        ubuntu:22.04
 
 LABEL       author="mrkrabs" maintainer="bl4ckspr4y@protonmail.com"
 

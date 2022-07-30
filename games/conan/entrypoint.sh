@@ -75,7 +75,7 @@ mkdir -p /home/container/Steam/steamapps/workshop
 for MODID in ${MODS}
 do
     echo "Linking $MODID..."
-    MODDIR=./Steam/steamapps/workshop/content/${STEAMSERVERID}/${MODID}/
+    MODDIR=/home/container/Steam/steamapps/workshop/content/${STEAMSERVERID}/${MODID}/
     find "${MODDIR}" -iname '*.pak' >> ${GAMEMODLIST}
 done
 fi
