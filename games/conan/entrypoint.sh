@@ -53,7 +53,7 @@ fi
 echo "" > ${GAMEMODLIST}
 MODS=$(awk '{print $1}' /home/container/modlist.txt)
 
-MODCMD="./steamcmd/steamcmd.sh +@sSteamCmdForcePlatformType windows +login anonymous"
+MODCMD="/home/container/steamcmd/steamcmd.sh +@sSteamCmdForcePlatformType windows +login anonymous"
 for MODID in ${MODS}
 do
     echo "Adding $MODID to update list..."
