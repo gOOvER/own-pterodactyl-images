@@ -11,7 +11,7 @@ on:
       - custom/**
 jobs:
   push:
-    name: "debian:${{ matrix.oses }}"
+    name: "custom:${{ matrix.oses }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
