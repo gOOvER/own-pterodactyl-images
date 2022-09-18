@@ -13,10 +13,8 @@ RUN     apt install -y alsa-tools libpulse-dev libasound2 libao-common gnutls-bi
 RUN     useradd -d /home/container -m container
 
 # Install winehq-stable and with recommends
-RUN     wget -nc https://dl.winehq.org/wine-builds/winehq.key
-RUN     mv winehq.key /usr/share/keyrings/winehq-archive.key
-RUN     wget -nc https://dl.winehq.org/wine-builds/debian/dists/bullseye/winehq-bullseye.sources
-RUN     mv winehq-bullseye.sources /etc/apt/sources.list.d/
+RUN     wget -nc -O /usr/share/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+RUN     wget -nc -P /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bullseye/winehq-bullseye.sources
 RUN     apt update
 RUN     apt install --install-recommends winehq-stable cabextract -y
 
