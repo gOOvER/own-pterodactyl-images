@@ -9,7 +9,7 @@ LABEL   author="Torsten Widmann" maintainer="info@goover.de"
 RUN     dpkg --add-architecture i386
 RUN     apt update
 RUN     apt install -y --no-install-recommends wget iproute2 gnupg2 software-properties-common libntlm0 winbind xvfb xauth python3 libncurses5-dev:i386 libncurses6 dbus libgdiplus lib32gcc-s1
-RUN     apt install -y alsa-tools libpulse-dev libasound2 libao-common gnutls-bin libasound2
+RUN     apt install -y alsa-tools libpulse-dev libasound2 libao-common gnutls-bin libasound2 locales
 RUN     useradd -d /home/container -m container
 
 # Install winehq-stable and with recommends
@@ -33,6 +33,13 @@ ENV     DISPLAY_HEIGHT=768
 ENV     DISPLAY_DEPTH=16
 ENV     AUTO_UPDATE=1
 ENV     XVFB=1
+
+# Set the locale
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+    locale-gen
+ENV LANG en_US.UTF-8  
+ENV LANGUAGE en_US:en  
+ENV LC_ALL en_US.UTF-8     
 
 USER    container
 ENV     USER=container HOME=/home/container
