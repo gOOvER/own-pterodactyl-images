@@ -12,11 +12,10 @@ RUN     apt install -y --no-install-recommends wget iproute2 gnupg2 software-pro
 RUN     apt install -y alsa-tools libpulse-dev libasound2 libao-common gnutls-bin
 RUN     useradd -d /home/container -m container
 
-# Install winehq-stable and with recommends
-RUN     mkdir -p /etc/apt/keyrings
+# Install wine and with recommends
+RUN     mkdir -pm755 /etc/apt/keyrings
 RUN     wget -nc -O /usr/share/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
 RUN     mv -f /usr/share/keyrings/winehq-archive.key /etc/apt/keyrings/winehq-archive.key
-RUN     apt update
 RUN     wget -nc -P /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bullseye/winehq-bullseye.sources
 RUN     apt update
 RUN     apt install --install-recommends winehq-devel cabextract -y
