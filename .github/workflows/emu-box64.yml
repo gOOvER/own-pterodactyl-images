@@ -35,7 +35,7 @@ jobs:
       - uses: docker/build-push-action@v3
         with:
           context: ./box64
-          file: ./box64/${{ matrix.tag }}/Dockerfile
+          file: ./box64/Dockerfile
           platforms: linux/arm64
           push: true
           tags: |
