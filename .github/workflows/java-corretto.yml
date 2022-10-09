@@ -9,10 +9,8 @@ on:
       - main
     paths:
       - java/corretto/**
-
 env:
   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
 jobs:
   push:
     name: "java:corretto_${{ matrix.tag }}"

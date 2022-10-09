@@ -9,6 +9,8 @@ on:
       - main
     paths:
       - distros/archlinux/**
+env:
+  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 jobs:
   push:
     name: "archlinux:${{ matrix.oses }}"
@@ -28,7 +30,7 @@ jobs:
       - uses: docker/login-action@v2
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
+          username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - uses: docker/build-push-action@v3
         with:
