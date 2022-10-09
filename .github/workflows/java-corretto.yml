@@ -9,6 +9,10 @@ on:
       - main
     paths:
       - java/corretto/**
+
+env:
+  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
 jobs:
   push:
     name: "java:corretto_${{ matrix.tag }}"
@@ -33,7 +37,7 @@ jobs:
       - uses: docker/login-action@v2
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
+          username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - uses: docker/build-push-action@v3
         with:
