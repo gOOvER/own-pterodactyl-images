@@ -38,4 +38,4 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-             ghcr.io/pteroforge/steamcmd:${{ matrix.distro }}
+             ghcr.io/goover/steamcmd:${{ matrix.distro }}

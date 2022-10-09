@@ -36,4 +36,4 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-             ghcr.io/pteroforge/voice:${{ matrix.tag }}
+             ghcr.io/goover/voice:${{ matrix.tag }}

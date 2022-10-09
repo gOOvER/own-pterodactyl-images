@@ -43,4 +43,4 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-             ghcr.io/pteroforge/games:${{ matrix.game }}
+             ghcr.io/goover/games:${{ matrix.game }}

@@ -39,4 +39,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/pteroforge/redis:${{ matrix.tag }}
+            ghcr.io/goover/redis:${{ matrix.tag }}

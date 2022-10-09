@@ -44,4 +44,4 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ghcr.io/pteroforge/dotnet:${{ matrix.tag }}
+            ghcr.io/goover/dotnet:${{ matrix.tag }}

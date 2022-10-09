@@ -39,4 +39,4 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ghcr.io/pteroforge/java:shenandoah_${{ matrix.tag }}
+            ghcr.io/goover/java:shenandoah_${{ matrix.tag }}

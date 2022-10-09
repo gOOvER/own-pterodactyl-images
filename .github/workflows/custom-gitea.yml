@@ -36,4 +36,4 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ghcr.io/pteroforge/custom:${{ matrix.oses }}
+            ghcr.io/goover/custom:${{ matrix.oses }}

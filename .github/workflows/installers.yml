@@ -38,4 +38,4 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ghcr.io/pteroforge/installers:${{ matrix.tag }}
+            ghcr.io/goover/installers:${{ matrix.tag }}

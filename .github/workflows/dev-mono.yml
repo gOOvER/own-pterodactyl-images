@@ -36,4 +36,4 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ghcr.io/pteroforge/mono:${{ matrix.tag }}
+            ghcr.io/goover/mono:${{ matrix.tag }}

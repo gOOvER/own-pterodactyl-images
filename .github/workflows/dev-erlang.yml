@@ -38,4 +38,4 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ghcr.io/pteroforge/erlang:${{ matrix.tag }}
+            ghcr.io/goover/erlang:${{ matrix.tag }}

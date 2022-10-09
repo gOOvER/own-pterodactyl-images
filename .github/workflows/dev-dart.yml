@@ -38,4 +38,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/pteroforge/dart:${{ matrix.tag }}
+            ghcr.io/goover/dart:${{ matrix.tag }}
