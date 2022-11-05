@@ -21,7 +21,6 @@ jobs:
         tag:
           - alpine
           - debian
-          - sogebot
     steps:
       - uses: actions/checkout@v3
       - uses: docker/setup-buildx-action@v2
