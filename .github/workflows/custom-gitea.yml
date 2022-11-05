@@ -1,4 +1,4 @@
-name: build custom-gitea
+name: build custom-images
 on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
