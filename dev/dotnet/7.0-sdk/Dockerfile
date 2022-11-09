@@ -11,7 +11,7 @@ RUN     apt update -y \
           && dpkg -i packages-microsoft-prod.deb \
           && rm packages-microsoft-prod.deb \
           && apt update -y \
-          && apt install -y dotnet-sdk-6.0 libgdiplus
+          && apt install -y dotnet-sdk-7.0 libgdiplus
 
 RUN     useradd -d /home/container -m container
 

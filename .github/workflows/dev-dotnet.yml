@@ -27,6 +27,9 @@ jobs:
           - '5.0-sdk'
           - '6.0'
           - '6.0-sdk'
+          - '7.0'
+          - '7.0-sdk'
+
     steps:
       - uses: actions/checkout@v3
       - uses: docker/setup-qemu-action@v2
