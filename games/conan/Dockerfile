@@ -1,7 +1,7 @@
 # ---------------------------------------------
 # Conan Exile Wine image with Mod support
 # ---------------------------------------------
-FROM    ghcr.io/pteroforge/debian:11-bullseye
+FROM    debian:bullseye-slim
 
 LABEL org.opencontainers.image.authors="info@goover.de"
 
@@ -11,11 +11,10 @@ RUN     apt update
 RUN     apt install -y --no-install-recommends wget iproute2 gnupg2 software-properties-common libntlm0 winbind xvfb xauth python3 libncurses5-dev:i386 libncurses6 dbus libgdiplus lib32gcc-s1
 RUN     apt install -y alsa-tools libpulse-dev libasound2 libao-common gnutls-bin
 
-# Install winehq-stable and with recommends
+# Install wine and with recommends
+RUN     sh -c 'echo " deb https://dl.winehq.org/wine-builds/debian/ bullseye main" >> /etc/apt/sources.list.d/wine.list'
 RUN     wget -nc https://dl.winehq.org/wine-builds/winehq.key
-RUN     mv winehq.key /usr/share/keyrings/winehq-archive.key
-RUN     wget -nc https://dl.winehq.org/wine-builds/debian/dists/bullseye/winehq-bullseye.sources
-RUN     mv winehq-bullseye.sources /etc/apt/sources.list.d/
+RUN     apt-key add winehq.key
 RUN     apt update
 RUN     apt install --install-recommends winehq-staging cabextract -y
 
