@@ -23,4 +23,4 @@ systemd-bus-proxy:x:103:105:systemd Bus Proxy,,,:/run/systemd:/bin/false
 syslog:x:104:108::/home/syslog:/bin/false
 messagebus:x:106:109::/var/run/dbus:/bin/false
 bind:x:108:112::/var/cache/bind:/bin/false
-${USER}:x:${USER_ID}:${GROUP_ID}:${USER}:${HOME}:/bin/bash
+${USER_NAME}:x:${USER_ID}:${GROUP_ID}:${USER_NAME}:${HOME}:/bin/bash

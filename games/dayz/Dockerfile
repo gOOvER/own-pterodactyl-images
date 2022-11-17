@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH debian:stable-slim
+FROM        --platform=$BUILDPLATFORM debian:stable-slim
 
 LABEL       author="David Wolfe (Red-Thirten)" maintainer="rehlmgaming@gmail.com"
 
@@ -8,9 +8,9 @@ LABEL       org.opencontainers.image.licenses=MIT
 ## Update base packages and install dependencies
 ENV         DEBIAN_FRONTEND=noninteractive
 RUN         dpkg --add-architecture i386 \
-            && apt-get update \
-            && apt-get upgrade -y \
-            && apt-get install -y \
+            && apt update \
+            && apt upgrade -y \
+            && apt install -y \
                 curl \
                 tzdata \
                 locales \
@@ -24,10 +24,8 @@ RUN         dpkg --add-architecture i386 \
                 libstdc++6 \
                 libstdc++6:i386 \
                 lib32stdc++6 \
-                libnss-wrapper \
-                libnss-wrapper:i386 \
-                libtbb2 \
-                libtbb2:i386
+                libcap2 \
+                libnss-wrapper
 
 ## Configure locale
 RUN         update-locale lang=en_US.UTF-8 \
