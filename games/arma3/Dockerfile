@@ -1,4 +1,4 @@
-FROM        ubuntu:20.04
+FROM        ubuntu:22.04
 
 LABEL       author="David Wolfe (Red-Thirten)" maintainer="rehlmgaming@gmail.com"
 ENV         DEBIAN_FRONTEND noninteractive
@@ -8,10 +8,10 @@ ENV         NSS_WRAPPER_GROUP /tmp/group
 
 # Install Dependencies
 RUN         dpkg --add-architecture i386 \
-            && apt-get update \
-            && apt-get upgrade -y \
-            && apt-get install -y libgcc-10-dev libstdc++-10-dev libtinfo5 lib64z1 libcurl3-gnutls \
-            && apt-get install -y libnss-wrapper gettext-base tar curl gcc g++ libc6 libtbb2 lib32z1 lib32gcc1 lib32stdc++6 libsdl2-2.0-0 libsdl2-2.0-0:i386 libtbb2:i386 lib32stdc++6 libtinfo5:i386 libncurses5:i386 libcurl3-gnutls:i386 \
+            && apt update \
+            && apt upgrade -y \
+            && apt install -y libgcc-10-dev libstdc++-10-dev libtinfo5 lib64z1 libcurl4-gnutls \
+            && apt install -y libnss-wrapper gettext-base tar curl gcc g++ libc6 libtbb2 lib32z1 lib32gcc1 lib32stdc++6 libsdl2-2.0-0 libsdl2-2.0-0:i386 libtbb2:i386 lib32stdc++6 libtinfo5:i386 libncurses5:i386 libcurl3-gnutls:i386 \
             && useradd -m -d /home/container -s /bin/bash container \
             && touch ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
             && chgrp 0 ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
