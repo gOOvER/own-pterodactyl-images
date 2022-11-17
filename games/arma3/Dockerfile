@@ -8,9 +8,9 @@ LABEL       org.opencontainers.image.licenses=MIT
 ## Update base packages and install dependencies
 ENV         DEBIAN_FRONTEND=noninteractive
 RUN         dpkg --add-architecture i386 \
-            && apt-get update \
-            && apt-get upgrade -y \
-            && apt-get install -y \
+            && apt update \
+            && apt upgrade -y \
+            && apt install -y \
                 curl \
                 tzdata \
                 locales \
@@ -27,7 +27,9 @@ RUN         dpkg --add-architecture i386 \
                 libnss-wrapper \
                 libnss-wrapper:i386 \
                 libtbb2 \
-                libtbb2:i386
+                libtbb2:i386 \
+                libcurl4-openssl-dev \
+                libcurl4-openssl-dev:i386
 
 ## Configure locale
 RUN         update-locale lang=en_US.UTF-8 \
