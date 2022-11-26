@@ -4,7 +4,7 @@ LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 
 ENV         DEBIAN_FRONTEND=noninteractive
 
-RUN         dpkg --add-architecture i386 \
+RUN         dpkg --add-architecture i386
 RUN         apt update
 RUN         apt upgrade -y
 RUN         apt install -y mesa-utils git tar curl gcc g++ iproute2 gdb libsdl1.2debian libfontconfig1 telnet net-tools netcat tzdata psmisc lib32gcc-s1 libgcc1 lib32tinfo6 lib32z1 lib32stdc++6 libstdc++6 libc6-amd64 libgdiplus
