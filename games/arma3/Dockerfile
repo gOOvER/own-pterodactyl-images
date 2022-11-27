@@ -30,7 +30,8 @@ RUN         dpkg --add-architecture i386 \
                 libtbb2:i386 \
                 libcurl4-openssl-dev \
                 libcurl4-openssl-dev:i386 \
-                net-tools
+                net-tools \
+                libcurl4
 
 ## Configure locale
 RUN         update-locale lang=en_US.UTF-8 \

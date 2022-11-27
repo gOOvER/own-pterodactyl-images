@@ -382,6 +382,9 @@ if [[ ${HC_NUM} > 0 ]]; then
     done
 fi
 
+## sdl fix
+cp -v /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0 /home/container/linux64/libSDL2-2.0.so.0
+
 # Start the Server
 echo -e "\n${GREEN}[STARTUP]:${NC} Starting server with the following startup command:"
 echo -e "${CYAN}${modifiedStartup}${NC}\n"
