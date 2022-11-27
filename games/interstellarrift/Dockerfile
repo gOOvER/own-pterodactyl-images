@@ -7,11 +7,10 @@ RUN     dpkg --add-architecture i386
 RUN     apt update
 RUN     apt install -y --no-install-recommends gnupg2 software-properties-common libntlm0 winbind xvfb xauth python3 libncurses5:i386 libncurses6:i386 dbus wget curl
 
-# Install winehq-stable and with recommends
+# Install wine and with recommends
+RUN     sh -c 'echo " deb https://dl.winehq.org/wine-builds/debian/ bullseye main" >> /etc/apt/sources.list.d/wine.list'
 RUN     wget -nc https://dl.winehq.org/wine-builds/winehq.key
-RUN     mv winehq.key /usr/share/keyrings/winehq-archive.key
-RUN     wget -nc https://dl.winehq.org/wine-builds/debian/dists/bullseye/winehq-bullseye.sources
-RUN     mv winehq-bullseye.sources /etc/apt/sources.list.d/
+RUN     apt-key add winehq.key
 RUN     apt update
 RUN     apt install --install-recommends winehq-staging cabextract -y
 
