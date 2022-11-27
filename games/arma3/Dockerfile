@@ -34,8 +34,9 @@ RUN         dpkg --add-architecture i386 \
                 libcurl4
 
 ## Configure locale
-RUN         update-locale lang=en_US.UTF-8 steam \
-            && dpkg-reconfigure --frontend noninteractive locales
+#RUN         update-locale lang=en_US.UTF-8 steam \
+#            && dpkg-reconfigure --frontend noninteractive locales
+RUN          LC_ALL=C steam
 
 ## Prepare NSS Wrapper for the entrypoint as a workaround for Arma 3 requiring a valid UID
 ENV         NSS_WRAPPER_PASSWD=/tmp/passwd NSS_WRAPPER_GROUP=/tmp/group
