@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH ubuntu:22.04
+FROM        --platform=$TARGETOS/$TARGETARCH debian:stable-slim
 
 LABEL       author="David Wolfe (Red-Thirten)" maintainer="rehlmgaming@gmail.com"
 
@@ -24,7 +24,6 @@ RUN         dpkg --add-architecture i386 \
                 libstdc++6 \
                 libstdc++6:i386 \
                 lib32stdc++6 \
-                libnss-wrapper \
                 libnss-wrapper:i386 \
                 libtbb2 \
                 libtbb2:i386 \
