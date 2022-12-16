@@ -10,10 +10,10 @@ MODIFIED_STARTUP=$(echo -e $(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/
 echo -e ":/home/container$ ${MODIFIED_STARTUP}"
 
 # start mongo
-mongod --fork --dbpath /home/container/mongodb/ --port 27017 --logpath /home/container/mongod.log && until nc -z -v -w5 127.0.0.1 27017 do echo 'Waiting for mongodb connection...' sleep 5 done
+/usr/bin/mongod --fork --dbpath /home/container/mongodb/ --port 27017 --logpath /home/container/mongod.log && until nc -z -v -w5 127.0.0.1 27017; do echo 'Waiting for mongodb connection...'; sleep 5; done
 
 # Run the Server
 eval ${MODIFIED_STARTUP}
 
 # stop mongo
-mongo --eval "db.getSiblingDB('admin').shutdownServer()";
+mongo --eval "db.getSiblingDB('admin').shutdownServer()"
