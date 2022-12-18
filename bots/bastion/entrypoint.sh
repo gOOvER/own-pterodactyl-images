@@ -12,10 +12,10 @@ clear
 echo -e "${BLUE}-------------------------------------------------${NC}"
 echo -e "${YELLOW}BastionBot Installation${NC}"
 echo -e "${BLUE}-------------------------------------------------${NC}"
-echo -e "${YELLOW}MongoDB Version:${NC}" | mongod --version
-echo -e "${YELLOW}NodeJS Version:${NC}" | node -v
-echo -e "${YELLOW}NPM Version:${NC}" | npm -v
-echo -e "${YELLOW}Python Version:${NC}" | python3 -version
+echo -e "${YELLOW}MongoDB Version:${NC} " && mongod --version
+echo -e "${YELLOW}NodeJS Version:${NC} " && node -v
+echo -e "${YELLOW}NPM Version:${NC} " && npm -v
+echo -e "${YELLOW}Python Version:${NC} " && python3 --version
 echo -e "${BLUE}-------------------------------------------------${NC}"
 
 cd /home/container
@@ -26,7 +26,7 @@ export INTERNAL_IP
 
 # Replace Startup Variables
 MODIFIED_STARTUP=$(echo -e $(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g'))
-echo -e ":/home/container$ ${MODIFIED_STARTUP}"
+echo -e "${YELLOW}:/home/container${NC} ${MODIFIED_STARTUP}"
 
 # start mongo
 echo -e "${BLUE}-------------------------------------------------${NC}"
