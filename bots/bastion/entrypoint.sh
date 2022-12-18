@@ -29,9 +29,15 @@ MODIFIED_STARTUP=$(echo -e $(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/
 echo -e ":/home/container$ ${MODIFIED_STARTUP}"
 
 # start mongo
+echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${YELLOW}starting MongoDB...${NC}"
+echo -e "${BLUE}-------------------------------------------------${NC}"
 mongod --fork --dbpath /home/container/mongodb/ --port 27017 --logpath /home/container/mongod.log --logRotate reopen --logappend && until nc -z -v -w5 127.0.0.1 27017; do echo 'Waiting for mongodb connection...'; sleep 5; done
 
 # Run the Server
+echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${YELLOW}BastionBot starting...${NC}"
+echo -e "${BLUE}-------------------------------------------------${NC}"
 eval ${MODIFIED_STARTUP}
 
 # stop mongo
