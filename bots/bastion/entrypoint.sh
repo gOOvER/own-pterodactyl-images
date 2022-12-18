@@ -6,14 +6,16 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+clear
+
 #show versions
 echo -e "${BLUE}-------------------------------------------------${NC}"
 echo -e "${YELLOW}BastionBot Installation${NC}"
 echo -e "${BLUE}-------------------------------------------------${NC}"
-echo -e "${YELLOW}MongoDB Version:${NC}"; mongod --version
-echo -e "${YELLOW}NodeJS Version:${NC}"; node -v
-echo -e "${YELLOW}NPM Version:${NC}"; npm -v
-echo -e "${YELLOW}Python Version:${NC}"; python -version
+echo -e "${YELLOW}MongoDB Version:${NC}" | mongod --version
+echo -e "${YELLOW}NodeJS Version:${NC}" | node -v
+echo -e "${YELLOW}NPM Version:${NC}" | npm -v
+echo -e "${YELLOW}Python Version:${NC}" | python3 -version
 echo -e "${BLUE}-------------------------------------------------${NC}"
 
 cd /home/container
