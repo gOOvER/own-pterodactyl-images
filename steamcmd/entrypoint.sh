@@ -12,10 +12,10 @@ INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 export INTERNAL_IP
 
 # Information output
-echo "Running on Debian $(cat /etc/debian_version)"
+echo "Running on: $(cat /etc/debian_version)"
 echo "Current timezone: $(cat /etc/timezone)"
 
-cp -v /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0 /home/container/linux64/libSDL2-2.0.so.0
+#cp -v /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0 /home/container/linux64/libSDL2-2.0.so.0
 
 # Switch to the container's working directory
 cd /home/container || exit 1
