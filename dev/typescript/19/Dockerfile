@@ -5,7 +5,8 @@ RUN         apt update \
             && useradd -d /home/container -m container
 
 RUN         npm install npm@latest -g
-RUN         npm install -g typescript
+RUN         npm install typescript -g
+RUN         npm install -g yarn
 
 USER        container
 ENV         USER=container HOME=/home/container
