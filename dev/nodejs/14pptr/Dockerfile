@@ -9,6 +9,8 @@ RUN         apt update \
 RUN         npm -g install npm@latest
 RUN         useradd -d /home/container -m container
 
+RUN         npm install npm@latest -g
+
 RUN         echo 'kernel.unprivileged_userns_clone=1' > /etc/sysctl.d/userns.conf
 
 USER        container
