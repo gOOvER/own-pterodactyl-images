@@ -1,4 +1,4 @@
-name: build nodejs
+name: build nodejs-typescript
 on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -8,12 +8,12 @@ on:
     branches:
       - main
     paths:
-      - dev/nodejs/*
+      - dev/typescript/*
 env:
   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 jobs:
   push:
-    name: "nodejs:${{ matrix.tag }}"
+    name: "nodejs_ts:${{ matrix.tag }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -21,7 +21,6 @@ jobs:
         tag:
           - 12
           - 14
-          - 14pptr
           - 16
           - 17
           - 18
@@ -41,9 +40,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - uses: docker/build-push-action@v3
         with:
-          context: ./dev/nodejs
-          file: ./dev/nodejs/${{ matrix.tag }}/Dockerfile
+          context: ./dev/typescript
+          file: ./dev/typescript/${{ matrix.tag }}/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/goover/nodejs:${{ matrix.tag }}
+            ghcr.io/goover/nodejs_ts:${{ matrix.tag }}
