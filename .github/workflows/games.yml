@@ -20,8 +20,6 @@ jobs:
       matrix:
         game:
           - altv
-          - arma3
-          - arma3ubuntu
           - conan
           - dayz
           - interstellarrift
