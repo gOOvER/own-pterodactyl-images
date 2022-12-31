@@ -1,7 +1,7 @@
 # -----------------------------------------------------
 # MariaDB Image for Pterodactyl
 # -----------------------------------------------------
-FROM        mariadb:10.9
+FROM        mariadb:10.10
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 
