@@ -1,4 +1,4 @@
-FROM        --platform=$BUILDPLATFORM golang:1.16-alpine
+FROM        --platform=$BUILDPLATFORM golang:1.19-alpine
 
 LABEL       author="Matthew Penner" maintainer="matthew@pterodactyl.io"
 LABEL       org.opencontainers.image.licenses=MIT
