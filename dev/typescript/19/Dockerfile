@@ -6,7 +6,6 @@ RUN         apt update \
 
 RUN         npm install npm@latest -g
 RUN         npm install typescript -g
-RUN         npm install -g yarn
 
 USER        container
 ENV         USER=container HOME=/home/container
@@ -14,5 +13,5 @@ WORKDIR     /home/container
 
 RUN         tsc -v
 
-COPY        ./../entrypoint.sh /entrypoint.sh
+COPY        ../entrypoint.sh /entrypoint.sh
 CMD         ["/bin/bash", "/entrypoint.sh"]
