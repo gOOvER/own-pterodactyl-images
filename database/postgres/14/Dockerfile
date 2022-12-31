@@ -1,7 +1,3 @@
-# ----------------------------------
-# Environment: Postgres DB
-# Minimum Panel Version: 0.7.0
-# ----------------------------------
 FROM postgres:14-alpine
 
 LABEL author="Parker" maintainer="parker@pterodactyl.io"

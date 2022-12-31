@@ -1,4 +1,4 @@
-FROM postgres:10-alpine
+FROM postgres:15-alpine
 
 LABEL author="Parker" maintainer="parker@pterodactyl.io"
 
