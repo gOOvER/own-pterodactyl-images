@@ -1,4 +1,4 @@
-FROM        mongo:4.0
+FROM        mongo:6.0
 
 LABEL       author="Michael Parker" maintainer="parker@pterodactyl.io"
 

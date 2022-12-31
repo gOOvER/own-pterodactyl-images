@@ -21,6 +21,7 @@ jobs:
         tag:
           - 4
           - 5
+          - 6
           
     steps:
       - uses: actions/checkout@v3
