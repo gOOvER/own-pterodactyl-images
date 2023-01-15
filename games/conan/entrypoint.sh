@@ -1,7 +1,15 @@
 #!/bin/bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
 cd /home/container
 
 # Information output
+echo
 echo "Running on Debian $(cat /etc/debian_version)"
 echo "Current timezone: $(cat /etc/timezone)"
 wine --version
@@ -34,10 +42,9 @@ else
 fi
 
 if [ -z ${MODS_UPDATE} ] || [ "${MODS_UPDATE}" == "1" ]; then
-echo " 
-------------------------------------
-Updating mods
-------------------------------------"
+    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${YELLOW}updating mods...${NC}"
+    echo -e "${BLUE}-------------------------------------------------${NC}"
 
 STEAMSERVERID=440900
 
@@ -47,8 +54,11 @@ GAMEMODLIST=${GAMEMODDIR}/modlist.txt
 cd /home/container
 
 if [ ! -f ./modlist.txt ]; then
-    echo "No modlist, creating empty modlist.txt"
+    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${YELLOW}found no modlist.txt. creating one...${NC}"
+    echo -e "${BLUE}-------------------------------------------------${NC}"
     touch ./modlist.txt
+    echo -e "${GREEN}[DONE]${NC}"
 fi
 
 # Clear server modlist so we don't end up with duplicates
@@ -62,30 +72,33 @@ do
     MODCMD="${MODCMD} +workshop_download_item ${STEAMSERVERID} ${MODID}"
 done
 MODCMD="${MODCMD} +quit"
-#echo "DUBUG START--------------------------------------------------------------------------------"
-#echo "${MODCMD}"
-#echo "DEBUG END----------------------------------------------------------------------------------"
 ${MODCMD}
 
-echo "Linking mods..."
+echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${YELLOW}linking mods...${NC}"
+echo -e "${BLUE}-------------------------------------------------${NC}"
 mkdir -p ${GAMEMODDIR}
 # make dir to prevent errors
 mkdir -p /home/container/Steam/steamapps/workshop
 
 for MODID in ${MODS}
 do
-    echo "Linking $MODID..."
+    echo -e "${BLUE}Linking ${NC}${RED}$MODID${NC}"
     MODDIR=/home/container/Steam/steamapps/workshop/content/${STEAMSERVERID}/${MODID}/
     find "${MODDIR}" -iname '*.pak' >> ${GAMEMODLIST}
 done
 fi
+echo -e "${GREEN}[DONE]${NC}"
+
 
 if [[ $XVFB == 1 ]]; then
         Xvfb :0 -screen 0 ${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_DEPTH} &
 fi
 
 # Install necessary to run packages
-echo "First launch will throw some errors. Ignore them"
+echo -e "${BLUE}---------------------------------------------------${NC}"
+echo -e "${YELLOW}First launch will throw some errors. Ignore them${NC}"
+echo -e "${BLUE}---------------------------------------------------${NC}"
 
 mkdir -p $WINEPREFIX
 
