@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH openjdk13:debianslim-slim
+FROM        --platform=$TARGETOS/$TARGETARCH adoptopenjdk/openjdk11:debianslim-slim
 
 LABEL org.opencontainers.image.authors="info@goover.de"
 LABEL version="1.0"
