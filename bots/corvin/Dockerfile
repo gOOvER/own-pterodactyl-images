@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH eclipse-temurin:11-jdk-jammy
+FROM        --platform=$TARGETOS/$TARGETARCH openjdk:13-buster
 
 LABEL org.opencontainers.image.authors="info@goover.de"
 LABEL version="1.0"
@@ -6,7 +6,7 @@ LABEL description="Pterodactyl image for CorvinBot"
 
 ## install basic reqs
 RUN          apt update \         
-                && apt install -y git libtool netcat ffmpeg iproute2 curl
+                && apt install -y git libtool netcat ffmpeg iproute2 curl gnupg
 
 ## install mongo
 RUN         wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | apt-key add - \
