@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH eclipse-temurin:18-jdk-jammy
+FROM        --platform=$TARGETOS/$TARGETARCH openjdk:18-bullseye
 
 LABEL       author="Michael Parker" maintainer="parker@pterodactyl.io"
 
