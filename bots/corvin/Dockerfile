@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH openjdk:13-buster
+FROM        --platform=$TARGETOS/$TARGETARCH eclipse-temurin:11-jdk-focal
 
 LABEL org.opencontainers.image.authors="info@goover.de"
 LABEL version="1.0"
@@ -10,7 +10,7 @@ RUN          apt update \
 
 ## install mongo
 RUN         wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | apt-key add - \
-                && echo "deb http://repo.mongodb.org/apt/debian bullseye/mongodb-org/6.0 main" | tee /etc/apt/sources.list.d/mongodb-org-6.0.list \
+                && echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-6.0.list \
                 && apt update \
                 && apt install -y mongodb-org mongodb-org-server mongodb-org-shell mongodb-org-mongos mongodb-org-tools
 
