@@ -6,7 +6,7 @@ LABEL description="Pterodactyl image for CorvinBot"
 
 ## install basic reqs
 RUN          apt update \         
-                && apt install -y git libtool netcat ffmpeg iproute2 curl gnupg
+                && apt install -y git libtool netcat ffmpeg iproute2 curl gnupg sudo
 
 ## install mongo
 RUN         wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | apt-key add - \
