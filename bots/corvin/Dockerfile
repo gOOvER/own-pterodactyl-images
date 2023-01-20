@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH adoptopenjdk/openjdk11:debianslim-slim
+FROM        --platform=$TARGETOS/$TARGETARCH eclipse-temurin:11-jdk-jammy
 
 LABEL org.opencontainers.image.authors="info@goover.de"
 LABEL version="1.0"
