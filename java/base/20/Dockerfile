@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH openjdk:20-slim
+FROM        --platform=$TARGETOS/$TARGETARCH adoptopenjdk/openjdk20:debianslim-slim
 
 LABEL       author="Michael Parker" maintainer="parker@pterodactyl.io"
 
