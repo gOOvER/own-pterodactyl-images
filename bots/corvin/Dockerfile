@@ -6,7 +6,7 @@ LABEL description="Pterodactyl image for CorvinBot"
 
 ## install basic reqs
 RUN          apt update \         
-                && apt install -y git libtool netcat ffmpeg iproute2 curl gnupg sudo
+                && apt install -y git libtool netcat ffmpeg iproute2 curl gnupg
 
 ## install mongo
 RUN         wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | apt-key add - \
@@ -15,7 +15,7 @@ RUN         wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | apt-k
                 && apt install -y mongodb-org mongodb-org-server mongodb-org-shell mongodb-org-mongos mongodb-org-tools
 
 ## install nodejs
-RUN         curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - \
+RUN         curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
                 && curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | tee /usr/share/keyrings/yarnkey.gpg >/dev/null \
                 && echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | tee /etc/apt/sources.list.d/yarn.list
 RUN         apt update \
