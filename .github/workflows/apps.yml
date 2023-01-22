@@ -34,7 +34,7 @@ jobs:
       - uses: docker/build-push-action@v3
         with:
           context: ./apps/${{ matrix.oses }}
-          file: ./sppa/${{ matrix.oses }}/Dockerfile
+          file: ./apps/${{ matrix.oses }}/Dockerfile
           platforms: linux/amd64
           push: true
           tags: |
