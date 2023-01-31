@@ -43,4 +43,4 @@ echo -e "${BLUE}-------------------------------------------------${NC}"
 eval ${MODIFIED_STARTUP}
 
 # stop mongo
-mongod --eval "db.getSiblingDB('admin').shutdownServer()"
+mongod --shutdown
