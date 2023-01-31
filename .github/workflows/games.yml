@@ -27,6 +27,7 @@ jobs:
           - riskofrain2
           - rust
           - samp
+          - staxel
           - valheim
     steps:
       - uses: actions/checkout@v3
