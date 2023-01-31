@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH eclipse-temurin:11-jdk-focal
+FROM        --platform=$TARGETOS/$TARGETARCH mongo:6-focal
 
 LABEL org.opencontainers.image.authors="info@goover.de"
 LABEL version="1.0"
@@ -6,13 +6,10 @@ LABEL description="Pterodactyl image for CorvinBot"
 
 ## install basic reqs
 RUN          apt update \         
-                && apt install -y git libtool netcat ffmpeg iproute2 curl gnupg
+                && apt install -y git libtool netcat ffmpeg iproute2 curl gnupg software-properties-common
 
-## install mongo
-RUN         wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | apt-key add - \
-                && echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-6.0.list \
-                && apt update \
-                && apt install -y mongodb-org mongodb-org-server mongodb-org-shell mongodb-org-mongos mongodb-org-tools
+## install java
+RUN         apt -y install openjdk-11-jre 
 
 ## install nodejs
 RUN         curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
