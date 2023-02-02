@@ -6,6 +6,10 @@ FROM        debian:bullseye-slim
 
 LABEL       author="Torsten Widmann" maintainer="support@goover.de"
 
+ENV         DEBIAN_FRONTEND=noninteractive
+
+RUN         dpkg --add-architecture i386
+
 RUN         apt update \
             && apt -y upgrade
 RUN         apt install -y fontconfig dirmngr iproute2
