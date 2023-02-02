@@ -42,6 +42,8 @@ else
     echo -e "Not updating game server as auto update was set to 0. Starting Server"
 fi
 
+Xvfb :0 -screen 0 ${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_DEPTH} &
+
 # Display the command we're running in the output, and then execute it with the env
 # from the container itself.
 printf "\033[1m\033[33mcontainer@pterodactyl~ \033[0m%s\n" "$PARSED"
