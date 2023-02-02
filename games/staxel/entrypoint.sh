@@ -42,7 +42,7 @@ else
     echo -e "Not updating game server as auto update was set to 0. Starting Server"
 fi
 
-Xvfb :0 -screen 0 ${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_DEPTH} &
+Xvfb :0 -screen 0 1024x768x16 &
 
 # Display the command we're running in the output, and then execute it with the env
 # from the container itself.
