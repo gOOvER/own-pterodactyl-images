@@ -21,7 +21,7 @@ echo "Current timezone: $(cat /etc/timezone)"
 cd /home/container || exit 1
 
 if [[ $XVFB == 1 ]]; then
-        Xvfb :0 -screen 0 {{DISPLAY}} &
+        Xvfb :0 -screen 0 1024x768x24 &
 fi
 
 ## just in case someone removed the defaults.
