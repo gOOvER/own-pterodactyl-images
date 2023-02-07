@@ -14,20 +14,11 @@ RUN         apt install -y python3 python3-dev python3-pip jq git libtcmalloc-mi
 
 RUN         useradd -d /home/container -m container
 
-## install dotnet to support STEAM dotnet games
-RUN     apt update -y \
-          && apt upgrade -y \
-          && wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
-          && dpkg -i packages-microsoft-prod.deb \
-          && rm packages-microsoft-prod.deb \
-          && apt update -y \
-          && apt install -y aspnetcore-runtime-7.0 dotnet-sdk-7.0 libgdiplus
-
-## install rcon
-RUN         cd /tmp/ \
-            && curl -sSL https://github.com/gorcon/rcon-cli/releases/download/v0.10.2/rcon-0.10.2-amd64_linux.tar.gz > rcon.tar.gz \
-            && tar xvf rcon.tar.gz \
-            && mv rcon-0.10.2-amd64_linux/rcon /usr/local/bin/
+RUN         apt install apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common -y
+RUN         wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -
+RUN         add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
+RUN         apt update
+RUN         apt install adoptopenjdk-8-hotspot -y
 
 USER        container
 ENV         USER=container HOME=/home/container
