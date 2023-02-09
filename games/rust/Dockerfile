@@ -33,7 +33,7 @@ RUN			dpkg --add-architecture i386 \
 			&& apt update \
 			&& apt upgrade -y \
 			&& apt install -y lib32gcc-s1 lib32stdc++6 unzip curl iproute2 tzdata libgdiplus libsdl2-2.0-0:i386 jq sed wget \
-			&& curl -sL https://deb.nodesource.com/setup_14.x | bash - \
+			&& curl -sL https://deb.nodesource.com/setup_18.x | bash - \
 			&& apt install -y nodejs \
 			&& mkdir /node_modules \
 			&& npm install --prefix / ws \
