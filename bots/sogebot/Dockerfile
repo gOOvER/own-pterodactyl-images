@@ -2,7 +2,7 @@
 # sogeBot Install Image
 #
 
-FROM        --platform=$BUILDPLATFORM node:18-bullseye-slim
+FROM        --platform=$BUILDPLATFORM node:16-bullseye-slim
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 
