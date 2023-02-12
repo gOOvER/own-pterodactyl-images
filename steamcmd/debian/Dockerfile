@@ -16,6 +16,8 @@ RUN         useradd -d /home/container -m container
 
 RUN         rm -f /etc/machine-id
 RUN         dbus-uuidgen --ensure=/etc/machine-id
+RUN         rm /var/lib/dbus/machine-id
+RUN         dbus-uuidgen --ensure
 
 ## install dotnet to support STEAM dotnet games
 RUN     apt update -y \
