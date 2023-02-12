@@ -14,6 +14,8 @@ RUN         apt install -y python3 python3-dev python3-pip jq git libtcmalloc-mi
 
 RUN         useradd -d /home/container -m container
 
+RUN         dbus-uuidgen --ensure
+
 ## install dotnet to support STEAM dotnet games
 RUN     apt update -y \
           && apt upgrade -y \
