@@ -13,9 +13,9 @@ RUN     apt install -y alsa-tools libpulse-dev libasound2 libao-common gnutls-bi
 RUN     useradd -d /home/container -m container
 
 # Download Proton GE
+RUN     mkdir -p /usr/local/bin/proton
 RUN     curl -sLOJ $(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep .tar.gz)
 RUN     tar -xzf GE-Proton*.tar.gz -C /usr/local/bin/proton --strip-components=1
-RUN     ls /usr/local/bin/proton
 RUN     rm GE-Proton*.*
 
 # Set up Winetricks
