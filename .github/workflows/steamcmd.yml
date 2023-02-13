@@ -21,6 +21,7 @@ jobs:
         distro:
           - debian
           - ubuntu
+          - proton
           - parker
     steps:
       - uses: actions/checkout@v3
