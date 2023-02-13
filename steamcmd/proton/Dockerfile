@@ -14,13 +14,14 @@ RUN     useradd -d /home/container -m container
 
 # Download Proton GE
 RUN     curl -sLOJ $(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep .tar.gz)
-RUN     tar -xzf GE-Proton*.tar.gz -C /opt/proton
+RUN     tar -xzf GE-Proton*.tar.gz -C /usr/local/bin/proton
 RUN     rm GE-Proton*.*
 
 # Set up Winetricks
 RUN	    wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
 RUN     chmod +x /usr/sbin/winetricks
 
+# Proton Fix machine-id
 RUN     rm -f /etc/machine-id
 RUN     dbus-uuidgen --ensure=/etc/machine-id
 RUN     rm /var/lib/dbus/machine-id
