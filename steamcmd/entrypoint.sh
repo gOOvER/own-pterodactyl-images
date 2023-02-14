@@ -14,9 +14,9 @@ export INTERNAL_IP
 # proton envs
 if [ -f "/usr/local/bin/proton" ]; then
     echo -e "Proton found. Setting needed envs..."
-    mkdir -p /mnt/server/.steam/steam/steamapps/compatdata/${SRCDS_APPID}
-    export STEAM_COMPAT_CLIENT_INSTALL_PATH="/home/container/.steam/steam"
-    export STEAM_COMPAT_DATA_PATH="/home/container/.steam/steam/steamapps/compatdata/${SRCDS_APPID}"
+    mkdir -p /mnt/server/Steam/steamapps/compatdata/${SRCDS_APPID}
+    #export STEAM_COMPAT_CLIENT_INSTALL_PATH="/home/container/.steam/steam"
+    export STEAM_COMPAT_DATA_PATH="/home/container/Steam/steamapps/compatdata/${SRCDS_APPID}"
 fi
 
 # Information output
