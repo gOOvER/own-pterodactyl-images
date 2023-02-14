@@ -2,18 +2,17 @@
 # Mono Latest Image
 # Minimum Panel Version: 1.2.x
 # ----------------------------------
-FROM        debian:bullseye-slim
+FROM    debian:bullseye-slim
 
-LABEL       author="Torsten Widmann" maintainer="support@goover.de"
+LABEL   author="Torsten Widmann" maintainer="info@goover.de"
 
-ENV         DEBIAN_FRONTEND=noninteractive
-
+## install required packages
 RUN         dpkg --add-architecture i386
-
-RUN         apt update \
-            && apt -y upgrade
-RUN         apt install -y fontconfig dirmngr iproute2
-RUN         apt install -y wget mesa-utils git tar curl gcc g++ iproute2 gdb libsdl1.2debian libfontconfig1 telnet net-tools netcat tzdata psmisc lib32gcc-s1 libgcc1 lib32tinfo6 lib32z1 lib32stdc++6 libstdc++6 libgdiplus
+RUN         apt update
+RUN         apt install -y wget iproute2 gnupg2 software-properties-common libntlm0 winbind xvfb xauth python3 libncurses5-dev:i386 libncurses6 dbus libgdiplus lib32gcc-s1
+RUN         apt install -y alsa-tools libpulse0 pulseaudio libpulse-dev libasound2 libao-common gnutls-bin gnupg locales numactl cabextract curl
+RUN         apt install -y fontconfig dirmngr mesa-utils
+RUN         apt install -y tar gcc g++ gdb libsdl1.2debian libfontconfig1 telnet net-tools netcat tzdata psmisc lib32gcc-s1 libgcc1 lib32tinfo6 lib32z1 lib32stdc++6 libstdc++6 libgdiplus
 RUN         apt install -y libcurl4 libfontconfig1 libpangocairo-1.0-0 libnss3 libgconf-2-4 libxi6 libxcursor1 libxss1 libxcomposite1 libasound2 libxdamage1 libxtst6 libatk1.0-0 libxrandr2 libcurl4 libpulse-dev
 RUN         apt install -y libcurl4-gnutls-dev:i386 libssl1.1:i386 libcurl4:i386 libtinfo6:i386 libncurses5:i386 libcurl3-gnutls:i386 libsdl2-2.0-0:i386 libstdc++6:i386 libc6:i386
 RUN         apt install -y python3 python3-dev python3-pip jq git libtcmalloc-minimal4 sed
@@ -22,11 +21,28 @@ RUN         sh -c 'echo "deb https://download.mono-project.com/repo/debian stabl
 RUN         apt update
 RUN         apt install mono-complete mono-xsp4 mono-devel xvfb -y
 
-RUN         useradd -d /home/container -m container
+RUN     useradd -d /home/container -m container
+
+# Download Proton GE
+RUN     curl -sLOJ $(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep .tar.gz)
+RUN     tar -xzf GE-Proton*.tar.gz -C /usr/local/bin/ --strip-components=1
+RUN     rm GE-Proton*.*
+
+# Proton Fix machine-id
+RUN     rm -f /etc/machine-id
+RUN     dbus-uuidgen --ensure=/etc/machine-id
+RUN     rm /var/lib/dbus/machine-id
+RUN     dbus-uuidgen --ensure
+
+## install rcon
+RUN         cd /tmp/ \
+            && curl -sSL https://github.com/gorcon/rcon-cli/releases/download/v0.10.2/rcon-0.10.2-amd64_linux.tar.gz > rcon.tar.gz \
+            && tar xvf rcon.tar.gz \
+            && mv rcon-0.10.2-amd64_linux/rcon /usr/local/bin/
 
 USER        container
 ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
 
-COPY        ./entrypoint.sh /entrypoint.sh
-CMD         ["/bin/bash", "/entrypoint.sh"]
+COPY        ./../entrypoint.sh /entrypoint.sh
+CMD         [ "/bin/bash", "/entrypoint.sh" ]

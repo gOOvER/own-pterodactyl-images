@@ -13,6 +13,10 @@ export TZ
 INTERNAL_IP=$(ip route get 1 | awk '{print $NF;exit}')
 export INTERNAL_IP
 
+mkdir -p /home/container/.steam/steam/steamapps/compatdata/${SRCDS_APPID}
+export STEAM_COMPAT_CLIENT_INSTALL_PATH="/home/container/.steam/steam"
+export STEAM_COMPAT_DATA_PATH="/home/container/.steam/steam/steamapps/compatdata/${SRCDS_APPID}"
+
 # Convert all of the "{{VARIABLE}}" parts of the command into the expected shell
 # variable format of "${VARIABLE}" before evaluating the string and automatically
 # replacing the values.
