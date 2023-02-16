@@ -23,7 +23,7 @@ RUN         dbus-uuidgen --ensure=/etc/machine-id
 RUN         rm /var/lib/dbus/machine-id
 RUN         dbus-uuidgen --ensure
 
-#Setup Protontricks
+#Setup Protontricks install
 RUN         python3 -m pip install protontricks
 
 # Set up Winetricks
