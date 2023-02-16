@@ -40,8 +40,11 @@ if [ -f "/usr/local/bin/proton" ]; then
         export STEAM_COMPAT_CLIENT_INSTALL_PATH="/home/container/.steam/steam"
         export STEAM_COMPAT_DATA_PATH="/home/container/.steam/steam/steamapps/compatdata/${SRCDS_APPID}"
     else
-        echo -e "No appid set. Stopping server"
-        exit 1
+        echo -e "----------------------------------------------------------------------------------"
+        echo -e "WARNING!!! Proton needs variable SRCDS_APPID, else it will not work. Please add it"
+        echo -e "Server stopps now"
+        echo -e "----------------------------------------------------------------------------------"
+        exit 0
         fi
 fi
 
