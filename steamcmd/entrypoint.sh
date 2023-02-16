@@ -42,7 +42,7 @@ if [ -f "/usr/local/bin/proton" ]; then
     else
         echo -e "----------------------------------------------------------------------------------"
         echo -e "WARNING!!! Proton needs variable SRCDS_APPID, else it will not work. Please add it"
-        echo -e "Server stopps now"
+        echo -e "Server stops now"
         echo -e "----------------------------------------------------------------------------------"
         exit 0
         fi
