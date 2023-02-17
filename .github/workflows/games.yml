@@ -27,6 +27,7 @@ jobs:
           - riskofrain2
           - rust
           - samp
+          - screeps
           - staxel
           - valheim
           - wurm
