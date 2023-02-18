@@ -40,9 +40,9 @@ if [ -f "/usr/local/bin/proton" ]; then
         export STEAM_COMPAT_CLIENT_INSTALL_PATH="/home/container/.steam/steam"
         export STEAM_COMPAT_DATA_PATH="/home/container/.steam/steam/steamapps/compatdata/${SRCDS_APPID}"
         #protontricks
-        export STEAM_DIR="/home/container/.steam/steam"
+        #export STEAM_DIR="/home/container/.steam/steam"
         export WINETRICKS="/usr/sbin/winetricks"
-        #export STEAM_RUNTIME=0
+        #export STEAM_RUNTIME=1
 
     else
         echo -e "----------------------------------------------------------------------------------"
