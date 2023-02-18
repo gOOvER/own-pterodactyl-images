@@ -42,6 +42,7 @@ if [ -f "/usr/local/bin/proton" ]; then
         #protontricks
         export STEAM_DIR="/home/container/.steam/steam"
         export WINETRICKS="/usr/sbin/winetricks"
+        #export STEAM_RUNTIME=0
 
     else
         echo -e "----------------------------------------------------------------------------------"
