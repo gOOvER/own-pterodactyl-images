@@ -13,9 +13,15 @@ these images on an arm system, no modification to them or the tag is needed, the
 ### [Distros](/distros)
 
 * [alpine](/distros/alpine)
-  * `ghcr.io/goover/distros:alpine`
+  * `ghcr.io/goover/alpine:latest`
+  * `ghcr.io/goover/alpine:edge`
+  * `ghcr.io/goover/alpine:3.13`
+  * `ghcr.io/goover/alpine:3.14`
+  * `ghcr.io/goover/alpine:3.15`
+  * `ghcr.io/goover/alpine:3.16`
+  * `ghcr.io/goover/alpine:3.17`
 * [archlinux](/distros/archlinux)
-  * `ghcr.io/goover/distros:archlinux`
+  * `ghcr.io/goover/archlinux:latest`
 * [debian](/distros/debian)
   * `ghcr.io/goover/debian:10-buster`
   * `ghcr.io/goover/debian:11-bullseye`
@@ -27,11 +33,11 @@ these images on an arm system, no modification to them or the tag is needed, the
 ### [Bot](/bot)
 
 * [`bastion`](/bot/bastion)
-  * `ghcr.io/parkervcp/yolks:bot_bastion`
+  * `ghcr.io/goover/bot:bastion`
 * [`parkertron`](/bot/parkertron)
   * `ghcr.io/parkervcp/yolks:bot_parkertron`
 * [`redbot`](/bot/red)
-  * `ghcr.io/parkervcp/yolks:bot_red`
+  * `ghcr.io/goover/bot:red`
 * [`sinusbot`](/bot/sinusbot)
   * `ghcr.io/parkervcp/yolks:bot_sinusbot`
 
@@ -208,6 +214,7 @@ these images on an arm system, no modification to them or the tag is needed, the
   * `ghcr.io/parkervcp/yolks:rust_latest`
 
 ### [SteamCMD](/steamcmd)
+
 * [`SteamCMD Debian lastest`](/steamcmd/debian)
   * `ghcr.io/parkervcp/steamcmd:debian`
 * [`SteamCMD Debian Dotnet`](/steamcmd/dotnet)
@@ -216,6 +223,7 @@ these images on an arm system, no modification to them or the tag is needed, the
   * `ghcr.io/parkervcp/steamcmd:ubuntu`
 
 ### [Voice](/voice)
+
 * [`Mumble`](/voice/mumble)
   * `ghcr.io/parkervcp/yolks:voice_mumble`
 * [`TeaSpeak`](/voice/teaspeak)
