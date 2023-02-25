@@ -3,9 +3,9 @@ FROM        --platform=$TARGETOS/$TARGETARCH python:2.7-slim
 LABEL       author="Michael Parker" maintainer="parker@pterodactyl.io"
 
 RUN         apt update \
-            && apt -y install git gcc g++ ca-certificates dnsutils curl iproute2 ffmpeg procps libmysqlclient-dev \
+            && apt -y install git gcc g++ ca-certificates dnsutils curl iproute2 ffmpeg procps default-libmysqlclient-dev \
             && useradd -d /home/container -m container
-#RUN         python -m pip install --upgrade pip
+RUN         python -m pip install --upgrade pip
 
 USER        container
 ENV         USER=container HOME=/home/container
