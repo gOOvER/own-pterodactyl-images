@@ -15,6 +15,10 @@ sleep 1
 TZ=${TZ:-UTC}
 export TZ
 
+# Default the IMAGE_PROMPT environment variable to something nice
+IMAGE_PROMPT=${IMAGE_PROMPT:-$'\033[1m\033[33mcontainer@pterodactyl~ \033[0m'}
+export IMAGE_PROMPT
+
 # Information output
 echo -e "${BLUE}-------------------------------------------------${NC}"
 echo -e "${YELLOW}Running on Debian $(cat /etc/debian_version)${NC}"
@@ -116,9 +120,10 @@ for trick in $WINETRICKS_RUN; do
         winetricks -q $trick
 done
 
-# Replace Startup Variables
-MODIFIED_STARTUP=$(echo ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
-echo -e ":/home/container$ ${MODIFIED_STARTUP}"
+# Replace variables in the startup command
+PARSED=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g' | eval echo "$(cat -)")
+printf "%s%s\n" "$IMAGE_PROMPT" "$PARSED"
 
-# Run the Server
-eval ${MODIFIED_STARTUP}
+# Run the startup command
+# shellcheck disable=SC2086
+exec env ${PARSED}
