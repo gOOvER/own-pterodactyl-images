@@ -20,7 +20,7 @@ jobs:
       matrix:
         oses:
           - '10-buster'
-          - '11-buster'
+          - '11-bullseye'
           - '12-bookworm'
     steps:
       - uses: actions/checkout@v3
