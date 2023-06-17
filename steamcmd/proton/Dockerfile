@@ -17,7 +17,7 @@ RUN         apt install -y libgcc1 libcurl4-gnutls-dev:i386 libssl3:i386 libcurl
 RUN         apt install -y alsa-tools libpulse0 pulseaudio libpulse-dev libasound2 libao-common gnutls-bin gnupg locales numactl cabextract curl python3 python3-pip python3-setuptools
 RUN         apt install -y libfreetype6:i386 libfreetype6
 RUN         echo steam steam/question select "I AGREE" | debconf-set-selections
-RUN         apt install -y steam
+RUN         apt install -y steam-installer steam-libs
 RUN         useradd -d /home/container -m container
 
 # Download Proton GE

@@ -4,7 +4,7 @@ LABEL       author="Michael Parker" maintainer="parker@pterodactyl.io"
 
 RUN         mkdir -p /usr/share/man/man1 \
             && apt update \
-            && apt -y install git ca-certificates dnsutils iproute2 wget curl xz-utils git openjdk-11-jre \
+            && apt -y install git ca-certificates dnsutils iproute2 wget curl xz-utils git default-jre-headless \
             zlib1g-dev libffi-dev git libmagickwand-dev unzip libaa1-dev build-essential tk-dev libncurses5-dev libncursesw5-dev libreadline6-dev libdb5.3-dev libgdbm-dev libsqlite3-dev libssl-dev libbz2-dev libexpat1-dev liblzma-dev ffmpeg imagemagick \
             && pip install --upgrade pip \
             && pip install python-forecastio tweepy unidecode discord-text-sanitizer mcstatus bs4 sqlalchemy geocoder valve python-valve py-cpuinfo psutil numpy scipy \

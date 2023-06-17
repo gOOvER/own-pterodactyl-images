@@ -1,4 +1,4 @@
-FROM         debian:bullseye-slim
+FROM         debian:bookworm-slim
 
 LABEL        LABEL author="Torsten Widmann" maintainer="info@goover.de"
 
