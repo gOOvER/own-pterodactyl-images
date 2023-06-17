@@ -2,7 +2,7 @@
 # sogeBot Install Image
 #
 
-FROM        --platform=$BUILDPLATFORM node:18-bullseye-slim
+FROM        --platform=$BUILDPLATFORM node:18-bookworm-slim
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/PteroForge/pterodactyl-images"

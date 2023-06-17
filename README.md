@@ -24,7 +24,7 @@ these images on an arm system, no modification to them or the tag is needed, the
   * `ghcr.io/goover/archlinux:latest`
 * [debian](/distros/debian)
   * `ghcr.io/goover/debian:10-buster`
-  * `ghcr.io/goover/debian:11-bullseye`
+  * `ghcr.io/goover/debian:11-bookworm`
 * [ubuntu](/oses/ubuntu)
   * `ghcr.io/goover/ubuntu:18-bionic`
   * `ghcr.io/goover/ubuntu:20-focal`

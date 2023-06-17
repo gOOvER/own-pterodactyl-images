@@ -1,7 +1,7 @@
 # ----------------------------------
 # Risk of Rain 2 Wine image
 # ----------------------------------
-FROM    ghcr.io/pteroforge/debian:11-bullseye
+FROM    ghcr.io/pteroforge/debian:11-bookworm
 
 LABEL org.opencontainers.image.authors="info@goover.de"
 
@@ -13,7 +13,7 @@ RUN     apt install -y --no-install-recommends --no-install-suggests gnupg2 soft
 # Install winehq-stable and with recommends
 RUN     wget -nc https://dl.winehq.org/wine-builds/winehq.key
 RUN     apt-key add winehq.key
-RUN     apt-add-repository 'deb http://dl.winehq.org/wine-builds/debian/ bullseye main'
+RUN     apt-add-repository 'deb http://dl.winehq.org/wine-builds/debian/ bookworm main'
 RUN     apt update
 RUN     apt install --install-recommends --no-install-suggests winehq-staging cabextract -y
 

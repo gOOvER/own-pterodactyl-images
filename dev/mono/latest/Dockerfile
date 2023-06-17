@@ -2,7 +2,7 @@
 # Mono Latest Image
 # Minimum Panel Version: 1.2.x
 # ----------------------------------
-FROM        debian:bullseye-slim
+FROM        debian:bookworm-slim
 
 LABEL       author="Torsten Widmann" maintainer="support@goover.de"
 

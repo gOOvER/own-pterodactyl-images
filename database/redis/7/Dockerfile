@@ -2,7 +2,7 @@
 # Environment: redis
 # Minimum Panel Version: 0.7.X
 # ----------------------------------
-FROM    redis:7-bullseye
+FROM    redis:7-bookworm
 
 LABEL   author="Michael Parker" maintainer="parker@pterodactyl.io"
 

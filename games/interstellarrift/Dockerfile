@@ -1,4 +1,4 @@
-FROM    ghcr.io/pteroforge/debian:11-bullseye
+FROM    ghcr.io/pteroforge/debian:11-bookworm
 
 LABEL org.opencontainers.image.authors="info@goover.de"
 
@@ -8,7 +8,7 @@ RUN     apt update
 RUN     apt install -y --no-install-recommends gnupg2 software-properties-common libntlm0 winbind xvfb xauth python3 libncurses5:i386 libncurses6:i386 dbus wget curl
 
 # Install wine and with recommends
-RUN     sh -c 'echo " deb https://dl.winehq.org/wine-builds/debian/ bullseye main" >> /etc/apt/sources.list.d/wine.list'
+RUN     sh -c 'echo " deb https://dl.winehq.org/wine-builds/debian/ bookworm main" >> /etc/apt/sources.list.d/wine.list'
 RUN     wget -nc https://dl.winehq.org/wine-builds/winehq.key
 RUN     apt-key add winehq.key
 RUN     apt update

@@ -13,7 +13,7 @@ RUN     apt install -y alsa-tools libpulse-dev libasound2 libao-common gnutls-bi
 RUN     useradd -d /home/container -m container
 
 # Install wine and with recommends
-RUN     sh -c 'echo " deb https://dl.winehq.org/wine-builds/debian/ bullseye main" >> /etc/apt/sources.list.d/wine.list'
+RUN     sh -c 'echo " deb https://dl.winehq.org/wine-builds/debian/ bookworm main" >> /etc/apt/sources.list.d/wine.list'
 RUN     wget -nc https://dl.winehq.org/wine-builds/winehq.key
 RUN     apt-key add winehq.key
 RUN     apt update

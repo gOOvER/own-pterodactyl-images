@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH openjdk:20-bullseye
+FROM        --platform=$TARGETOS/$TARGETARCH openjdk:20-bookworm
 
 LABEL       author="Michael Parker" maintainer="parker@pterodactyl.io"
 

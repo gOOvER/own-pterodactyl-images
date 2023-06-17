@@ -1,7 +1,7 @@
 # ---------------------------------------------
 # playonlinux with Steam support
 # ---------------------------------------------
-FROM    debian:bullseye-slim
+FROM    debian:bookworm-slim
 
 LABEL   author="Torsten Widmann" maintainer="info@goover.de"
 
@@ -15,8 +15,8 @@ RUN     useradd -d /home/container -m container
 # Install winehq-stable and with recommends
 RUN     wget -nc https://dl.winehq.org/wine-builds/winehq.key
 RUN     mv winehq.key /usr/share/keyrings/winehq-archive.key
-RUN     wget -nc https://dl.winehq.org/wine-builds/debian/dists/bullseye/winehq-bullseye.sources
-RUN     mv winehq-bullseye.sources /etc/apt/sources.list.d/
+RUN     wget -nc https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
+RUN     mv winehq-bookworm.sources /etc/apt/sources.list.d/
 RUN     apt update
 RUN     apt install --install-recommends winehq-staging cabextract playonlinux -y
 

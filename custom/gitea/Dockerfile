@@ -19,7 +19,7 @@ RUN           apt install -y liblua5.4-0 libz-dev rapidjson-dev tzdata gpg lsb-r
 
 ## Add otional repos
 RUN           curl -fsSL https://packages.redis.io/gpg | gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
-RUN           echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb bullseye main" | tee /etc/apt/sources.list.d/redis.list
+RUN           echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb bookworm main" | tee /etc/apt/sources.list.d/redis.list
 RUN           apt update
 RUN           apt install -y redis-server
 

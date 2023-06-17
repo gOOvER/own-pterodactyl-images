@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH node:18-bullseye-slim
+FROM        --platform=$TARGETOS/$TARGETARCH node:18-bookworm-slim
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 
