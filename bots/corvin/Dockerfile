@@ -6,7 +6,7 @@ LABEL description="Pterodactyl image for CorvinBot"
 
 ## install basic reqs
 RUN          apt update \         
-                && apt install -y git libtool netcat ffmpeg iproute2 curl gnupg software-properties-common
+                && apt install -y git libtool netcat-openbsd ffmpeg iproute2 curl gnupg software-properties-common
 
 ## install java
 RUN         apt -y install openjdk-11-jre 

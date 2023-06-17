@@ -5,7 +5,7 @@ LABEL       author="Michael Parker" maintainer="parker@pterodactyl.io"
 ENV         DEBIAN_FRONTEND noninteractive
 
 RUN         apt update -y \
-            && apt install -y netcat iproute2 \
+            && apt install -y netcat-openbsd iproute2 \
             && useradd -d /home/container -m container -s /bin/bash
 
 USER        container

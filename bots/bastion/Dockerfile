@@ -8,7 +8,7 @@ RUN         apt update && apt install --no-install-recommends -y curl \
                 && apt install -y nodejs \
                 && npm install -g npm@latest \
                 ## install bastion reqs
-                && apt install -y python3 build-essential git libtool netcat ffmpeg iproute2 tzdata \
+                && apt install -y python3 build-essential git libtool netcat-openbsd ffmpeg iproute2 tzdata \
                 ## add container user
                 && useradd -d /home/container -m container -s /bin/bash
 
