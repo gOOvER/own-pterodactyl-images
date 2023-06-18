@@ -1,21 +1,36 @@
 # ----------------------------------
 # Risk of Rain 2 Wine image
 # ----------------------------------
-FROM    ghcr.io/pteroforge/debian:11-bookworm
+FROM    debian:bookworm-slim
 
-LABEL org.opencontainers.image.authors="info@goover.de"
+LABEL       author="Torsten Widmann" maintainer="info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.licenses=MIT
+
 
 ## install required packages
 RUN     dpkg --add-architecture i386
 RUN     apt update
-RUN     apt install -y --no-install-recommends --no-install-suggests gnupg2 software-properties-common libntlm0 winbind xvfb xauth python3 libncurses5:i386 libncurses6:i386 libgdiplus lib32gcc-s1
+RUN     apt -y upgrade
+RUN     apt install -y \
+           gnupg2 \
+           software-properties-common \
+           libntlm0 \
+           winbind \
+           xvfb \
+           xauth \
+           python3 \
+           libncurses5:i386 \
+           libncurses6:i386 \
+           libgdiplus \
+           lib32gcc-s1
 
 # Install winehq-stable and with recommends
 RUN     wget -nc https://dl.winehq.org/wine-builds/winehq.key
 RUN     apt-key add winehq.key
 RUN     apt-add-repository 'deb http://dl.winehq.org/wine-builds/debian/ bookworm main'
 RUN     apt update
-RUN     apt install --install-recommends --no-install-suggests winehq-staging cabextract -y
+RUN     apt -y install winehq-staging cabextract
 
 # Set up Winetricks
 RUN	    wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks

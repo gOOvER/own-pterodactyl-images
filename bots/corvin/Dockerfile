@@ -1,12 +1,21 @@
-FROM        --platform=$TARGETOS/$TARGETARCH mongo:6-focal
+FROM        --platform=$TARGETOS/$TARGETARCH mongo:6-jammy
 
-LABEL org.opencontainers.image.authors="info@goover.de"
-LABEL version="1.0"
-LABEL description="Pterodactyl image for CorvinBot"
+LABEL       author="Torsten Widmann" maintainer="info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.licenses=MIT
 
 ## install basic reqs
-RUN          apt update \         
-                && apt install -y git libtool netcat-openbsd ffmpeg iproute2 curl gnupg software-properties-common
+RUN         apt update \
+            && apt -y upgrade \         
+            && apt install -y \
+                  git \
+                  libtool \
+                  netcat \
+                  ffmpeg \
+                  iproute2 \
+                  curl \
+                  gnupg \
+                  software-properties-common
 
 ## install java
 RUN         apt -y install openjdk-11-jre 

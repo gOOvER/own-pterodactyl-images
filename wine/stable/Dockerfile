@@ -1,15 +1,39 @@
-# ---------------------------------------------
-# Generic Wine image with Steam support
-# ---------------------------------------------
 FROM    debian:bookworm-slim
 
-LABEL   author="Torsten Widmann" maintainer="info@goover.de"
+LABEL       author="Torsten Widmann" maintainer="info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.licenses=MIT
 
 ## install required packages
 RUN     dpkg --add-architecture i386
 RUN     apt update
-RUN     apt install -y --no-install-recommends wget iproute2 gnupg2 software-properties-common libntlm0 winbind xvfb xauth python3 libncurses5-dev:i386 libncurses6 dbus libgdiplus lib32gcc-s1 netcat-openbsd
-RUN     apt install -y alsa-tools libpulse-dev libasound2 libao-common gnutls-bin gnupg locales numactl
+RUN     apt -y upgrade
+RUN     apt install -y --no-install-recommends \
+            wget \
+            iproute2 \
+            gnupg2 \
+            software-properties-common \
+            libntlm0 \
+            winbind \
+            xvfb \
+            xauth \
+            python3 \
+            libncurses5-dev:i386 \
+            libncurses6 \
+            dbus \
+            libgdiplus \
+            lib32gcc-s1 \
+            netcat-openbsd \
+            alsa-tools \
+            libpulse-dev \
+            libasound2 \
+            libao-common \
+            gnutls-bin \
+            libasound2 \
+            locales \
+            gnupg \
+            numactl
+            
 RUN     useradd -d /home/container -m container
 
 # Install wine and with recommends
