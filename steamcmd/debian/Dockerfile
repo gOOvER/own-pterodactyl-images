@@ -4,7 +4,8 @@ LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 
 ENV         DEBIAN_FRONTEND=noninteractive
 
-RUN         apt -y install software-properties-common \
+RUN         apt update \
+                && apt -y install software-properties-common \
                 && apt-add-repository contrib \
                 && apt-add-repository non-free
 
