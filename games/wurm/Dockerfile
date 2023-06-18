@@ -56,8 +56,8 @@ RUN         apt install -y \
                 libcurl4:i386 \
                 libcurl4-gnutls-dev:i386 \
                 libpulse-dev \
-                libssl3 \
-                libssl3:i386 \
+                #libssl3 \
+                #libssl3:i386 \
                 libtinfo6:i386 \
                 libncurses5:i386 \
                 libcurl3-gnutls:i386 \
