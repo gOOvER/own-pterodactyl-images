@@ -20,6 +20,7 @@ jobs:
       matrix:
         tag:
           - bastion
+          - championbots
           - corvin
           - parkertron
           - red
