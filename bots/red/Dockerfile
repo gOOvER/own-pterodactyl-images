@@ -2,8 +2,9 @@ FROM        python:3.10-slim
 
 LABEL       author="Michael Parker" maintainer="parker@pterodactyl.io"
 
-RUN         mkdir -p /usr/share/man/man1 \
-            && apt update \
+RUN         mkdir -p /usr/share/man/man1
+
+RUN         apt update \
             && apt -y upgrade \
             && apt -y install \
                    git \
