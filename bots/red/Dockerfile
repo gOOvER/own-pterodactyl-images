@@ -33,7 +33,7 @@ RUN         mkdir -p /usr/share/man/man1 \
                    libexpat1-dev \
                    liblzma-dev \
                    ffmpeg \
-                   imagemagick \
+                   imagemagick
 
 RUN     pip install --upgrade pip \
             && pip install python-forecastio tweepy unidecode discord-text-sanitizer mcstatus bs4 sqlalchemy geocoder valve python-valve py-cpuinfo psutil numpy scipy \
