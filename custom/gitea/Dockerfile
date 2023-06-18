@@ -6,7 +6,7 @@ ENV           DEBIAN_FRONTEND noninteractive
 
 ## Update base packages
 RUN         apt update \
-            && apt upgrade -y
+            && apt upgrade -y \
             && apt -y install apt-transport-https \
             && apt -y install \
                   gcc \
