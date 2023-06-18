@@ -20,6 +20,8 @@ RUN     apt install -y \
            xvfb \
            xauth \
            python3 \
+           wget \
+           curl \
            libncurses5:i386 \
            libncurses6:i386 \
            libgdiplus \

@@ -1,4 +1,4 @@
-FROM        --platform=$BUILDPLATFORM debian:bookworm-slim
+FROM        --platform=$BUILDPLATFORM debian:bullseye-slim
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 
