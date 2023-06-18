@@ -41,7 +41,7 @@ mongod --fork --dbpath /home/container/mongodb/ --port 27017 --logpath /home/con
 echo -e "${BLUE}-------------------------------------------------${NC}"
 echo -e "${YELLOW}starting ChampionBot${NC}"
 echo -e "${BLUE}-------------------------------------------------${NC}"
-exec ${MODIFIED_STARTUP}
+eval ${MODIFIED_STARTUP}
 
 # stop mongo
 mongod --shutdown
