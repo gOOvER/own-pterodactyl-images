@@ -4,6 +4,10 @@ LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 
 ENV         DEBIAN_FRONTEND=noninteractive
 
+RUN         apt -y install software-properties-common \
+                && apt-add-repository contrib \
+                && apt-add-repository non-free
+
 RUN         dpkg --add-architecture i386
 RUN         apt update
 RUN         apt upgrade -y
