@@ -34,6 +34,7 @@ RUN         apt install -y \
                     python3-pip \
                     sed \
                     speex:i386 \
+                    steam-libs \
                     libgtk2.0-0:i386 \
                     dbus \
                     libsdl1.2debian \
