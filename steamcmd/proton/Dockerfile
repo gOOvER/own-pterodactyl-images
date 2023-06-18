@@ -6,6 +6,10 @@ FROM        debian:bookworm-slim
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 
 ## install required packages
+RUN         apt update \
+                && apt -y install software-properties-common \
+                && apt-add-repository contrib \
+                && apt-add-repository non-free
 
 RUN         dpkg --add-architecture i386
 RUN         apt update
