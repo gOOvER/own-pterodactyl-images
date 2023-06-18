@@ -28,11 +28,11 @@ RUN     apt install -y \
            lib32gcc-s1
 
 # Install winehq-stable and with recommends
-RUN     wget -nc https://dl.winehq.org/wine-builds/winehq.key
-RUN     apt-key add winehq.key
-RUN     apt-add-repository 'deb http://dl.winehq.org/wine-builds/debian/ bookworm main'
+RUN     mkdir -pm755 /etc/apt/keyrings
+RUN     wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+RUN     wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
 RUN     apt update
-RUN     apt -y install winehq-staging cabextract
+RUN     apt install --install-recommends winehq-staging cabextract
 
 # Set up Winetricks
 RUN	    wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks

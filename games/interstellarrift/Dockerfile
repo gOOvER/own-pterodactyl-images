@@ -1,11 +1,24 @@
-FROM    ghcr.io/pteroforge/debian:11-bookworm
+FROM    debian:bookworm-slim
 
 LABEL org.opencontainers.image.authors="info@goover.de"
 
 ## install required packages
 RUN     dpkg --add-architecture i386
 RUN     apt update
-RUN     apt install -y --no-install-recommends gnupg2 software-properties-common libntlm0 winbind xvfb xauth python3 libncurses5:i386 libncurses6:i386 dbus wget curl
+RUN     apt -y upgrade
+RUN     apt install -y \
+            gnupg2 \
+            software-properties-common \
+            libntlm0 \
+            winbind \
+            xvfb \
+            xauth \
+            python3 \
+            libncurses5:i386 \
+            libncurses6:i386 \
+            dbus \
+            wget \
+            curl
 
 # Install wine and with recommends
 RUN     sh -c 'echo " deb https://dl.winehq.org/wine-builds/debian/ bookworm main" >> /etc/apt/sources.list.d/wine.list'
@@ -18,6 +31,7 @@ RUN     apt install --install-recommends winehq-staging cabextract -y
 RUN	    wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
 RUN     chmod +x /usr/sbin/winetricks
 
+#Static wine variables
 ENV     HOME=/home/container
 ENV     WINEPREFIX=/home/container/.wine
 ENV     WINE_ARCH=win64
@@ -32,8 +46,6 @@ ENV     DISPLAY_HEIGHT=768
 ENV     DISPLAY_DEPTH=16
 ENV     AUTO_UPDATE=1
 ENV     XVFB=1
-
-#Static wine variables
 
 USER    container
 WORKDIR	/home/container

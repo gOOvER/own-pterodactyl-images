@@ -33,14 +33,14 @@ RUN         apt update \
                   libsdl1.2debian \
                   libsdl2-2.0-0 \
                   libfontconfig \
-                  libicu67 \
+                  libicu72 \
                   icu-devtools \
                   libunwind8 \
                   libssl-dev \
                   sqlite3 \
                   libsqlite3-dev \
                   libmariadbclient-dev-compat \
-                  libduktape205 \
+                  libduktape207 \
                   locales \
                   ffmpeg \
                   gnupg2 \
