@@ -9,17 +9,10 @@ STOPSIGNAL SIGINT
 
 ENV         DEBIAN_FRONTEND=noninteractive
 
-RUN         apt update \
-                && apt -y install software-properties-common \
-                && echo "deb https://ftp.debian.org/debian/ bookworm contrib main non-free non-free-firmware"  > /etc/apt/sources.list \
-                && echo "deb https://ftp.debian.org/debian/ bookworm-updates contrib main non-free non-free-firmware"  >> /etc/apt/sources.list \
-                && echo "deb https://ftp.debian.org/debian/ bookworm-proposed-updates contrib main non-free non-free-firmware"  >> /etc/apt/sources.list \
-                && echo "deb https://ftp.debian.org/debian/ bookworm-backports contrib main non-free non-free-firmware"  >> /etc/apt/sources.list \
-                && echo "deb https://security.debian.org/debian-security/ bookworm-security contrib main non-free non-free-firmware"  >> /etc/apt/sources.list \
-                && apt update \ 
-                && apt -y upgrade
-
 RUN         dpkg --add-architecture i386
+RUN         apt update \ 
+            && apt -y upgrade
+
 RUN         apt install -y \
                     wget \
                     mesa-utils \

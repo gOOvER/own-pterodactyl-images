@@ -4,20 +4,15 @@
 FROM        debian:bookworm-slim
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.licenses=MIT
 
-RUN         apt update \
-                && apt -y install software-properties-common \
-                && echo "deb https://ftp.debian.org/debian/ bookworm contrib main non-free non-free-firmware"  > /etc/apt/sources.list \
-                && echo "deb https://ftp.debian.org/debian/ bookworm-updates contrib main non-free non-free-firmware"  >> /etc/apt/sources.list \
-                && echo "deb https://ftp.debian.org/debian/ bookworm-proposed-updates contrib main non-free non-free-firmware"  >> /etc/apt/sources.list \
-                && echo "deb https://ftp.debian.org/debian/ bookworm-backports contrib main non-free non-free-firmware"  >> /etc/apt/sources.list \
-                && echo "deb https://security.debian.org/debian-security/ bookworm-security contrib main non-free non-free-firmware"  >> /etc/apt/sources.list \
-                && apt update \ 
-                && apt -y upgrade
-
+ENV         DEBIAN_FRONTEND noninteractive
 RUN         dpkg --add-architecture i386
 
-RUN         apt update
+RUN         apt update \
+            && apt -y upgrade
+
 RUN         apt -y install \
 					curl \
                     alsa-tools \
