@@ -106,5 +106,6 @@ WORKDIR     /home/container
 
 ## Copy over and execute entrypoint.sh
 COPY        ./../entrypoint.sh /entrypoint.sh
+RUN         chmod +x /entrypoint.sh
 ENTRYPOINT	["/usr/bin/tini", "-g", "--"]
 CMD 		["/entrypoint.sh"]
