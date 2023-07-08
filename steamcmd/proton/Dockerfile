@@ -10,8 +10,11 @@ LABEL       org.opencontainers.image.licenses=MIT
 ENV         DEBIAN_FRONTEND noninteractive
 RUN         dpkg --add-architecture i386
 
+
 RUN         apt update \
-            && apt -y upgrade
+            && apt -y upgrade \
+            && apt -y install software-properties-common \
+            && apt-add-repository -y -d -c contrib non-free
 
 RUN         apt -y install \
 					curl \
