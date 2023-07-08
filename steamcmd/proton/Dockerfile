@@ -12,11 +12,12 @@ RUN         dpkg --add-architecture i386
 
 
 RUN         apt update \
-            && apt -y upgrade \
-            && apt -y install software-properties-common \
-            && apt-add-repository -y -d -c contrib non-free
+            && apt -y install software-properties-common sed \
+            && sed -i -e's/ main/ main contrib non-free/g' /etc/apt/sources.list
 
-RUN         apt -y install \
+RUN         apt update \
+            && apt -y upgrade \
+            && apt -y install \
 					curl \
                     alsa-tools \
                     cabextract \
