@@ -37,9 +37,9 @@ RUN     apt install -y --no-install-recommends \
 RUN     useradd -d /home/container -m container
 
 # Install wine and with recommends
-RUN     sh -c 'echo " deb https://dl.winehq.org/wine-builds/debian/ bookworm main" >> /etc/apt/sources.list.d/wine.list'
-RUN     wget -nc https://dl.winehq.org/wine-builds/winehq.key
-RUN     apt-key add winehq.key
+RUN     mkdir -pm755 /etc/apt/keyrings
+RUN     wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+RUN     wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
 RUN     apt update
 RUN     apt install --install-recommends winehq-devel cabextract -y
 

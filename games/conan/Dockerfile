@@ -3,11 +3,13 @@
 # ---------------------------------------------
 FROM    debian:bookworm-slim
 
-LABEL org.opencontainers.image.authors="info@goover.de"
+LABEL       author="Torsten Widmann" maintainer="info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
 
 ## install required packages
 RUN     dpkg --add-architecture i386
 RUN     apt update
+RUN     apt -y upgrade
 RUN     apt install -y --no-install-recommends \
             wget \
             iproute2 \
@@ -31,9 +33,9 @@ RUN     apt install -y --no-install-recommends \
             gnutls-bin
 
 # Install wine and with recommends
-RUN     sh -c 'echo " deb https://dl.winehq.org/wine-builds/debian/ bookworm main" >> /etc/apt/sources.list.d/wine.list'
-RUN     wget -nc https://dl.winehq.org/wine-builds/winehq.key
-RUN     apt-key add winehq.key
+RUN     mkdir -pm755 /etc/apt/keyrings
+RUN     wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+RUN     wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
 RUN     apt update
 RUN     apt install --install-recommends winehq-staging cabextract -y
 
