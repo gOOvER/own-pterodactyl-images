@@ -81,9 +81,7 @@ RUN         apt install -y \
                     libtcmalloc-minimal4 \
                     libc++1 \
                     libnss-wrapper \
-                    libnss-wrapper:i386 \
-                    libtbb2 \
-                    libtbb2:i386
+                    libnss-wrapper:i386
 
 RUN         useradd -d /home/container -m container
 
