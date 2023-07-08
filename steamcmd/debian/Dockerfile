@@ -11,12 +11,15 @@ ENV         DEBIAN_FRONTEND=noninteractive
 
 RUN         apt update \
                 && apt -y install software-properties-common \
-                && apt-add-repository contrib \
-                && apt-add-repository non-free
+                && echo "deb https://ftp.debian.org/debian/ bookworm contrib main non-free non-free-firmware"  > /etc/apt/sources.list \
+                && echo "deb https://ftp.debian.org/debian/ bookworm-updates contrib main non-free non-free-firmware"  >> /etc/apt/sources.list \
+                && echo "deb https://ftp.debian.org/debian/ bookworm-proposed-updates contrib main non-free non-free-firmware"  >> /etc/apt/sources.list \
+                && echo "deb https://ftp.debian.org/debian/ bookworm-backports contrib main non-free non-free-firmware"  >> /etc/apt/sources.list \
+                && echo "deb https://security.debian.org/debian-security/ bookworm-security contrib main non-free non-free-firmware"  >> /etc/apt/sources.list \
+                && apt update \ 
+                && apt -y upgrade
 
 RUN         dpkg --add-architecture i386
-RUN         apt update
-RUN         apt upgrade -y
 RUN         apt install -y \
                     wget \
                     mesa-utils \
@@ -110,6 +113,6 @@ WORKDIR     /home/container
 
 ## Copy over and execute entrypoint.sh
 COPY        ./../entrypoint.sh /entrypoint.sh
-RUN         chmod +x ./entrypoint.sh 
+RUN         chmod +x entrypoint.sh 
 ENTRYPOINT	["/usr/bin/tini", "-g", "--"]
 CMD 		["/entrypoint.sh"]
