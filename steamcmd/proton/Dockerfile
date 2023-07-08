@@ -5,17 +5,14 @@ FROM        debian:bookworm-slim
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 
-## install required packages
-RUN         apt update \
-                && apt -y install software-properties-common \
-                && apt-add-repository contrib \
-                && apt-add-repository non-free
-
 RUN         dpkg --add-architecture i386
-RUN         apt update
-RUN         apt install -y software-properties-common
-RUN         apt-add-repository non-free
-RUN         apt update
+RUN         apt update \
+            && apt install -y software-properties-common \
+            && apt-add-repository --component non-free \
+            && apt-add-repository --component contrib \
+            && apt update \
+            && apt -y upgrade
+            
 RUN         apt install -y \
 					curl \
                     alsa-tools \
@@ -32,7 +29,6 @@ RUN         apt install -y \
                     python3 \
                     python3-pip \
                     python3-setuptools \
-                    software-properties-common \
                     wget \
                     winbind \
                     xauth \
