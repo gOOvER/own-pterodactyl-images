@@ -1,6 +1,11 @@
 FROM        --platform=$BUILDPLATFORM debian:bookworm-slim
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.licenses=MIT
+
+# Sets the default stop signal as wings can (currently) only send a kill or generic stop
+STOPSIGNAL SIGINT
 
 ENV         DEBIAN_FRONTEND=noninteractive
 
@@ -37,6 +42,7 @@ RUN         apt install -y \
                     steam-libs \
                     libgtk2.0-0:i386 \
                     dbus \
+                    tini \
                     libsdl1.2debian \
                     libfontconfig1 \
                     lib32gcc-s1 \
@@ -73,7 +79,11 @@ RUN         apt install -y \
                     libsdl2-2.0-0:i386 \
                     libc6:i386 \
                     libtcmalloc-minimal4 \
-                    libc++1
+                    libc++1 \
+                    libnss-wrapper \
+                    libnss-wrapper:i386 \
+                    libtbb2 \
+                    libtbb2:i386
 
 RUN         useradd -d /home/container -m container
 
@@ -97,4 +107,5 @@ ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
 
 COPY        ./../entrypoint.sh /entrypoint.sh
-CMD         [ "/bin/bash", "/entrypoint.sh" ]
+ENTRYPOINT	["/usr/bin/tini", "-g", "--"]
+CMD 		["/entrypoint.sh"]

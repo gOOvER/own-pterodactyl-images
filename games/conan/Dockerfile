@@ -6,6 +6,9 @@ FROM    debian:bookworm-slim
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
 
+# Sets the default stop signal as wings can (currently) only send a kill or generic stop
+STOPSIGNAL SIGINT
+
 ## install required packages
 RUN     dpkg --add-architecture i386
 RUN     apt update
@@ -30,7 +33,8 @@ RUN     apt install -y --no-install-recommends \
             libpulse-dev \
             libasound2 \
             libao-common \
-            gnutls-bin
+            gnutls-bin \
+            tini
 
 # Install wine and with recommends
 RUN     mkdir -pm755 /etc/apt/keyrings
@@ -58,5 +62,6 @@ ENV     USER=container HOME=/home/container
 WORKDIR /home/container
 
 COPY    ./entrypoint.sh /entrypoint.sh
-CMD	    ["/bin/bash", "/entrypoint.sh"]
+ENTRYPOINT	["/usr/bin/tini", "-g", "--"]
+CMD 		["/entrypoint.sh"]
 
