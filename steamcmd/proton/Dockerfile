@@ -26,7 +26,7 @@ RUN         apt install -y \
                     netcat-openbsd \
                     numactl \
                     pulseaudio \
-                    python3 \
+                    python3-full \
                     python3-pip \
                     python3-setuptools \
                     wget \
