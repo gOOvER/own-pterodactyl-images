@@ -83,8 +83,6 @@ RUN         apt install -y \
                     libnss-wrapper \
                     libnss-wrapper:i386
 
-RUN         useradd -d /home/container -m container
-
 ## install dotnet to support STEAM dotnet games
 RUN     apt update -y \
           && apt upgrade -y \
@@ -103,10 +101,13 @@ RUN         cd /tmp/ \
             && tar xvf rcon.tar.gz \
             && mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/
 
+## Setup user and working directory
+RUN         useradd -m -d /home/container -s /bin/bash container
 USER        container
 ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
 
+## Copy over and execute entrypoint.sh
 COPY        ./entrypoint.sh /entrypoint.sh
 ENTRYPOINT	["/usr/bin/tini", "-g", "--"]
 CMD 		["/entrypoint.sh"]
