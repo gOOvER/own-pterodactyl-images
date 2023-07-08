@@ -55,9 +55,9 @@ RUN         apt install -y \
                     libssl3:i386 libcurl4:i386 \
                     libtinfo6:i386 
 
-RUN         echo steam steam/question select "I AGREE" | debconf-set-selections
-RUN         apt install -y steam
-RUN         useradd -d /home/container -m container
+#RUN         echo steam steam/question select "I AGREE" | debconf-set-selections
+#RUN         apt install -y steam
+#RUN         useradd -d /home/container -m container
 
 # Download Proton GE
 RUN         curl -sLOJ $(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep .tar.gz)
