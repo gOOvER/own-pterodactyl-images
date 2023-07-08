@@ -66,15 +66,17 @@ mkdir -p $WINEPREFIX
 
 # Check if wine-gecko required and install it if so
 if [[ $WINETRICKS_RUN =~ gecko ]]; then
-        echo "Installing Gecko"
+        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${YELLOW}Installing Wine Gecko${NC}"
+        echo -e "${BLUE}-------------------------------------------------${NC}"
         WINETRICKS_RUN=${WINETRICKS_RUN/gecko}
 
         if [ ! -f "$WINEPREFIX/gecko_x86.msi" ]; then
-                wget -q -O $WINEPREFIX/gecko_x86.msi http://dl.winehq.org/wine/wine-gecko/2.47.2/wine_gecko-2.47.2-x86.msi
+                wget -q -O $WINEPREFIX/gecko_x86.msi http://dl.winehq.org/wine/wine-gecko/2.47.4/wine_gecko-2.47.4-x86.msi
         fi
 
         if [ ! -f "$WINEPREFIX/gecko_x86_64.msi" ]; then
-                wget -q -O $WINEPREFIX/gecko_x86_64.msi http://dl.winehq.org/wine/wine-gecko/2.47.2/wine_gecko-2.47.2-x86_64.msi
+                wget -q -O $WINEPREFIX/gecko_x86_64.msi http://dl.winehq.org/wine/wine-gecko/2.47.4/wine_gecko-2.47.4-x86_64.msi
         fi
 
         wine msiexec /i $WINEPREFIX/gecko_x86.msi /qn /quiet /norestart /log $WINEPREFIX/gecko_x86_install.log
@@ -83,11 +85,13 @@ fi
 
 # Check if wine-mono required and install it if so
 if [[ $WINETRICKS_RUN =~ mono ]]; then
-        echo "Installing mono"
+        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${YELLOW}Installing Wine Mono${NC}"
+        echo -e "${BLUE}-------------------------------------------------${NC}"
         WINETRICKS_RUN=${WINETRICKS_RUN/mono}
 
         if [ ! -f "$WINEPREFIX/mono.msi" ]; then
-                wget -q -O $WINEPREFIX/mono.msi https://dl.winehq.org/wine/wine-mono/7.1.1/wine-mono-7.1.1-x86.msi
+                wget -q -O $WINEPREFIX/mono.msi https://dl.winehq.org/wine/wine-mono/8.0.0/wine-mono-8.0.0-x86.msi
         fi
 
         wine msiexec /i $WINEPREFIX/mono.msi /qn /quiet /norestart /log $WINEPREFIX/mono_install.log
@@ -95,7 +99,9 @@ fi
 
 # List and install other packages
 for trick in $WINETRICKS_RUN; do
-        echo "Installing $trick"
+        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${YELLOW}Installing: ${NC} ${GREEN} $trick ${NC}"
+        echo -e "${BLUE}-------------------------------------------------${NC}"
         winetricks -q $trick
 done
 
