@@ -9,32 +9,31 @@ RUN     dpkg --add-architecture i386
 RUN     apt update
 RUN     apt -y upgrade
 RUN     apt install -y --no-install-recommends \
-            wget \
-            iproute2 \
+            alsa-tools \
+            dbus \
+            gnupg \
             gnupg2 \
-            software-properties-common \
-            libntlm0 \
-            winbind \
-            xvfb \
-            xauth \
+            gnutls-bin \
+            iproute2 \
+            locales \
+            netcat-openbsd \
+            numactl \
             python3 \
+            software-properties-common \
+            tini \
+            wget \
+            winbind \
+            xauth \
+            xvfb  \
+            lib32gcc-s1 \
+            libao-common \
+            libasound2 \
+            libasound2 \
+            libgdiplus \
             libncurses5-dev:i386 \
             libncurses6 \
-            dbus \
-            libgdiplus \
-            lib32gcc-s1 \
-            netcat-openbsd \
-            alsa-tools \
-            libpulse-dev \
-            libasound2 \
-            libao-common \
-            gnutls-bin \
-            libasound2 \
-            locales \
-            gnupg \
-            numactl
-
-RUN     useradd -d /home/container -m container
+            libntlm0 \
+            libpulse-dev
 
 # Install wine and with recommends
 RUN     mkdir -pm755 /etc/apt/keyrings
@@ -64,10 +63,14 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en  
 ENV LC_ALL en_US.UTF-8     
 
-USER    container
-ENV     USER=container HOME=/home/container
-WORKDIR /home/container
+## Setup user and working directory
+RUN         useradd -m -d /home/container -s /bin/bash container
+USER        container
+ENV         USER=container HOME=/home/container
+WORKDIR     /home/container
 
-COPY    ./entrypoint.sh /entrypoint.sh
-CMD	    ["/bin/bash", "/entrypoint.sh"]
-
+## Copy over and execute entrypoint.sh
+COPY        --chown=container:container ./../entrypoint.sh /entrypoint.sh
+RUN         chmod +x /entrypoint.sh
+ENTRYPOINT	["/usr/bin/tini", "-g", "--"]
+CMD 		["/entrypoint.sh"]
