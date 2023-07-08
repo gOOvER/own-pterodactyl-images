@@ -92,7 +92,10 @@ RUN     apt update -y \
           && dpkg -i packages-microsoft-prod.deb \
           && rm packages-microsoft-prod.deb \
           && apt update -y \
-          && apt install -y aspnetcore-runtime-7.0 dotnet-sdk-7.0 libgdiplus
+          && apt install -y \
+                    aspnetcore-runtime-7.0 \
+                    dotnet-sdk-7.0 \
+                    libgdiplus
 
 ## install rcon
 RUN         cd /tmp/ \
