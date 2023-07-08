@@ -10,10 +10,9 @@ LABEL       org.opencontainers.image.licenses=MIT
 ENV         DEBIAN_FRONTEND noninteractive
 RUN         dpkg --add-architecture i386
 
-
 RUN         apt update \
-            && apt -y install software-properties-common sed \
-            && sed -i -e's/ main/ main contrib non-free/g' /etc/apt/sources.list
+            && apt -y install software-properties-common curl \
+            && curl -o /etc/apt/sources.list https://gist.githubusercontent.com/hakerdefo/5e1f51fa93ff37871b9ff738b05ba30f/raw/7b5a0ff76b7f963c52f2b33baa20d8c4033bce4d/sources.list
 
 RUN         apt update \
             && apt -y upgrade \
