@@ -57,11 +57,15 @@ ENV     DISPLAY_DEPTH=16
 ENV     AUTO_UPDATE=1
 ENV     XVFB=1
 
-USER    container
-ENV     USER=container HOME=/home/container
-WORKDIR /home/container
+## Setup user and working directory
+RUN         useradd -m -d /home/container -s /bin/bash container
+USER        container
+ENV         USER=container HOME=/home/container
+WORKDIR     /home/container
 
-COPY    ./entrypoint.sh /entrypoint.sh
+## Copy over and execute entrypoint.sh
+COPY        --chown=container:container ./../entrypoint.sh /entrypoint.sh
+RUN         chmod +x /entrypoint.sh
 ENTRYPOINT	["/usr/bin/tini", "-g", "--"]
 CMD 		["/entrypoint.sh"]
 
