@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH mongo:6-focal
+FROM        --platform=$TARGETOS/$TARGETARCH mongo:6-jammy
 
 LABEL org.opencontainers.image.authors="info@goover.de"
 LABEL version="1.0"
