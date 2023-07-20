@@ -22,9 +22,8 @@ RUN         echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] 
 RUN         apt update
 RUN         apt install -y redis                
 
-## add container user
-RUN         useradd -d /home/container -m container -s /bin/bash
-
+## Setup user and working directory
+RUN         useradd -m -d /home/container -s /bin/bash container
 USER        container
 ENV         USER=container HOME=/home/container
 WORKDIR     /home/container

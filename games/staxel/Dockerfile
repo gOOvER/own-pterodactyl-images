@@ -20,8 +20,6 @@ RUN         sh -c 'echo "deb https://download.mono-project.com/repo/debian stabl
 RUN         apt update
 RUN         apt install mono-complete mono-xsp4 mono-devel -y
 
-RUN     useradd -d /home/container -m container
-
 # Download Proton GE
 RUN     curl -sLOJ $(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep .tar.gz)
 RUN     tar -xzf GE-Proton*.tar.gz -C /usr/local/bin/ --strip-components=1
@@ -39,6 +37,8 @@ RUN         cd /tmp/ \
             && tar xvf rcon.tar.gz \
             && mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/
 
+## Setup user and working directory
+RUN         useradd -m -d /home/container -s /bin/bash container
 USER        container
 ENV         USER=container HOME=/home/container
 WORKDIR     /home/container

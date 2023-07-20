@@ -68,14 +68,14 @@ RUN         apt install -y \
                 libtcmalloc-minimal4 \
                 libswt-gtk-4-java
 
-RUN         useradd -d /home/container -m container
-
 RUN         apt install apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common -y
 RUN         wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -
 RUN         add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
 RUN         apt update
 RUN         apt install adoptopenjdk-8-hotspot -y
 
+## Setup user and working directory
+RUN         useradd -m -d /home/container -s /bin/bash container
 USER        container
 ENV         USER=container HOME=/home/container
 WORKDIR     /home/container

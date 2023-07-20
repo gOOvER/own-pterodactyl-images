@@ -32,13 +32,12 @@ RUN     mkdir -pm755 /etc/apt/keyrings
 RUN     wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
 RUN     wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
 RUN     apt update
-RUN     apt install -y --install-recommends winehq-staging cabextract
+RUN     apt install -y --install-recommends winehq-stable cabextract
 
 # Set up Winetricks
 RUN	    wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
 RUN     chmod +x /usr/sbin/winetricks
 
-ENV     HOME=/home/container
 ENV     WINEPREFIX=/home/container/.wine
 ENV     WINEDLLOVERRIDES="mscoree,mshtml="
 ENV     WINDEBUG=-all
@@ -49,8 +48,11 @@ ENV     DISPLAY_DEPTH=16
 ENV     AUTO_UPDATE=1
 ENV     XVFB=1
 
-USER    container
-WORKDIR	/home/container
+## Setup user and working directory
+RUN         useradd -m -d /home/container -s /bin/bash container
+USER        container
+ENV         USER=container HOME=/home/container
+WORKDIR     /home/container
 
 COPY    ./entrypoint.sh /entrypoint.sh
 CMD	    ["/bin/bash", "/entrypoint.sh"]
