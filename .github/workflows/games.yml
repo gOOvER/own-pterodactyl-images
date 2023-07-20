@@ -25,7 +25,6 @@ jobs:
           - interstellarrift
           - mohaa
           - riskofrain2
-          - rust
           - samp
           - screeps
           - staxel
