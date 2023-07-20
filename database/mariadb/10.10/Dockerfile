@@ -8,9 +8,10 @@ LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 ENV         DEBIAN_FRONTEND noninteractive
 
 RUN         apt update -y \
-            && apt install -y netcat-openbsd \
-            && useradd -d /home/container -m container -s /bin/bash
+            && apt install -y netcat-openbsd
 
+## Setup user and working directory
+RUN         useradd -m -d /home/container -s /bin/bash container
 USER        container
 ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
