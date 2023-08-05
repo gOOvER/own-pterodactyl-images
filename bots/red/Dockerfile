@@ -13,7 +13,7 @@ RUN           apt update \
                      wget \
                      curl \
                      xz-utils \
-                     openjdk-11-jre \
+                     openjdk-17-jre-headless \
                      zlib1g-dev \
                      libffi-dev \
                      libmagickwand-dev \
