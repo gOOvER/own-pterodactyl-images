@@ -36,7 +36,7 @@ RUN           apt update \
 
 RUN           pip install python-forecastio tweepy unidecode discord-text-sanitizer mcstatus bs4 sqlalchemy geocoder valve python-valve py-cpuinfo psutil
 
-RUN           mkdir -p /home/container/.config/Red-DiscordBot/ \
+RUN           mkdir -p /home/container/.config/Red-DiscordBot/
 RUN           ln -s /home/container/.config/Red-DiscordBot/ /usr/local/share/Red-DiscordBot
 
 ## Setup user and working directory
