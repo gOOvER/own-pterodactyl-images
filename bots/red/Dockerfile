@@ -36,12 +36,13 @@ RUN           apt update \
 
 RUN           pip install python-forecastio tweepy unidecode discord-text-sanitizer mcstatus bs4 sqlalchemy geocoder valve python-valve py-cpuinfo psutil
 
-RUN           useradd -m -d /home/container container \
 RUN           mkdir -p /home/container/.config/Red-DiscordBot/ \
-              && ln -s /home/container/.config/Red-DiscordBot/ /usr/local/share/Red-DiscordBot
+RUN           ln -s /home/container/.config/Red-DiscordBot/ /usr/local/share/Red-DiscordBot
 
+## Setup user and working directory
+RUN         useradd -m -d /home/container -s /bin/bash container
 USER        container
-ENV         USER=container HOME=/home/container 
+ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
 
 COPY        ./entrypoint.sh /entrypoint.sh
