@@ -20,8 +20,12 @@ export INTERNAL_IP
 
 # Information output
 echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${RED}SteamCMD Image by gOOvER${NC}"
+echo -e "${BLUE}-------------------------------------------------${NC}"
 echo -e "${YELLOW}Running on Debian $(cat /etc/debian_version)${NC}"
 echo -e "${YELLOW}Current timezone: $(cat /etc/timezone)${NC}"
+echo -e "${YELLOW}DotNet Version: ${RED} $(dotnet --info) ${NC}" | 
+echo -e "${YELLOW}Mono Version: ${RED} $(mono --info) ${NC}"
 echo -e "${BLUE}-------------------------------------------------${NC}"
 
 # Set environment for Steam Proton

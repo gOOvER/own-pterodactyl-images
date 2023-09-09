@@ -40,7 +40,6 @@ RUN         apt install -y \
                     speex:i386 \
                     libgtk2.0-0:i386 \
                     dbus \
-                    tini \
                     libfontconfig1 \
                     lib32gcc-s1 \
                     libgcc1 \
@@ -91,9 +90,7 @@ RUN     apt update -y \
           && apt update -y \
           && apt install -y \
                     aspnetcore-runtime-7.0 \
-                    dotnet-sdk-7.0 \
-                    libgdiplus
-
+                    dotnet-sdk-7.0
 ## install mono to support STEAM dotnet games
 RUN         gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
 RUN         echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/debian stable-buster main" | tee /etc/apt/sources.list.d/mono-official-stable.list
@@ -120,7 +117,5 @@ ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
 
 ## Copy over and execute entrypoint.sh
-COPY        --chown=container:container ./../entrypoint.sh /entrypoint.sh
-RUN         chmod +x /entrypoint.sh
-ENTRYPOINT	["/usr/bin/tini", "-g", "--"]
-CMD 		["/entrypoint.sh"]
+COPY        ./../entrypoint.sh /entrypoint.sh
+CMD         [ "/bin/bash", "/entrypoint.sh" ]
