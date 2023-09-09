@@ -51,6 +51,10 @@ fi
 # Switch to the container's working directory
 cd /home/container || exit 1
 
+echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${GREEN}Starting Server.... Please wait...${NC}"
+echo -e "${BLUE}-------------------------------------------------${NC}"
+
 ## just in case someone removed the defaults.
 if [ "${STEAM_USER}" == "" ]; then
     echo -e "${BLUE}-------------------------------------------------${NC}"
