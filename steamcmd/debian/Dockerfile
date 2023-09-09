@@ -35,11 +35,9 @@ RUN         apt install -y \
                     python3-pip \
                     sed \
                     speex:i386 \
-                    steam-libs \
                     libgtk2.0-0:i386 \
                     dbus \
                     tini \
-                    libsdl1.2debian \
                     libfontconfig1 \
                     lib32gcc-s1 \
                     libgcc1 \
@@ -71,6 +69,8 @@ RUN         apt install -y \
                     libncurses5:i386 \
                     libssl3 \
                     libssl3:i386 \
+                    libsdl1.2debian \
+                    libsdl1.2debian:i386 \
                     libsdl2-2.0-0 \
                     libsdl2-2.0-0:i386 \
                     libc6:i386 \
@@ -82,7 +82,7 @@ RUN         apt install -y \
 ## install dotnet to support STEAM dotnet games
 RUN     apt update -y \
           && apt upgrade -y \
-          && wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
+          && wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
           && dpkg -i packages-microsoft-prod.deb \
           && rm packages-microsoft-prod.deb \
           && apt update -y \
@@ -109,7 +109,6 @@ RUN         useradd -m -d /home/container -s /bin/bash container
 USER        container
 ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
-
 
 ## Copy over and execute entrypoint.sh
 COPY        --chown=container:container ./../entrypoint.sh /entrypoint.sh
