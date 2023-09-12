@@ -78,7 +78,7 @@ RUN         apt install -y \
                     libxi6 \
                     libxrandr2 \
                     libxss1 \
-                    libxtst6 \
+                    libxtst6
 
 ## install dotnet to support STEAM dotnet games
 RUN     apt update -y \
