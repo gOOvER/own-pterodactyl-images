@@ -14,72 +14,71 @@ RUN         apt update \
             && apt -y upgrade
 
 RUN         apt install -y \
-                    wget \
-                    dirmngr \
                     ca-certificates \
-                    gnupg \
-                    mesa-utils \
-                    git \
-                    tar \
                     curl \
-                    gcc \
+                    dbus \
+                    dirmngr \
                     g++ \
-                    iproute2 \
+                    gcc \
                     gdb \
-                    jq \
                     git \
-                    telnet \
+                    gnupg \
+                    iproute2 \
+                    jq \
+                    mesa-utils \
                     net-tools \
                     netcat-openbsd \
-                    tzdata \
+                    numactl \
                     psmisc \
                     python3 \
                     python3-dev \
                     python3-pip \
                     sed \
                     speex:i386 \
-                    libgtk2.0-0:i386 \
-                    dbus \
-                    libfontconfig1 \
+                    tar \
+                    telnet \
+                    tzdata \
+                    wget \
                     lib32gcc-s1 \
-                    libgcc1 \
+                    lib32stdc++6 \
                     lib32tinfo6 \
                     lib32z1 \
-                    lib32stdc++6 \
-                    libstdc++6 \
-                    libstdc++6:i386 \
-                    libgdiplus \
+                    libasound2 \
+                    libatk1.0-0 \
+                    libc++1 \
+                    libc6:i386 \
                     libcurl3-gnutls:i386 \
                     libcurl4 \
                     libcurl4:i386 \
                     libcurl4-gnutls-dev:i386 \
                     libfontconfig1 \
-                    libpangocairo-1.0-0 \
-                    libnss3 \
+                    libgcc1 \
                     libgconf-2-4 \
-                    libxi6 \
-                    libxcursor1 \
-                    libxss1 \
-                    libxcomposite1 \
-                    libasound2 \
-                    libxdamage1 \
-                    libxtst6 \
-                    libatk1.0-0 \
-                    libxrandr2 \
-                    libpulse-dev \
-                    libtinfo6:i386 \
+                    libgdiplus \
+                    libgtk2.0-0:i386 \
                     libncurses5:i386 \
-                    libssl3 \
-                    libssl3:i386 \
+                    libnss-wrapper \
+                    libnss-wrapper:i386 \
+                    libnss3 \
+                    libpangocairo-1.0-0 \
+                    libpulse-dev \
                     libsdl1.2debian \
                     libsdl1.2debian:i386 \
                     libsdl2-2.0-0 \
                     libsdl2-2.0-0:i386 \
-                    libc6:i386 \
+                    libssl3 \
+                    libssl3:i386 \
+                    libstdc++6 \
+                    libstdc++6:i386 \
                     libtcmalloc-minimal4 \
-                    libc++1 \
-                    libnss-wrapper \
-                    libnss-wrapper:i386
+                    libtinfo6:i386 \
+                    libxcomposite1 \
+                    libxcursor1 \
+                    libxdamage1 \
+                    libxi6 \
+                    libxrandr2 \
+                    libxss1 \
+                    libxtst6 \
 
 ## install dotnet to support STEAM dotnet games
 RUN     apt update -y \
@@ -91,6 +90,7 @@ RUN     apt update -y \
           && apt install -y \
                     aspnetcore-runtime-7.0 \
                     dotnet-sdk-7.0
+
 ## install mono to support STEAM dotnet games
 RUN         gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
 RUN         echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/debian stable-buster main" | tee /etc/apt/sources.list.d/mono-official-stable.list
