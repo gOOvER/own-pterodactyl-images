@@ -1,4 +1,5 @@
 name: build mongodb
+
 on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -9,8 +10,10 @@ on:
       - main
     paths:
       - database/mongodb/**
+
 env:
   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
 jobs:
   push:
     name: "mongodb:${{ matrix.tag }}"
@@ -19,22 +22,25 @@ jobs:
       fail-fast: false
       matrix:
         tag:
-          - 4
           - 5
           - 6
           - 7
           
     steps:
       - uses: actions/checkout@v4
+      
       - uses: docker/setup-qemu-action@v3
+      
       - uses: docker/setup-buildx-action@v3
         with:
           buildkitd-flags: --debug
+      
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      
       - uses: docker/build-push-action@v5
         with:
           context: ./database/mongodb

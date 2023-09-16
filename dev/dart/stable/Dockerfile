@@ -13,6 +13,7 @@ RUN 		 apt install -y \
 				ca-certificates \
 				openssl \
 				git \
+				locales \
 				tar \
 				sqlite3 \
 				fontconfig \

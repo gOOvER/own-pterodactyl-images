@@ -36,11 +36,11 @@ RUN          apt install -y \
                 libatomic1 \
                 libc++-dev \
 				libc6 \
-                libduktape205 \
+                libduktape207 \
                 libevent-dev \
                 libfontconfig \
                 libgdiplus \
-                libicu67 \
+                libicu72 \
                 liblzo2-2 \
                 libmariadbclient-dev-compat \
                 libsdl1.2debian \

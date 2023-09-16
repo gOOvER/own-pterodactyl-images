@@ -1,20 +1,35 @@
 FROM        --platform=$TARGETOS/$TARGETARCH mongo:6-jammy
 
-LABEL org.opencontainers.image.authors="info@goover.de"
-LABEL version="1.0"
-LABEL description="Pterodactyl image for Screeps"
+LABEL           author="Torsten Widmann" maintainer="info@goover.de"
+LABEL           org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL           org.opencontainers.image.licenses=MIT
 
-## install basic reqs
-RUN          apt update \         
-                && apt install -y git libtool netcat ffmpeg iproute2 curl gnupg software-properties-common build-essential tcl git lsb-release
+RUN         apt update \
+             && apt -y upgrade
+
+RUN         apt install -y \
+                    build-essential \
+                    curl \
+                    ffmpeg \
+                    git \
+                    gnupg \
+                    iproute2 \
+                    libtool \
+                    lsb-release \
+                    netcat \
+                    software-properties-common \
+                    tcl
 
 ## install nodejs
-RUN         curl -fsSL https://deb.nodesource.com/setup_10.x | bash - \
-                && curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | tee /usr/share/keyrings/yarnkey.gpg >/dev/null \
-                && echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | tee /etc/apt/sources.list.d/yarn.list
-RUN         apt update \
-                && apt install -y nodejs yarn \
-                && npm install -g npm@latest
+RUN         mkdir -p /etc/apt/keyrings \
+            && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+
+RUN         NODE_MAJOR=16
+RUN         echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+RUN         apt update
+
+RUN         apt install -y nodejs \
+RUN         npm install -g npm@latest
 
 ## install redis
 RUN         curl -fsSL https://packages.redis.io/gpg | gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg

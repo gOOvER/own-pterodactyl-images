@@ -16,6 +16,8 @@ RUN         apt -y install \
 				ffmpeg \
                 g++ \
                 git \
+                gpg \
+                gnupg2 \
                 iproute2 \
                 libtool \
                 python3 \
@@ -29,9 +31,8 @@ RUN         apt -y install \
 # updating npm 
 RUN         npm install npm@latest -g
 
-#additional packages
 # add cloudflare repo
-RUN         mkdir -p /usr/share/keyrings \
+RUN         mkdir -p --mode=0755 /usr/share/keyrings \
                 && curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null \
                 && echo 'deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared bookworm main' | tee /etc/apt/sources.list.d/cloudflared.list \
                 && apt update \ 
