@@ -1,4 +1,4 @@
-FROM    --platform=$TARGETOS/$TARGETARCH redis:6-bookworm
+FROM    --platform=$TARGETOS/$TARGETARCH redis:7-bookworm
 
 LABEL   author="Torsten Widmann" maintainer="info@goover.de"
 LABEL   org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
