@@ -1,4 +1,4 @@
-FROM        --platform=$BUILDPLATFORM alpine:3.16
+FROM        --platform=$BUILDPLATFORM alpine:3.18
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 
