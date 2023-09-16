@@ -1,4 +1,4 @@
-FROM        shipilev/openjdk:11
+FROM        shipilev/openjdk:17
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 
