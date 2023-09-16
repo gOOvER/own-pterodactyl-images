@@ -35,67 +35,75 @@ these images on an arm system, no modification to them or the tag is needed, the
 * [`bastion`](/bot/bastion)
   * `ghcr.io/goover/bot:bastion`
 * [`parkertron`](/bot/parkertron)
-  * `ghcr.io/parkervcp/yolks:bot_parkertron`
+  * `ghcr.io/goover/bot:parkertron`
 * [`redbot`](/bot/red)
   * `ghcr.io/goover/bot:red`
 * [`sinusbot`](/bot/sinusbot)
-  * `ghcr.io/parkervcp/yolks:bot_sinusbot`
+  * `ghcr.io/goover/bot:sinusbot`
 
 ### [Box64](/box64)
 
 * [`Box64`](/box64)
-  * `ghcr.io/parkervcp/yolks:box64`
+  * `ghcr.io/goover/box64:latest`
 
-### [Cassandra](/cassandra)
+### [Cassandra](/database/cassandra)
 
-* [`cassandra_java8_python27`](/cassandra/cassandra_java8_python2)
-  * `ghcr.io/parkervcp/yolks:cassandra_java11_python2`
-* [`cassandra_java11_python3`](/cassandra/cassandra_java11_python3)
-  * `ghcr.io/parkervcp/yolks:cassandra_java11_python3`
+* [`cassandra_java8_python27`](/database/cassandra/cassandra_java8_python2)
+  * `ghcr.io/goover/cassandra:java8_python2`
+* [`cassandra_java11_python3`](/database/cassandra/cassandra_java11_python3)
+  * `ghcr.io/goover/cassandra:java11_python3`
 
 ### [Dart](/dart)
 
-* [`dart2.17`](/dart/2.17)
-  * `ghcr.io/parkervcp/yolks:dart_2.17`
+* [`dart stable`](/dev/dart/stable)
+  * `ghcr.io/goover/dart:stable`
+* [`dart stable-sdk`](/dev/dart/stable-sdk)
+  * `ghcr.io/goover/dart:stable-sdk`
 
-### [dotNet](/dotnet)
+### [dotNet](/dev/dotnet)
 
-* [`dotnet2.1`](/dotnet/2.1)
-  * `ghcr.io/parkervcp/yolks:dotnet_2.1`
-* [`dotnet3.1`](/dotnet/3.1)
-  * `ghcr.io/parkervcp/yolks:dotnet_3.1`
-* [`dotnet5.0`](/dotnet/5)
-  * `ghcr.io/parkervcp/yolks:dotnet_5`
-* [`dotnet6.0`](/dotnet/6)
-  * `ghcr.io/parkervcp/yolks:dotnet_6`
-* [`dotnet7.0`](/dotnet/7)
-  * `ghcr.io/parkervcp/yolks:dotnet_7`
+* [`dotnet6.0`](/dev/dotnet/6)
+  * `ghcr.io/goover/dotnet:6`
+* [`dotnet6.0`](/dev/dotnet/6-sdk)
+  * `ghcr.io/goover/dotnet:6-sdk`
+* [`dotnet7.0`](/dev/dotnet/7)
+  * `ghcr.io/goover/dotnet:7`
+* [`dotnet6.0`](/dev/dotnet/7-sdk)
+  * `ghcr.io/goover/dotnet:7-sdk`
 
-### [Erlang](/erlang)
+### [Erlang](/dev/erlang)
 
-* [`erlang22`](/erlang/22)
-  * `ghcr.io/parkervcp/yolks:erlang_22`
-* [`erlang23`](/erlang/23)
-  * `ghcr.io/parkervcp/yolks:erlang_23`
-* [`erlang24`](/erlang/24)
-  * `ghcr.io/parkervcp/yolks:erlang_24`
+* [`erlang22`](/dev/erlang/22)
+  * `ghcr.io/goover/erlang:22`
+* [`erlang23`](/dev/erlang/23)
+  * `ghcr.io/goover/erlang:23`
+* [`erlang24`](/dev/erlang/24)
+  * `ghcr.io/goover/erlang:24`
 
 ### [Games](/games)
 
 * [`altv`](/games/altv)
-  * `ghcr.io/parkervcp/games:altv`
-* [`arma3`](/games/arma3)
-  * `ghcr.io/parkervcp/games:arma3`
+  * `ghcr.io/goover/games:altv`
+* [`altv`](/games/conan)
+  * `ghcr.io/goover/games:conan`
 * [`dayz`](/games/dayz)
-  * `ghcr.io/parkervcp/games:dayz`
+  * `ghcr.io/goover/games:dayz`
+* [`altv`](/games/interstellarrift)
+  * `ghcr.io/goover/games:interstellarrift`
 * [`mohaa`](games/mohaa)
-  * `ghcr.io/pterodactyl/games:mohaa`  
+  * `ghcr.io/goover/games:mohaa`
+  * [`riskofrain2`](games/riskofrain2)
+  * `ghcr.io/goover/games:riskofrain2`
 * [`samp`](/games/samp)
-  * `ghcr.io/parkervcp/games:samp`  
-* [`source`](/games/source)
-  * `ghcr.io/parkervcp/games:source`
+  * `ghcr.io/goover/games:samp`
+* [`screeps`](games/screeps)
+  * `ghcr.io/goover/games:screeps`
+* [`staxel`](games/staxel)
+  * `ghcr.io/goover/games:staxel`
 * [`valheim`](/games/valheim)
-  * `ghcr.io/parkervcp/games:valheim`
+  * `ghcr.io/goover/games:valheim`
+* [`wurm`](games/wurm)
+  * `ghcr.io/goover/games:wurm`
 
 ### [Golang](/go)
 
