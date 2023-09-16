@@ -1,4 +1,4 @@
-FROM        --platform=$BUILDPLATFORM erlang:22-alpine
+FROM        --platform=$BUILDPLATFORM erlang:26-alpine
 
 LABEL       author="Pascal Zarrad" maintainer="p.zarrad@outlook.de"
 
