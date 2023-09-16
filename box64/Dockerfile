@@ -9,26 +9,66 @@ RUN          apt update \
              && apt upgrade -y
 
 ## Install dependencies
-RUN          apt install -y libc++-dev libc6 git wget curl tar zip unzip binutils xz-utils liblzo2-2 cabextract iproute2 net-tools libatomic1 libsdl1.2debian libsdl2-2.0-0 \
-             libfontconfig libicu67 icu-devtools libunwind8 libssl-dev sqlite3 libsqlite3-dev libmariadbclient-dev-compat libduktape205 locales ffmpeg gnupg2 apt-transport-https software-properties-common ca-certificates \
-             libz-dev rapidjson-dev tzdata libevent-dev libzip4 libsdl2-mixer-2.0-0 libsdl2-image-2.0-0 build-essential cmake libgdiplus
+RUN          apt install -y \
+                apt-transport-https \
+                binutils \
+                build-essential \
+                ca-certificates \
+                cabextract \
+                cmake \
+                curl \
+                ffmpeg \
+                git \
+                gnupg2 \
+                icu-devtools \
+                iproute2 \
+				locales \
+                net-tools \
+                rapidjson-dev \
+                software-properties-common \
+                sqlite3 \
+                tar \
+                tzdata \
+                unzip \
+                wget \
+                xz-utils \
+                zip \
+                libatomic1 \
+                libc++-dev \
+				libc6 \
+                libduktape205 \
+                libevent-dev \
+                libfontconfig \
+                libgdiplus \
+                libicu67 \
+                liblzo2-2 \
+                libmariadbclient-dev-compat \
+                libsdl1.2debian \
+                libsdl2-2.0-0 \
+                libsdl2-image-2.0-0 \
+                libsdl2-mixer-2.0-0 \
+                libsqlite3-dev \
+                libssl-dev \
+                libunwind8 \
+				libz-dev \
+                libzip4
 			 
 ## Configure locale
 RUN          update-locale lang=en_US.UTF-8 \
              && dpkg-reconfigure --frontend noninteractive locales
 
-
 ##Install box64
 RUN         wget https://ryanfortner.github.io/box64-debs/box64.list -O /etc/apt/sources.list.d/box64.list \
-            && wget -O- https://ryanfortner.github.io/box64-debs/KEY.gpg | gpg --dearmor | tee /usr/share/keyrings/box64-debs-archive-keyring.gpg \
-            && apt update && apt install box64 -y
+            && wget -O- https://ryanfortner.github.io/box64-debs/KEY.gpg | gpg --dearmor | tee /usr/share/keyrings/box64-debs-archive-keyring.gpg
 
+RUN         apt update 
+RUN         apt install -y box64
 
-
-RUN		useradd -d /home/container -m container
-USER    container
-ENV     USER=container HOME=/home/container
-WORKDIR /home/container
+## Setup user and working directory
+RUN         useradd -m -d /home/container -s /bin/bash container
+USER        container
+ENV         USER=container HOME=/home/container
+WORKDIR     /home/container
 
 COPY    ./entrypoint.sh /entrypoint.sh
 CMD     ["/bin/bash", "/entrypoint.sh"]

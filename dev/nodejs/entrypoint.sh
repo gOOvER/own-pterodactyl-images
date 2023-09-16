@@ -1,10 +1,14 @@
 #!/bin/bash
+#System variables
 clear
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
+
+# Switch to the container's working directory
+cd /home/container || exit 1
 
 # Wait for the container to fully initialize
 sleep 1

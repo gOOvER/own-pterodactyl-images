@@ -1,8 +1,8 @@
-FROM        --platform=$TARGETOS/$TARGETARCH node:18-bookworm-slim
+FROM        --platform=$TARGETOS/$TARGETARCH node:16-bookworm-slim
 
-LABEL           author="Torsten Widmann" maintainer="info@goover.de"
-LABEL           org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL           org.opencontainers.image.licenses=MIT
+LABEL       author="Torsten Widmann" maintainer="info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.licenses=MIT
 
 RUN         apt update \
              && apt -y upgrade
@@ -25,16 +25,6 @@ RUN         apt -y install \
                 zip \
 				libnss3 \
                 libsqlite3-dev
-
-# updating npm 
-RUN         npm install npm@latest -g
-
-# add cloudflare repo
-RUN         mkdir -p /usr/share/keyrings \
-                && curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null \
-                && echo 'deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared bookworm main' | tee /etc/apt/sources.list.d/cloudflared.list \
-                && apt update \ 
-                && apt install -y cloudflared
 
 ## Setup user and working directory
 RUN             useradd -m -d /home/container -s /bin/bash container

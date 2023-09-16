@@ -1,27 +1,69 @@
-FROM    debian:buster-slim
+FROM    --platform=$TARGETOS/$TARGETARCH debian:buster-slim
 
 LABEL   author="Torsten Widmann" maintainer="info@goover.de"
+LABEL   org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL   org.opencontainers.image.licenses=MIT
 
 ENV     DEBIAN_FRONTEND noninteractive
 
-## add container user
-RUN     useradd -m -d /home/container -s /bin/bash container
-RUN     ln -s /home/container/ /nonexistent
-ENV     USER=container HOME=/home/container
-
 ## update base packages
 RUN     apt update \
-         && apt upgrade -y
+        && apt -y upgrade
 
 ## install dependencies
-RUN     apt install -y gcc g++ libgcc1 lib32gcc1 libc++-dev gdb libc6 git wget curl tar zip unzip binutils xz-utils liblzo2-2 cabextract iproute2 net-tools netcat telnet libatomic1 libsdl1.2debian libsdl2-2.0-0 \
-        libfontconfig libicu63 icu-devtools libunwind8 libssl-dev sqlite3 libsqlite3-dev libmariadbclient-dev libduktape203 locales ffmpeg gnupg2 apt-transport-https software-properties-common ca-certificates tzdata \
-        liblua5.3 libz-dev rapidjson-dev
+RUN     apt install -y \
+                apt-transport-https \
+                binutils \
+                ca-certificates \
+                cabextract \
+                curl \
+                ffmpeg \
+                g++ \
+                gcc \
+		gdb \
+                git \
+                gnupg2 \
+                icu-devtools \
+                iproute2 \
+		locales \
+                net-tools \
+                netcat \
+                rapidjson-dev \
+                software-properties-common \
+                sqlite3 \
+                tar \
+                telnet \
+                tzdata \
+                unzip \
+                wget \
+                xz-utils \
+                zip \
+                lib32gcc1 \
+                libatomic1 \
+                libc++-dev \
+                libc6 \
+                libduktape203 \
+                libfontconfig \
+                libgcc1 \
+                libicu63 \
+                liblua5.3 \
+                liblzo2-2 \
+                libmariadbclient-dev \
+                libsdl1.2debian \
+                libsdl2-2.0-0 \
+                libsqlite3-dev \
+                libssl-dev \
+                libunwind8 \
+                libz-dev
 
 ## configure locale
 RUN     update-locale lang=en_US.UTF-8 \
          && dpkg-reconfigure --frontend noninteractive locales
 
+## Setup user and working directory
+RUN     useradd -m -d /home/container -s /bin/bash container
+USER    container
+ENV     USER=container HOME=/home/container
 WORKDIR /home/container
 
 COPY    ./../entrypoint.sh /entrypoint.sh

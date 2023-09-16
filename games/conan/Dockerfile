@@ -1,6 +1,3 @@
-# ---------------------------------------------
-# Conan Exile Wine image with Mod support
-# ---------------------------------------------
 FROM    debian:bookworm-slim
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"

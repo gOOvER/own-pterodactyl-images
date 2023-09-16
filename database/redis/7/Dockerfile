@@ -1,18 +1,18 @@
-# ----------------------------------
-# Environment: redis
-# Minimum Panel Version: 0.7.X
-# ----------------------------------
-FROM    redis:7-bookworm
+FROM    --platform=$TARGETOS/$TARGETARCH redis:/-bookworm
 
-LABEL   author="Michael Parker" maintainer="parker@pterodactyl.io"
+LABEL   author="Torsten Widmann" maintainer="info@goover.de"
+LABEL   org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL   org.opencontainers.image.licenses=MIT
 
 ENV     DEBIAN_FRONTEND noninteractive
+RUN     apt update \
+        && apt -y upgrade
 
-RUN     apt -y update && \
-        apt -y upgrade && \
-        apt -y install iproute2 && \
-        useradd -d /home/container -m container -s /bin/bash
+RUN     apt -y install \
+                iproute2
 
+## Setup user and working directory
+RUN     useradd -m -d /home/container -s /bin/bash container
 USER    container
 ENV     USER=container HOME=/home/container
 WORKDIR /home/container

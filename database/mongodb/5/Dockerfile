@@ -1,16 +1,22 @@
-FROM        mongo:5.0
+FROM        --platform=$TARGETOS/$TARGETARCH mongo:5.0
 
-LABEL       author="Michael Parker" maintainer="parker@pterodactyl.io"
+LABEL       author="Torsten Widmann" maintainer="info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.licenses=MIT
 
 ENV         DEBIAN_FRONTEND noninteractive
+RUN         apt update \
+             && apt -y upgrade
 
-RUN         apt update -y \
-            && apt install -y netcat-openbsd iproute2 \
-            && useradd -d /home/container -m container -s /bin/bash
+RUN         apt install -y \
+                netcat \
+                iproute2
 
+## Setup user and working directory
+RUN         useradd -m -d /home/container -s /bin/bash container
 USER        container
 ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
 
 COPY        ./../entrypoint.sh /entrypoint.sh
-CMD ["/bin/bash", "/entrypoint.sh"]
+CMD         ["/bin/bash", "/entrypoint.sh"]

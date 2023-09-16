@@ -1,13 +1,22 @@
-FROM postgres:15-alpine
+FROM    --platform=$TARGETOS/$TARGETARCH postgres:15-bookworm
 
-LABEL author="Parker" maintainer="parker@pterodactyl.io"
+LABEL       author="Torsten Widmann" maintainer="info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.licenses=MIT
 
-# UID 999 is the default pterodactyl user
-RUN adduser -D -h /home/container container
+ENV         DEBIAN_FRONTEND noninteractive
+RUN         apt update \
+             && apt -y upgrade
 
-USER container
-ENV HOME /home/container
-WORKDIR /home/container
+RUN         apt install -y \
+                netcat-openbsd \
+                iproute2
 
-COPY ./entrypoint.sh /entrypoint.sh
-CMD ["/bin/bash", "/entrypoint.sh"]
+## Setup user and working directory
+RUN             useradd -m -d /home/container -s /bin/bash container
+USER            container
+ENV             USER=container HOME=/home/container
+WORKDIR         /home/container
+
+COPY        ./../entrypoint.sh /entrypoint.sh
+CMD         ["/bin/bash", "/entrypoint.sh"]
