@@ -8,7 +8,7 @@ updates:
   # Enable version updates for Docker
   - package-ecosystem: "docker"
     # Look for a `Dockerfile` in the `root` directory
-    directory: "/*/Dockerfile*"
+    directory: "/*/*/*/Dockerfile*"
     # Check for updates once a week
     schedule:
       interval: "daily"
