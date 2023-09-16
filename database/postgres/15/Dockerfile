@@ -1,4 +1,4 @@
-FROM    --platform=$TARGETOS/$TARGETARCH postgres:15-bookworm
+FROM    --platform=$TARGETOS/$TARGETARCH postgres:16-bookworm
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
