@@ -1,4 +1,4 @@
-FROM            --platform=$TARGETOS/$TARGETARCH ubuntu:20.04
+FROM            --platform=$TARGETOS/$TARGETARCH ubuntu:22.04
 
 LABEL           author="Torsten Widmann" maintainer="info@goover.de"
 LABEL           org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
