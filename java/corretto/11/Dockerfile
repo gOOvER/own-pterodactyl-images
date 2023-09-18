@@ -34,8 +34,11 @@ RUN         apt update
 RUN         apt install -y java-11-amazon-corretto-jdk
 
 ## configure locale
-RUN     update-locale lang=en_US.UTF-8 \
-         && dpkg-reconfigure --frontend noninteractive locales
+RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+            locale-gen
+ENV         LANG en_US.UTF-8  
+ENV         LANGUAGE en_US:en  
+ENV         LC_ALL en_US.UTF-8 
 
 ## Setup user and working directory
 RUN     useradd -m -d /home/container -s /bin/bash container
