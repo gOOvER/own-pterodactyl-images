@@ -92,7 +92,7 @@ these images on an arm system, no modification to them or the tag is needed, the
   * `ghcr.io/goover/games:interstellarrift`
 * [`mohaa`](games/mohaa)
   * `ghcr.io/goover/games:mohaa`
-  * [`riskofrain2`](games/riskofrain2)
+* [`riskofrain2`](games/riskofrain2)
   * `ghcr.io/goover/games:riskofrain2`
 * [`samp`](/games/samp)
   * `ghcr.io/goover/games:samp`
