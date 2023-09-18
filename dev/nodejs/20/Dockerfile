@@ -12,6 +12,7 @@ RUN         apt -y install \
                 automake \
                 build-essential \
                 ca-certificates\
+                curl \
                 dnsutils \
 				ffmpeg \
                 g++ \

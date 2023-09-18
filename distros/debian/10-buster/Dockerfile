@@ -38,7 +38,6 @@ RUN     apt install -y \
                 wget \
                 xz-utils \
                 zip \
-                lib32gcc1 \
                 libatomic1 \
                 libc++-dev \
                 libc6 \
@@ -49,6 +48,7 @@ RUN     apt install -y \
                 liblua5.3 \
                 liblzo2-2 \
                 libmariadbclient-dev \
+                libprotobuf17 \
                 libsdl1.2debian \
                 libsdl2-2.0-0 \
                 libsqlite3-dev \

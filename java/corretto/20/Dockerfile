@@ -29,7 +29,7 @@ RUN         apt install -y \
 RUN         wget -O- -q https://apt.corretto.aws/corretto.key | apt-key add -
 RUN         add-apt-repository 'deb https://apt.corretto.aws stable main'
 RUN         apt update
-RUN         apt install -y java-1.8.0-amazon-corretto-jdk
+RUN         apt install -y java-20-amazon-corretto-jdk
 
 ## configure locale
 RUN     update-locale lang=en_US.UTF-8 \

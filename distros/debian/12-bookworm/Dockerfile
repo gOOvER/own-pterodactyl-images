@@ -37,7 +37,6 @@ RUN           apt install -y \
                     wget \
                     xz-utils \
                     zip \
-                    lib32gcc-s1 \
                     libatomic1 \
                     libc++-dev \
                     libc6 \
@@ -49,6 +48,7 @@ RUN           apt install -y \
                     liblua5.4-0 \
                     liblzo2-2 \
                     libmariadbclient-dev-compat \
+                    libprotobuf32 \
                     libsdl1.2debian \
                     libsdl2-2.0-0 \
                     libsqlite3-dev \
