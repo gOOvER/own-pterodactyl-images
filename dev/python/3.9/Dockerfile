@@ -2,8 +2,7 @@ FROM        --platform=$TARGETOS/$TARGETARCH python:3.9-slim
 
 LABEL       author="Michael Parker" maintainer="parker@pterodactyl.io"
 
-# Sets the default stop signal as wings can (currently) only send a kill or generic stop
-STOPSIGNAL SIGINT
+ENV         DEBIAN_FRONTEND=noninteractive
 
 RUN         apt update \
             && apt -y install git gcc g++ ca-certificates dnsutils curl iproute2 ffmpeg procps default-libmysqlclient-dev \

@@ -4,7 +4,7 @@ LABEL   author="Torsten Widmann" maintainer="info@goover.de"
 LABEL   org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
 LABEL   org.opencontainers.image.licenses=MIT
 
-RUN         useradd -d /home/container -m container
+ENV         DEBIAN_FRONTEND=noninteractive
 
 RUN 		apt update -y
 RUN         apt -y upgrade
