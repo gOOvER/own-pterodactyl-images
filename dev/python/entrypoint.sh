@@ -23,7 +23,7 @@ export INTERNAL_IP
 
 # system informations
 echo -e "${BLUE}-------------------------------------------------${NC}"
-echo -e "${RED}NodeJS Image by gOOvER${NC}"
+echo -e "${RED}Python Image by gOOvER${NC}"
 echo -e "${BLUE}-------------------------------------------------${NC}"
 echo -e "${YELLOW}Running on Debian ${RED} $(cat /etc/debian_version)${NC}"
 echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
