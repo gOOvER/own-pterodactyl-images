@@ -18,6 +18,7 @@ RUN         apt install -y \
                 gnupg2 \
                 iproute2 \
                 java-common \
+                locales \
                 openssl \
                 procps \
                 software-properties-common \
