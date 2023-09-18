@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH debian:bookworm-slim
+FROM        --platform=$TARGETOS/$TARGETARCH debian:bullseye-slim
 
 LABEL   author="Torsten Widmann" maintainer="info@goover.de"
 LABEL   org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
@@ -17,6 +17,7 @@ RUN         apt install -y \
                 git \
                 gnupg2 \
                 iproute2 \
+                java-common \
                 openssl \
                 procps \
                 software-properties-common \
