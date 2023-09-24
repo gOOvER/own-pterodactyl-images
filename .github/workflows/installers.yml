@@ -24,6 +24,7 @@ jobs:
         tag:
           - alpine
           - debian
+          - nodejs
     
     steps:
       - uses: actions/checkout@v4

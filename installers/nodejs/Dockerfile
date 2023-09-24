@@ -17,39 +17,25 @@ RUN         apt -y install \
                 curl \
                 dnsutils \
 				ffmpeg \
+                file \
                 g++ \
+                gcc \
                 git \
                 gpg \
                 gnupg2 \
                 iproute2 \
                 iputils-ping \
+                jq \
                 libtool \
+                make \
                 python3 \
                 python3-dev \
                 sqlite3 \
                 tzdata \
                 zip \
+                unzip \
 				libnss3 \
                 libsqlite3-dev
 
 # updating npm 
 RUN         npm install npm@latest -g
-
-# add cloudflare repo
-RUN         mkdir -p --mode=0755 /usr/share/keyrings \
-                && curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null \
-                && echo 'deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared bookworm main' | tee /etc/apt/sources.list.d/cloudflared.list \
-                && apt update \ 
-                && apt install -y cloudflared
-
-RUN         echo 'net.ipv4.ping_group_range = 0 2147483647' > /etc/sysctl.d/99-ping.conf
-RUN         sysctl -p /etc/sysctl.d/99-ping.conf
-
-## Setup user and working directory
-RUN         useradd -m -d /home/container -s /bin/bash container
-USER        container
-ENV         USER=container HOME=/home/container
-WORKDIR     /home/container
-
-COPY        ./../entrypoint.sh /entrypoint.sh
-CMD         ["/bin/bash", "/entrypoint.sh"]
