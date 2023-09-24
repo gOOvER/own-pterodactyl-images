@@ -42,8 +42,7 @@ RUN         mkdir -p --mode=0755 /usr/share/keyrings \
                 && apt update \ 
                 && apt install -y cloudflared
 
-RUN         echo 'net.ipv4.ping_group_range = 0 2147483647' > /etc/sysctl.d/99-ping.conf
-RUN         sysctl -p /etc/sysctl.d/99-ping.conf
+RUN         setcap 'cap_net_raw+ep' "$(which ping)"
 
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container
