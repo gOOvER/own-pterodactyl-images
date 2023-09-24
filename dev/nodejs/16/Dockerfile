@@ -20,6 +20,7 @@ RUN         apt -y install \
                 g++ \
                 git \
                 iproute2 \
+                iputils-ping \
                 libtool \
                 python3 \
                 python3-dev \
@@ -36,11 +37,13 @@ RUN         mkdir -p --mode=0755 /usr/share/keyrings \
                 && apt update \ 
                 && apt install -y cloudflared
 
+RUN         setcap 'cap_net_raw+ep' "$(which ping)"
+
 ## Setup user and working directory
-RUN             useradd -m -d /home/container -s /bin/bash container
-USER            container
-ENV             USER=container HOME=/home/container
-WORKDIR         /home/container
+RUN         useradd -m -d /home/container -s /bin/bash container
+USER        container
+ENV         USER=container HOME=/home/container
+WORKDIR     /home/container
 
 COPY        ./../entrypoint.sh /entrypoint.sh
 CMD         ["/bin/bash", "/entrypoint.sh"]
