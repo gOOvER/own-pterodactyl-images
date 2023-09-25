@@ -22,6 +22,8 @@ jobs:
       fail-fast: false
       matrix:
         oses:
+          - nodejs18
+          - nodejs20
           - wine
     
     steps:
