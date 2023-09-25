@@ -26,7 +26,8 @@ RUN         apk add --no-cache \
                 python3-dev \
                 sqlite \
                 tzdata \
-                zip
+                zip \
+                libc6-compat
 
 # updating npm 
 RUN         npm install npm@latest -g
