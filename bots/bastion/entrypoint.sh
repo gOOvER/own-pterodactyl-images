@@ -12,10 +12,15 @@ clear
 echo -e "${BLUE}-------------------------------------------------${NC}"
 echo -e "${YELLOW}BastionBot Installation${NC}"
 echo -e "${BLUE}-------------------------------------------------${NC}"
-echo -e "${YELLOW}MongoDB Version:${NC} " && mongod --version
-echo -e "${YELLOW}NodeJS Version:${NC} " && node -v
-echo -e "${YELLOW}NPM Version:${NC} " && npm -v
-echo -e "${YELLOW}Python Version:${NC} " && python3 --version
+echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
+echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
+echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${YELLOW}Python Version: ${RED}$(python3 --version)${NC}"
+#echo -e "${YELLOW}Java Version: ${RED} $(java -version)${NC}"
+echo -e "${YELLOW}NodeJS Version: ${RED} $(node -v) ${NC}"
+echo -e "${YELLOW}npm Version: ${RED} $(npm -v) ${NC}"
+echo -e "${YELLOW}yarn Version: ${RED} $(yarn --version) ${NC}"
+echo -e "${YELLOW}MongoDB Version: ${RED}$(mongod --version)${NC}"
 echo -e "${BLUE}-------------------------------------------------${NC}"
 
 cd /home/container
