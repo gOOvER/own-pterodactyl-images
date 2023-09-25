@@ -16,7 +16,7 @@ env:
 
 jobs:
   push:
-    name: "alpine:${{ matrix.oses }}"
+    name: "apps:${{ matrix.oses }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
