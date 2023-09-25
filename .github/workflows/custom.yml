@@ -22,7 +22,6 @@ jobs:
       fail-fast: false
       matrix:
         oses:
-          - gitea
           - discordpush
           - node16132
           - 14pptr

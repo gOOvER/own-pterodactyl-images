@@ -25,7 +25,7 @@ export INTERNAL_IP
 echo -e "${BLUE}-------------------------------------------------${NC}"
 echo -e "${RED}MongoDB Image by gOOvER${NC}"
 echo -e "${BLUE}-------------------------------------------------${NC}"
-echo -e "${YELLOW}Running on Debian ${RED} $(cat /etc/debian_version)${NC}"
+echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
 echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
 echo -e "${YELLOW}MongoDB Version: ${RED} $(mongo --version) ${NC}"
 echo -e "${BLUE}-------------------------------------------------${NC}"

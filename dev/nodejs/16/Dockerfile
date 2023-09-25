@@ -37,8 +37,6 @@ RUN         mkdir -p --mode=0755 /usr/share/keyrings \
                 && apt update \ 
                 && apt install -y cloudflared
 
-RUN         setcap 'cap_net_raw+ep' "$(which ping)"
-
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container
 USER        container

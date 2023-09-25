@@ -1,15 +1,13 @@
-FROM        --platform=$TARGETOS/$TARGETARCH node:18-bookworm-slim
+FROM        --platform=$TARGETOS/$TARGETARCH node:18-alpine
 
-LABEL           author="Torsten Widmann" maintainer="info@goover.de"
-LABEL           org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL           org.opencontainers.image.licenses=MIT
+LABEL       author="Torsten Widmann" maintainer="info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.licenses=MIT
 
-ENV         DEBIAN_FRONTEND=noninteractive
+RUN         apk update \
+            && apk upgrade
 
-RUN         apt update \
-             && apt -y upgrade
-
-RUN         apt -y install \
+RUN         apk add --no-cache \
                 autoconf \
                 automake \
                 build-essential \
@@ -35,11 +33,14 @@ RUN         apt -y install \
 # updating npm 
 RUN         npm install npm@latest -g
 
+# add cloudflare repo
+RUN         curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o /usr/bin/cloudflared
+
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container
 USER        container
 ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
 
-COPY        ./../entrypoint.sh /entrypoint.sh
+COPY        ./entrypoint.sh /entrypoint.sh
 CMD         ["/bin/bash", "/entrypoint.sh"]

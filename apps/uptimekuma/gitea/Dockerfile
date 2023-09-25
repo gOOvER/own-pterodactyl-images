@@ -1,4 +1,4 @@
-FROM         debian:bookworm-slim
+FROM         --platform=$TARGETOS/$TARGETARCH debian:bookworm-slim
 
 LABEL        LABEL author="Torsten Widmann" maintainer="info@goover.de"
 

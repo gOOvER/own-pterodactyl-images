@@ -1,15 +1,13 @@
-FROM        --platform=$TARGETOS/$TARGETARCH node:18-bookworm-slim
+FROM        --platform=$TARGETOS/$TARGETARCH node:18-alpine
 
 LABEL           author="Torsten Widmann" maintainer="info@goover.de"
 LABEL           org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
 LABEL           org.opencontainers.image.licenses=MIT
 
-ENV         DEBIAN_FRONTEND=noninteractive
+RUN             apk update \
+                && apk upgrade
 
-RUN         apt update \
-             && apt -y upgrade
-
-RUN         apt -y install \
+RUN         add --no-cache \
                 autoconf \
                 automake \
                 build-essential \
@@ -35,11 +33,18 @@ RUN         apt -y install \
 # updating npm 
 RUN         npm install npm@latest -g
 
+# add cloudflare repo
+RUN         mkdir -p --mode=0755 /usr/share/keyrings \
+                && curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null \
+                && echo 'deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared bookworm main' | tee /etc/apt/sources.list.d/cloudflared.list \
+                && apt update \ 
+                && apt install -y cloudflared
+
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container
 USER        container
 ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
 
-COPY        ./../entrypoint.sh /entrypoint.sh
+COPY        ./entrypoint.sh /entrypoint.sh
 CMD         ["/bin/bash", "/entrypoint.sh"]

@@ -25,7 +25,7 @@ export INTERNAL_IP
 echo -e "${BLUE}-------------------------------------------------${NC}"
 echo -e "${RED}MariaDB Image by gOOvER${NC}"
 echo -e "${BLUE}-------------------------------------------------${NC}"
-echo -e "${YELLOW}Running on Debian ${RED} $(cat /etc/debian_version)${NC}"
+echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
 echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
 echo -e "${YELLOW}MariaDB Version: ${RED} $(mariadb --version) ${NC}"
 echo -e "${BLUE}-------------------------------------------------${NC}"
