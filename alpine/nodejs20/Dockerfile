@@ -1,13 +1,13 @@
 FROM        --platform=$TARGETOS/$TARGETARCH node:20-alpine
 
-LABEL           author="Torsten Widmann" maintainer="info@goover.de"
-LABEL           org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL           org.opencontainers.image.licenses=MIT
+LABEL       author="Torsten Widmann" maintainer="info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.licenses=MIT
 
-RUN             apk update \
-                && apk upgrade
+RUN         apk update \
+            && apk upgrade
 
-RUN         add --no-cache \
+RUN         apk add --no-cache \
                 autoconf \
                 automake \
                 build-essential \
@@ -32,13 +32,7 @@ RUN         add --no-cache \
 
 # updating npm 
 RUN         npm install npm@latest -g
-
-# add cloudflare repo
-RUN         mkdir -p --mode=0755 /usr/share/keyrings \
-                && curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null \
-                && echo 'deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared bookworm main' | tee /etc/apt/sources.list.d/cloudflared.list \
-                && apt update \ 
-                && apt install -y cloudflared
+RUN         npm install -g typescript ts-node
 
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container

@@ -34,6 +34,7 @@ RUN         apt -y install \
 
 # updating npm 
 RUN         npm install npm@latest -g
+RUN         npm install -g typescript ts-node
 
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container

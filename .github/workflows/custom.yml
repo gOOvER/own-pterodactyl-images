@@ -22,9 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         oses:
-          - discordpush
           - node16132
-          - 14pptr
     
     steps:
       - uses: actions/checkout@v4
