@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/ash
 #System variables
 clear
 RED='\033[0;31m'
