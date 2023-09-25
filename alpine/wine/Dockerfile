@@ -8,7 +8,7 @@ LABEL       org.opencontainers.image.licenses=MIT
 RUN         apk update
 RUN         apk upgrade
 RUN         apk add --no-cache tzdata xvfb wget curl git
-RUN         apk add wine --update-cache --repository https://dl-cdn.alpinelinux.org/alpine/latest-stable/community --allow-untrusted
+RUN         apk add wine --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/latest/community --allow-untrusted
 RUN         apk add winetricks --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ --allow-untrusted
 
 # ENV
