@@ -7,26 +7,30 @@ LABEL       org.opencontainers.image.licenses=MIT
 ## install basic reqs
 RUN          apt update \         
                 && apt install -y \
+                      ca-certificates \
+                      curl \
+                      ffmpeg \
                       git \
+                      gnupg \
+                      iproute2 \
                       libtool \
                       netcat \
-                      ffmpeg \
-                      iproute2 \
-                      curl \
-                      gnupg \
                       software-properties-common
 
 ## install nodejs
-RUN         curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-                && curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | tee /usr/share/keyrings/yarnkey.gpg >/dev/null \
-                && echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | tee /etc/apt/sources.list.d/yarn.list
+RUN         mkdir -p /etc/apt/keyrings \
+                && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
+                && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \
+                && curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+                && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+
 RUN         apt update \
                 && apt install -y nodejs yarn \
-                && npm install -g npm@latest
+
+RUN         npm install -g npm@latest
 
 ## add container user
 RUN         useradd -d /home/container -m container -s /bin/bash
-
 USER        container
 ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
