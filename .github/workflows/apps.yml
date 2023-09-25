@@ -9,7 +9,7 @@ on:
     branches:
       - main
     paths:
-      - /apps/**
+      - apps/**
 
 env:
   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
