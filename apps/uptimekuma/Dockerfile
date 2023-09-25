@@ -13,22 +13,20 @@ RUN         apk add --no-cache \
                 build-essential \
                 ca-certificates\
                 curl \
-                dnsutils \
+                bind-tools \
 				ffmpeg \
                 g++ \
                 git \
                 gpg \
-                gnupg2 \
+                gnupg \
                 iproute2 \
                 iputils-ping \
                 libtool \
                 python3 \
                 python3-dev \
-                sqlite3 \
+                sqlite \
                 tzdata \
-                zip \
-				libnss3 \
-                libsqlite3-dev
+                zip
 
 # updating npm 
 RUN         npm install npm@latest -g
