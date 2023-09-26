@@ -33,13 +33,13 @@ RUN         apk add --no-cache \
 RUN         npm install npm@latest -g
 
 # download cloudflared
-RUN         if [ "$(uname -m)" = "x86_64" ]; then \
+RUN         arch=$(uname -i) \
+            if [[ $arch == x86_64* ]]; then \
                 curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o /usr/bin/cloudflared \
-                && chmod +x /usr/bin/cloudflared  \
-            elif [ "$(uname -m)" = "armv*" ]; then \
+            elif  [[ $arch == arm* ]]; then \
                 curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64 -o /usr/bin/cloudflared \
-                && chmod +x /usr/bin/cloudflared; \
             fi
+RUN         chmod +x /usr/bin/cloudflared
 
 ## Setup user and working directory
 RUN         adduser -D -h /home/container container -s /bin/bash container
