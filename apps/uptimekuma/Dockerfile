@@ -33,8 +33,7 @@ RUN         apk add --no-cache \
 RUN         npm install npm@latest -g
 
 # download cloudflared
-RUN         arch=$(uname -m)
-RUN         if [ "$arch" == "arm*" ]; then \
+RUN         if [ "$(uname -m)" = "arm*" ]; then \
                 curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64 -o /usr/bin/cloudflared \
             else \
                 curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o /usr/bin/cloudflared; \
