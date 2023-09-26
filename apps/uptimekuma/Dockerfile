@@ -34,11 +34,10 @@ RUN         npm install npm@latest -g
 
 # download cloudflared
 RUN         arch=$(uname -m)
-RUN         echo $arch
 RUN         if [ "$arch" == "arm*" ]; then \
                 curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64 -o /usr/bin/cloudflared \
             else \
-                curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o /usr/bin/cloudflared \
+                curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o /usr/bin/cloudflared; \
             fi
 RUN         chmod +x /usr/bin/cloudflared
 
