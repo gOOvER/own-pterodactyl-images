@@ -35,10 +35,10 @@ RUN         npm install npm@latest -g
 # download cloudflared
 RUN         if [ "$(uname -m)" = "x86_64" ]; then \
                 curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o /usr/bin/cloudflared \
-                && chmod +x /usr/bin/cloudflared \
+                && chmod +x /usr/bin/cloudflared  \
             elif [ "$(uname -m)" = "armv*" ]; then \
                 curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64 -o /usr/bin/cloudflared \
-                && chmod +x /usr/bin/cloudflared \
+                && chmod +x /usr/bin/cloudflared; \
             fi
 
 ## Setup user and working directory
