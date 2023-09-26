@@ -37,7 +37,7 @@ RUN         arch=$(uname -i) \
             if [[ $arch == x86_64* ]]; then \
                 curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o /usr/bin/cloudflared \
             elif  [[ $arch == arm* ]]; then \
-                curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64 -o /usr/bin/cloudflared \
+                curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64 -o /usr/bin/cloudflared; \
             fi
 RUN         chmod +x /usr/bin/cloudflared
 
