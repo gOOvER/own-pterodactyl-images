@@ -33,7 +33,7 @@ RUN         apk add --no-cache \
 RUN         npm install npm@latest -g
 
 # add cloudflare repo
-RUN         curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o /usr/bin/cloudflared
+RUN         curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o /usr/bin/cloudflared \
             && chmod +x /usr/bin/cloudflared
 ## Setup user and working directory
 RUN         adduser -D -h /home/container container -s /bin/bash container
