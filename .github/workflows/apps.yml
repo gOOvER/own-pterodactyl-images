@@ -23,7 +23,6 @@ jobs:
       matrix:
         oses:
           - discordpush
-          - gitea
           - uptimekuma
     
     steps:
