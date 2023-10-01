@@ -12,6 +12,7 @@ RUN         apk add --no-cache \
                 automake \
                 build-base \
                 ca-certificates\
+                chromium \
                 curl \
                 bind-tools \
 				ffmpeg \
@@ -40,7 +41,6 @@ RUN         if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCHITECTURE=amd64; e
 RUN         chmod +x /usr/bin/cloudflared
 
 # install apprise
-
 RUN         pip install apprise
 
 ## Setup user and working directory
