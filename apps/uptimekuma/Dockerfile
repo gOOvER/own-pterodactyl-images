@@ -38,6 +38,10 @@ RUN         if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCHITECTURE=amd64; e
             && curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-${ARCHITECTURE} -o /usr/bin/cloudflared
 RUN         chmod +x /usr/bin/cloudflared
 
+# install apprise
+
+RUN         pip install apprise
+
 ## Setup user and working directory
 RUN         adduser -D -h /home/container container -s /bin/bash container
 USER        container
