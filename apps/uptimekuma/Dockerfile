@@ -22,6 +22,7 @@ RUN         apk add --no-cache \
                 iproute2 \
                 iputils-ping \
                 libtool \
+                py3-pip \
                 python3 \
                 python3-dev \
                 sqlite \
