@@ -9,38 +9,38 @@ RUN             dpkg --add-architecture i386
 RUN             apt update
 RUN             apt -y upgrade
 RUN             apt install -y --no-install-recommends \
-                    wget \
-                    iproute2 \
+                    alsa-tools \
+                    dbus \
+                    gnupg \
                     gnupg2 \
-                    software-properties-common \
-                    libntlm0 \
-                    winbind \
-                    xvfb \
-                    xauth \
+                    gnutls-bin \
+                    iproute2 \
+                    locales \
+                    musl-dev \
+                    netcat-openbsd \
+                    numactl \
                     python3 \
+                    software-properties-common \
+                    wget \
+                    winbind \
+                    xauth \
+                    xvfb \
+                    lib32gcc-s1 \
+                    libao-common \
+                    libasound2 \
+                    libasound2 \
+                    libgdiplus \
                     libncurses5-dev:i386 \
                     libncurses6 \
-                    dbus \
-                    libgdiplus \
-                    lib32gcc-s1 \
-                    netcat-openbsd \
-                    alsa-tools \
-                    libpulse-dev \
-                    libasound2 \
-                    libao-common \
-                    gnutls-bin \
-                    libasound2 \
-                    locales \
-                    gnupg \
-                    numactl
-            
+                    libntlm0 \
+                    libpulse-dev
 
 # Install wine and with recommends
 RUN             mkdir -pm755 /etc/apt/keyrings
 RUN             wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
 RUN             wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
 RUN             apt update
-RUN             apt install --install-recommends winehq-devel cabextract wine-binfmt -y
+RUN             apt install --install-recommends winehq-devel cabextract -y
 
 # Set up Winetricks
 RUN	            wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
@@ -48,13 +48,10 @@ RUN             chmod +x /usr/sbin/winetricks
 
 ENV             HOME=/home/container
 ENV             WINEPREFIX=/home/container/.wine
-ENV             WINEDLLOVERRIDES="mscoree,mshtml="
 ENV             DISPLAY=:0
 ENV             DISPLAY_WIDTH=1024
 ENV             DISPLAY_HEIGHT=768
 ENV             DISPLAY_DEPTH=16
-ENV             AUTO_UPDATE=1
-ENV             XVFB=1
 
 ## Setup user and working directory
 RUN             useradd -m -d /home/container -s /bin/bash container
