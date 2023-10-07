@@ -105,5 +105,5 @@ ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
 
 ## Copy over and execute entrypoint.sh
-COPY        ./../entrypoint.sh /entrypoint.sh
-CMD         [ "/bin/bash", "/entrypoint.sh" ]
+COPY       ./entrypoint.sh /entrypoint.sh
+CMD	       ["/bin/bash", "/entrypoint.sh"]
