@@ -10,8 +10,8 @@ RUN             apt update
 RUN             apt -y upgrade
 RUN             apt install -y --no-install-recommends \
                     alsa-tools \
+                    alsa-utils \
                     dbus \
-                    firmware-sof-signed \
                     gnupg \
                     gnupg2 \
                     gnutls-bin \
