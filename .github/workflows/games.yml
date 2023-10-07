@@ -26,6 +26,7 @@ jobs:
           - conan
           - dayz
           - interstellarrift
+          - longvinter
           - mohaa
           - riskofrain2
           - samp
