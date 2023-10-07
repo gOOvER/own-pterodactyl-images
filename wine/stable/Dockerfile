@@ -11,6 +11,7 @@ RUN             apt -y upgrade
 RUN             apt install -y --no-install-recommends \
                     alsa-tools \
                     dbus \
+                    firmware-sof-signed \
                     gnupg \
                     gnupg2 \
                     gnutls-bin \
@@ -49,13 +50,11 @@ RUN             chmod +x /usr/sbin/winetricks
 
 ENV             HOME=/home/container
 ENV             WINEPREFIX=/home/container/.wine
-ENV             WINEDLLOVERRIDES="mscoree,mshtml="
+ENV             WINEDLLOVERRIDES="mscoree,mshtml=n,b"
 ENV             DISPLAY=:0
 ENV             DISPLAY_WIDTH=1024
 ENV             DISPLAY_HEIGHT=768
 ENV             DISPLAY_DEPTH=16
-ENV             AUTO_UPDATE=1
-ENV             XVFB=1
 
 ## Setup user and working directory
 RUN             useradd -m -d /home/container -s /bin/bash container
