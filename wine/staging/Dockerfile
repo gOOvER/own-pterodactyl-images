@@ -49,6 +49,7 @@ RUN             chmod +x /usr/sbin/winetricks
 
 ENV             HOME=/home/container
 ENV             WINEPREFIX=/home/container/.wine
+ENV             WINEDLLOVERRIDES="mscoree,mshtml="
 ENV             DISPLAY=:0
 ENV             DISPLAY_WIDTH=1024
 ENV             DISPLAY_HEIGHT=768
@@ -60,5 +61,5 @@ USER            container
 ENV             USER=container HOME=/home/container
 WORKDIR         /home/container
 
-COPY            ./entrypoint.sh /entrypoint.sh
-CMD	            ["/bin/bash", "/entrypoint.sh"]
+COPY            ./../entrypoint.sh /entrypoint.sh
+CMD             [ "/bin/bash", "/entrypoint.sh" ]

@@ -60,7 +60,6 @@ RUN         apt update \
 
 #RUN         echo steam steam/question select "I AGREE" | debconf-set-selections
 #RUN         apt install -y steam
-#RUN         useradd -d /home/container -m container
 
 # Download Proton GE
 RUN         curl -sLOJ $(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep .tar.gz)
@@ -76,19 +75,17 @@ RUN         dbus-uuidgen --ensure
 #Setup Protontricks install
 RUN         apt install -y protontricks
 
-# Set up Winetricks
-RUN	        wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
-            && chmod +x /usr/sbin/winetricks
-
 ## install rcon
 RUN         cd /tmp/ \
             && curl -sSL https://github.com/gorcon/rcon-cli/releases/download/v0.10.3/rcon-0.10.3-amd64_linux.tar.gz > rcon.tar.gz \
             && tar xvf rcon.tar.gz \
             && mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/
 
-USER        container
-ENV         USER=container HOME=/home/container
-WORKDIR     /home/container
+## Setup user and working directory
+RUN             useradd -m -d /home/container -s /bin/bash container
+USER            container
+ENV             USER=container HOME=/home/container
+WORKDIR         /home/container
 
 COPY        ./../entrypoint.sh /entrypoint.sh
 CMD         [ "/bin/bash", "/entrypoint.sh" ]
