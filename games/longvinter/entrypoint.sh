@@ -91,26 +91,17 @@ else
 fi
 
 ## Pull Server from Github
-cd $HOME
-if [ -d "$HOME/longvinter-linux-server" ]; then
-  cd $HOME/longvinter-linux-server
-  echo -e "${BLUE}-------------------------------------------------${NC}"
-  echo -e "${YELLOW}checkig for Server update. please wait...${NC}"
-  echo -e "${BLUE}-------------------------------------------------${NC}"
-  git restore .
-  sleep 1
-  git stash
-  sleep 1
-  git pull "https://github.com/Uuvana-Studios/longvinter-linux-server.git" main
-  sleep 1
-else
-  echo -e "${BLUE}-------------------------------------------------${NC}"
-  echo -e "${RED}no server found. downloading server. please wait${NC}"
-  echo -e "${BLUE}-------------------------------------------------${NC}"
-  git clone https://github.com/Uuvana-Studios/longvinter-linux-server.git
-fi
-
-cd $HOME
+cd /mnt/server/longvinter-linux-server
+echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${YELLOW}checkig for Server update. please wait...${NC}"
+echo -e "${BLUE}-------------------------------------------------${NC}"
+git restore .
+sleep 1
+git stash
+sleep 1
+git pull "https://github.com/Uuvana-Studios/longvinter-linux-server.git" main
+sleep 1
+cd /mnt/server
 chmod -R ugo+rwx longvinter-linux-server/
 
 # Replace Startup Variables
