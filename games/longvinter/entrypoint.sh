@@ -91,7 +91,7 @@ else
 fi
 
 ## Pull Server from Github
-cd /mnt/server/longvinter-linux-server
+cd /home/container/longvinter-linux-server
 echo -e "${BLUE}-------------------------------------------------${NC}"
 echo -e "${YELLOW}checkig for Server update. please wait...${NC}"
 echo -e "${BLUE}-------------------------------------------------${NC}"
@@ -101,7 +101,7 @@ git stash
 sleep 1
 git pull "https://github.com/Uuvana-Studios/longvinter-linux-server.git" main
 sleep 1
-cd /mnt/server
+cd /home/container/
 chmod -R ugo+rwx longvinter-linux-server/
 
 # Replace Startup Variables
