@@ -91,18 +91,24 @@ else
 fi
 
 ## Pull Server from Github
-cd /home/container/longvinter-linux-server
-echo -e "${BLUE}-------------------------------------------------${NC}"
-echo -e "${YELLOW}checkig for Server update. please wait...${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}"
-git restore .
-sleep 1
-git stash
-sleep 1
-git pull "https://github.com/Uuvana-Studios/longvinter-linux-server.git" main
-sleep 1
-cd /home/container/
-chmod -R ugo+rwx longvinter-linux-server/
+if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
+    cd /home/container/longvinter-linux-server
+    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${YELLOW}checkig for Server update. please wait...${NC}"
+    echo -e "${BLUE}-------------------------------------------------${NC}"
+    git restore .
+    sleep 1
+    git stash
+    sleep 1
+    git pull "https://github.com/Uuvana-Studios/longvinter-linux-server.git" main
+    sleep 1
+    cd /home/container/
+    chmod -R ugo+rwx longvinter-linux-server/
+else
+    echo -e "${BLUE}---------------------------------------------------------------${NC}"
+    echo -e "${YELLOW}Not updating game server as auto update was set to 0. Starting Server${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------${NC}"
+fi
 
 # Replace Startup Variables
 MODIFIED_STARTUP=$(echo ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
