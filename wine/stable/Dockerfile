@@ -16,7 +16,6 @@ RUN             apt install -y --no-install-recommends \
                     gnutls-bin \
                     iproute2 \
                     locales \
-                    musl-dev \
                     netcat-openbsd \
                     numactl \
                     python3 \
@@ -41,7 +40,7 @@ RUN             mkdir -pm755 /etc/apt/keyrings
 RUN             wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
 RUN             wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
 RUN             apt update
-RUN             apt install --install-recommends winehq-stable cabextract -y
+RUN             apt install --install-recommends winehq-stable cabextract wine-binfmt -y
 
 # Set up Winetricks
 RUN	            wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
@@ -54,6 +53,8 @@ ENV             DISPLAY=:0
 ENV             DISPLAY_WIDTH=1024
 ENV             DISPLAY_HEIGHT=768
 ENV             DISPLAY_DEPTH=16
+ENV             AUTO_UPDATE=1
+ENV             XVFB=1
 
 ## Setup user and working directory
 RUN             useradd -m -d /home/container -s /bin/bash container
