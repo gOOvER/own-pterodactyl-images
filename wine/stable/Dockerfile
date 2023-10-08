@@ -8,7 +8,7 @@ LABEL           org.opencontainers.image.licenses=MIT
 RUN             dpkg --add-architecture i386
 RUN             apt update
 RUN             apt -y upgrade
-RUN             apt install -y --no-install-recommends \
+RUN             apt install -y \
                     alsa-tools \
                     dbus \
                     gnupg \
@@ -26,7 +26,6 @@ RUN             apt install -y --no-install-recommends \
                     xvfb \
                     lib32gcc-s1 \
                     libao-common \
-                    libasound2 \
                     libasound2 \
                     libgdiplus \
                     libncurses5-dev:i386 \

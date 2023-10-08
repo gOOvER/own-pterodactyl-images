@@ -21,6 +21,7 @@ RUN           apt install -y \
                     gcc \
                     gdb \
                     git \
+                    git-lfs \
                     gnupg2 \
                     icu-devtools \
                     iproute2 \
