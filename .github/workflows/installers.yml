@@ -25,6 +25,7 @@ jobs:
           - alpine
           - debian
           - nodejs
+          - ubuntu
     
     steps:
       - uses: actions/checkout@v4
