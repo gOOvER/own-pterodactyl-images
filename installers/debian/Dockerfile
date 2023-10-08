@@ -14,6 +14,8 @@ RUN		 		apt -y --no-install-recommends install \
 						ca-certificates \
 						curl \
 						git \
+						git-lfs \
+						jq \
 						tar \
 						unzip \
 						wget \
