@@ -31,6 +31,9 @@ RUN         apk add --no-cache \
                 zip \
                 libc6-compat
 
+RUN         apk add --update --no-cache \
+				git-lfs --repository=https://dl-cdn.alpinelinux.org/alpine/latest-stable/community
+
 # updating npm 
 RUN         npm install npm@latest -g
 
