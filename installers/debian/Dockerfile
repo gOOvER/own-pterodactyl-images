@@ -20,8 +20,10 @@ RUN		 		apt install -y --no-install-recommends \
 						unzip \
 						wget \
 						lib32gcc-s1 \
-						libcurl4-gnutls \
-						libcurl4-gnutls:i386 \
+						libcurl4 \
+						libcurl4_i386 \
+						libcurl4-gnutls-dev \
+						libcurl4-gnutls-dev:i386 \
 						libsdl2-2.0-0 \
 						libsdl2-2.0-0:i386
 
