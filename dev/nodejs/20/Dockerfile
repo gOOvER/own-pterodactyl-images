@@ -9,7 +9,7 @@ ENV         DEBIAN_FRONTEND=noninteractive
 RUN         apt update \
              && apt -y upgrade
 
-RUN         apt -y install \
+RUN         apt -y install --no-install-recommends \
                 autoconf \
                 automake \
                 build-essential \
