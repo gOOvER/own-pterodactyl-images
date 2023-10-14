@@ -26,5 +26,3 @@ RUN		 		apt install -y --no-install-recommends \
 						libcurl4-gnutls-dev:i386 \
 						libsdl2-2.0-0 \
 						libsdl2-2.0-0:i386
-
-RUN 			ln -s /usr/lib/x86_64-linux-gnu/libcurl.so.4 /usr/lib/x86_64-linux-gnu/libcurl.so
