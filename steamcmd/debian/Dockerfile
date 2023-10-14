@@ -47,6 +47,7 @@ RUN         apt install -y \
                     libatk1.0-0 \
                     libc++1 \
                     libc6:i386 \
+                    libcurl3-gnutls \
                     libcurl3-gnutls:i386 \
                     libcurl4 \
                     libcurl4:i386 \

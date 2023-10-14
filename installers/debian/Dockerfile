@@ -20,5 +20,7 @@ RUN		 		apt -y --no-install-recommends install \
 						unzip \
 						wget \
 						lib32gcc-s1 \
+						libcurl3-gnutls \
+						libcurl3-gnutls:i386 \
 						libsdl2-2.0-0 \
 						libsdl2-2.0-0:i386
