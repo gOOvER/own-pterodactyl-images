@@ -20,7 +20,9 @@ RUN		 		apt -y --no-install-recommends install \
 						unzip \
 						wget \
 						lib32gcc-s1 \
-						libcurl3-gnutls \
-						libcurl3-gnutls:i386 \
+						libcurl4-gnutls \
+						libcurl4-gnutls:i386 \
 						libsdl2-2.0-0 \
 						libsdl2-2.0-0:i386
+
+RUN 			ln -s /usr/lib/x86_64-linux-gnu/libcurl.so.4 /usr/lib/x86_64-linux-gnu/libcurl.so
