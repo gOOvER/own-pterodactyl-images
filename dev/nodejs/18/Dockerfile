@@ -42,6 +42,10 @@ RUN         curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
 RUN         npm install npm@latest -g
 RUN         npm install -g typescript ts-node
 
+#install pnpm
+RUN         corepack enable
+RUN         corepack prepare pnpm@latest --activate
+
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container
 USER        container

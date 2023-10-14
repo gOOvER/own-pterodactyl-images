@@ -21,6 +21,7 @@ RUN         apt -y install \
                 g++ \
                 gcc \
                 git \
+                git-lfs \
                 gpg \
                 gnupg2 \
                 iproute2 \
