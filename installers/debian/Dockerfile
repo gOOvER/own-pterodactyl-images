@@ -10,7 +10,7 @@ RUN         	dpkg --add-architecture i386
 RUN             apt update \
                 && apt -y upgrade
 
-RUN		 		apt -y --no-install-recommends install \
+RUN		 		apt install -y --no-install-recommends \
 						ca-certificates \
 						curl \
 						git \
