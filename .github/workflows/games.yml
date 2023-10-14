@@ -32,6 +32,7 @@ jobs:
           - samp
           - screeps
           - staxel
+          - thefront
           - valheim
           - wurm
     
