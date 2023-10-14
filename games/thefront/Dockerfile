@@ -79,23 +79,6 @@ RUN         apt install -y \
                     libxss1 \
                     libxtst6
 
-## install dotnet to support STEAM dotnet games
-RUN     apt update -y \
-          && apt upgrade -y \
-          && wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
-          && dpkg -i packages-microsoft-prod.deb \
-          && rm packages-microsoft-prod.deb \
-          && apt update -y \
-          && apt install -y \
-                    aspnetcore-runtime-7.0 \
-                    dotnet-sdk-7.0
-
-## install mono to support STEAM dotnet games
-RUN         gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-RUN         echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/debian stable-buster main" | tee /etc/apt/sources.list.d/mono-official-stable.list
-RUN         apt update
-RUN         apt install mono-complete -y                    
-
 ## install rcon
 RUN         cd /tmp/ \
             && curl -sSL https://github.com/gorcon/rcon-cli/releases/download/v0.10.3/rcon-0.10.3-amd64_linux.tar.gz > rcon.tar.gz \
