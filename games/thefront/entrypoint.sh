@@ -56,12 +56,12 @@ if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
             echo -e "${BLUE}-------------------------------------------------${NC}"
             echo -e "${YELLOW}UPDATING SERVER... This can take some minutes....${NC}"
             echo -e "${BLUE}-------------------------------------------------${NC}"
-            rm -fR /mnt/server/steamcmd/linux32/steamapps/content/app_2334200/*
-            ./steamcmd.sh +force_install_dir /mnt/server +login ${STEAM_USER} +app_update 1007 +app_update ${SRCDS_APPID} validate +quit
-            ./steamcmd.sh +force_install_dir /mnt/server +login ${STEAM_USER} +download_depot 2334200 2334201 ${MANIFEST} +quit
-            rm -fR /mnt/server/ProjectWar
-            rm -fR /mnt/server/Engine
-            mv -v /mnt/server/steamcmd/linux32/steamapps/content/app_2334200/depot_2334201/* /mnt/server
+            rm -fR /home/container/steamcmd/linux32/steamapps/content/app_2334200/*
+            ./steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} +app_update 1007 +app_update ${SRCDS_APPID} validate +quit
+            ./steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} +download_depot 2334200 2334201 ${MANIFEST} +quit
+            rm -fR /home/container/ProjectWar
+            rm -fR /home/container/Engine
+            mv -v /home/container/steamcmd/linux32/steamapps/content/app_2334200/depot_2334201/* /home/container/
 	    else
             numactl --physcpubind=+0 ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +app_update ${SRCDS_APPID} $( [[ -z ${SRCDS_BETAID} ]] || printf %s "-beta ${SRCDS_BETAID}" ) $( [[ -z ${SRCDS_BETAPASS} ]] || printf %s "-betapassword ${SRCDS_BETAPASS}" ) $( [[ -z ${HLDS_GAME} ]] || printf %s "+app_set_config 90 mod ${HLDS_GAME}" ) $( [[ -z ${VALIDATE} ]] || printf %s "validate" ) +quit
 	    fi
