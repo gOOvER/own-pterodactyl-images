@@ -57,8 +57,8 @@ if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
             echo -e "${YELLOW}UPDATING SERVER... This can take some minutes....${NC}"
             echo -e "${BLUE}-------------------------------------------------${NC}"
             rm -fR /home/container/steamcmd/linux32/steamapps/content/app_2334200/*
-            ./steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} +app_update 1007 +app_update ${SRCDS_APPID} validate +quit
-            ./steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} +download_depot 2334200 2334201 ${MANIFEST} +quit
+            ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} +app_update 1007 +app_update ${SRCDS_APPID} validate +quit
+            ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} +download_depot 2334200 2334201 ${MANIFEST} +quit
             rm -fR /home/container/ProjectWar
             rm -fR /home/container/Engine
             mv -v /home/container/steamcmd/linux32/steamapps/content/app_2334200/depot_2334201/* /home/container/
