@@ -34,6 +34,7 @@ RUN         apt install -y \
                     speex:i386 \
                     tar \
                     telnet \
+                    tini \
                     tzdata \
                     wget \
                     lib32gcc-s1 \
