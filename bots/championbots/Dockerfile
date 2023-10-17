@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH mongo:6-jammy
+FROM        --platform=$TARGETOS/$TARGETARCH mongo:7-jammy
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
