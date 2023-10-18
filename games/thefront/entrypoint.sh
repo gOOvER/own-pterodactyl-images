@@ -29,15 +29,11 @@ echo -e "${BLUE}-------------------------------------------------${NC}"
 # Switch to the container's working directory
 cd /home/container || exit 1
 
-echo -e "${BLUE}-------------------------------------------------${NC}"
-echo -e "${GREEN}Starting Server.... Please wait...${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}"
-
 ## just in case someone removed the defaults.
 if [ "${STEAM_USER}" == "" ]; then
     echo -e "${BLUE}-------------------------------------------------${NC}"
-    echo -e "${YELLOW}Steam user is not set. ${NC}"
-    echo -e "${YELLOW}Using anonymous user.${NC}"
+    echo -e "${YELLOW}Steam user is not set.\n ${NC}"
+    echo -e "${YELLOW}Using anonymous user.\n ${NC}"
     echo -e "${BLUE}-------------------------------------------------${NC}"
     STEAM_USER=anonymous
     STEAM_PASS=""
@@ -53,14 +49,7 @@ if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
     # Update Source Server
     if [ ! -z ${SRCDS_APPID} ]; then
 	    if [ "${STEAM_USER}" == "anonymous" ]; then
-            echo -e "${BLUE}-------------------------------------------------${NC}"
-            echo -e "${YELLOW}UPDATING SERVER... This can take some minutes....${NC}"
-            echo -e "${BLUE}-------------------------------------------------${NC}"
-            ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} +app_update 1007 validate +quit
-            ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} +download_depot 2334200 2334201 +quit
-            rm -fR /home/container/ProjectWar
-            rm -fR /home/container/Engine
-            mv -v /home/container/steamcmd/linux32/steamapps/content/app_2334200/depot_2334201/* /home/container/
+            ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +app_update ${SRCDS_APPID} $( [[ -z ${SRCDS_BETAID} ]] || printf %s "-beta ${SRCDS_BETAID}" ) $( [[ -z ${SRCDS_BETAPASS} ]] || printf %s "-betapassword ${SRCDS_BETAPASS}" ) $( [[ -z ${HLDS_GAME} ]] || printf %s "+app_set_config 90 mod ${HLDS_GAME}" ) $( [[ -z ${VALIDATE} ]] || printf %s "validate" ) +quit
 	    else
             numactl --physcpubind=+0 ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +app_update ${SRCDS_APPID} $( [[ -z ${SRCDS_BETAID} ]] || printf %s "-beta ${SRCDS_BETAID}" ) $( [[ -z ${SRCDS_BETAPASS} ]] || printf %s "-betapassword ${SRCDS_BETAPASS}" ) $( [[ -z ${HLDS_GAME} ]] || printf %s "+app_set_config 90 mod ${HLDS_GAME}" ) $( [[ -z ${VALIDATE} ]] || printf %s "validate" ) +quit
 	    fi
