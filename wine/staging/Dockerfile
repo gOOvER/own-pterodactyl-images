@@ -38,6 +38,7 @@ RUN             apt install -y --no-install-recommends \
                     speex:i386 \
                     tar \
                     telnet \
+                    tini \
                     tzdata \
                     wget \
                     winbind \
@@ -100,6 +101,7 @@ RUN             apt install --install-recommends winehq-staging cabextract fonts
 RUN	            wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
 RUN             chmod +x /usr/sbin/winetricks
 
+# Setup ENVs
 ENV             HOME=/home/container
 ENV             WINEPREFIX=/home/container/.wine
 ENV             WINEDLLOVERRIDES="mscoree,mshtml="
@@ -114,5 +116,10 @@ USER            container
 ENV             USER=container HOME=/home/container
 WORKDIR         /home/container
 
-COPY            ./../entrypoint.sh /entrypoint.sh
-CMD             [ "/bin/bash", "/entrypoint.sh" ]
+# Sets the default stop signal as wings can (currently) only send a kill or generic stop
+STOPSIGNAL SIGINT
+
+COPY        --chown=container:container ../entrypoint.sh /entrypoint.sh
+RUN         chmod +x /entrypoint.sh
+ENTRYPOINT    ["/usr/bin/tini", "-g", "--"]
+CMD         ["/entrypoint.sh"]

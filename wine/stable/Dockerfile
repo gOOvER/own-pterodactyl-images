@@ -38,6 +38,7 @@ RUN             apt install -y \
                     speex:i386 \
                     tar \
                     telnet \
+                    tini \
                     tzdata \
                     wget \
                     winbind \
@@ -116,5 +117,10 @@ USER            container
 ENV             USER=container HOME=/home/container
 WORKDIR         /home/container
 
-COPY            ./../entrypoint.sh /entrypoint.sh
-CMD             [ "/bin/bash", "/entrypoint.sh" ]
+# Sets the default stop signal as wings can (currently) only send a kill or generic stop
+STOPSIGNAL SIGINT
+
+COPY        --chown=container:container ../entrypoint.sh /entrypoint.sh
+RUN         chmod +x /entrypoint.sh
+ENTRYPOINT    ["/usr/bin/tini", "-g", "--"]
+CMD         ["/entrypoint.sh"]
