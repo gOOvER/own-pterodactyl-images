@@ -22,6 +22,7 @@ RUN         apk add --no-cache \
                 gnupg \
                 iproute2 \
                 iputils-ping \
+                locales \
                 libtool \
                 py3-pip \
                 python3 \
