@@ -101,6 +101,7 @@ RUN             apt install --install-recommends winehq-stable cabextract wine-b
 RUN	            wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
 RUN             chmod +x /usr/sbin/winetricks
 
+# Setup ENVs
 ENV             HOME=/home/container
 ENV             WINEPREFIX=/home/container/.wine
 ENV             WINEDLLOVERRIDES="mscoree,mshtml="
