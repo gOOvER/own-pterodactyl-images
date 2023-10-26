@@ -22,7 +22,7 @@ export INTERNAL_IP
 echo -e "${BLUE}-------------------------------------------------${NC}"
 echo -e "${RED}Valheim Image${NC}"
 echo -e "${BLUE}-------------------------------------------------${NC}"
-echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
+echo -e "${YELLOW}Running on Debian: ${RED} $(lsb_release -a)${NC}"
 echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
 echo -e "${BLUE}-------------------------------------------------${NC}"
 
