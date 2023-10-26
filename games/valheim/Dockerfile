@@ -48,7 +48,6 @@ RUN             update-locale lang=en_US.UTF-8 \
 
 ## Setup user and working directory
 RUN             useradd -m -d /home/container -s /bin/bash container
-USER            container
 ENV             USER=container HOME=/home/container
 WORKDIR         /home/container
 
