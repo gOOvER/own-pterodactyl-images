@@ -25,7 +25,6 @@ echo -e "${BLUE}-------------------------------------------------${NC}"
 echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
 echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
 echo -e "${YELLOW}DotNet Version: ${RED} $(dotnet --version) ${NC}"
-echo -e "${YELLOW}Mono Version: ${RED} $(mono --version) ${NC}"
 echo -e "${BLUE}-------------------------------------------------${NC}"
 
 # Set environment for Steam Proton
