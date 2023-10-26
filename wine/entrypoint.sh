@@ -123,9 +123,9 @@ for trick in $WINETRICKS_RUN; do
 done
 
 # Replace variables in the startup command
-PARSED=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g' | eval echo "$(cat -)")
+PARSED=$(echo -e "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g' | eval echo "$(cat -)")
 printf "%s%s\n" "$IMAGE_PROMPT" "$PARSED"
 
 # Run the startup command
 # shellcheck disable=SC2086
-exec env ${PARSED}
+eval env ${PARSED}
