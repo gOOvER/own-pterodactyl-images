@@ -48,6 +48,7 @@ RUN         apt update \
                     libfreetype6:i386 \
                     libgcc1 \
                     libgdiplus \
+                    libnss-wrapper \
                     libncurses5-dev:i386 \
                     libncurses5:i386 \
                     libncurses6 \
@@ -81,11 +82,18 @@ RUN         cd /tmp/ \
             && tar xvf rcon.tar.gz \
             && mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/
 
+## Prepare NSS Wrapper for the entrypoint as a workaround for games requiring a valid UID
+ENV         NSS_WRAPPER_PASSWD=/tmp/passwd NSS_WRAPPER_GROUP=/tmp/group
+RUN         touch ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
+            && chgrp 0 ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
+            && chmod g+rw ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP}
+ADD         passwd.template /passwd.template
+
 ## Setup user and working directory
-RUN             useradd -m -d /home/container -s /bin/bash container
-USER            container
-ENV             USER=container HOME=/home/container
-WORKDIR         /home/container
+RUN         useradd -m -d /home/container -s /bin/bash container
+USER        container
+ENV         USER=container HOME=/home/container
+WORKDIR     /home/container
 
 COPY        ./../entrypoint.sh /entrypoint.sh
 CMD         [ "/bin/bash", "/entrypoint.sh" ]
