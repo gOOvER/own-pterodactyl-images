@@ -91,6 +91,13 @@ else
     echo -e "${BLUE}---------------------------------------------------------------${NC}"
 fi
 
+# Setup NSS Wrapper for use ($NSS_WRAPPER_PASSWD and $NSS_WRAPPER_GROUP have been set by the Dockerfile)
+export USER_ID=$(id -u)
+export GROUP_ID=$(id -g)
+envsubst < /passwd.template > ${NSS_WRAPPER_PASSWD}
+
+export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnss_wrapper.so
+
 # Replace Startup Variables
 MODIFIED_STARTUP=$(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
 echo -e ":/home/container$ ${MODIFIED_STARTUP}"

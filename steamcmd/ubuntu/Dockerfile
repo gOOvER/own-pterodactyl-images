@@ -57,6 +57,7 @@ RUN         apt install -y \
                     libcurl4-gnutls-dev:i386 \
                     libcurl4:i386 \
                     libfontconfig \
+					libnss-wrapper \
                     libgcc1 \
                     libgconf-2-4 \
                     libgdiplus \
@@ -99,6 +100,13 @@ RUN         cd /tmp/ \
             && curl -sSL https://github.com/gorcon/rcon-cli/releases/download/v0.10.3/rcon-0.10.3-amd64_linux.tar.gz > rcon.tar.gz \
             && tar xvf rcon.tar.gz \
             && mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/
+
+## Prepare NSS Wrapper for the entrypoint as a workaround for Valheim requiring a valid UID
+ENV         NSS_WRAPPER_PASSWD=/tmp/passwd NSS_WRAPPER_GROUP=/tmp/group
+RUN         touch ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
+            && chgrp 0 ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
+            && chmod g+rw ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP}
+ADD         passwd.template /passwd.template
 
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
