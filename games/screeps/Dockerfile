@@ -27,7 +27,7 @@ RUN         mkdir -p /etc/apt/keyrings \
 RUN         echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
 RUN         apt update
 
-RUN         apt install -y nodejs \
+RUN         apt install -y nodejs
 RUN         npm install npm@latest -g
 
 ## install redis
