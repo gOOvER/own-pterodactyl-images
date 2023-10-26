@@ -93,8 +93,8 @@ RUN         apt update -y \
                 && rm packages-microsoft-prod.deb \
                 && apt update -y \
                 && apt install -y \
-                    aspnetcore-runtime-7.0 \
-                    dotnet-sdk-7.0
+                    aspnetcore-runtime-6.0 \
+                    dotnet-sdk-6.0
 
 RUN         curl -sLOJ $(curl -s https://api.github.com/repos/SteamRE/DepotDownloader/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep linux-x64.zip)
 RUN         unzip DepotDownloader-linux-x64.zip -d /usr/local/bin/
@@ -105,19 +105,19 @@ RUN         cd /tmp/ \
                 && tar xvf rcon.tar.gz \
                 && mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/
 
-## Prepare NSS Wrapper for the entrypoint as a workaround for Valheim requiring a valid UID
-ENV         NSS_WRAPPER_PASSWD=/tmp/passwd NSS_WRAPPER_GROUP=/tmp/group
-RUN         touch ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
-            && chgrp 0 ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
-            && chmod g+rw ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP}
-ADD         passwd.template /passwd.template
-
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
             locale-gen
 ENV         LANG en_US.UTF-8  
 ENV         LANGUAGE en_US:en  
 ENV         LC_ALL en_US.UTF-8
+
+## Prepare NSS Wrapper for the entrypoint as a workaround for Valheim requiring a valid UID
+ENV         NSS_WRAPPER_PASSWD=/tmp/passwd NSS_WRAPPER_GROUP=/tmp/group
+RUN         touch ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
+            && chgrp 0 ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
+            && chmod g+rw ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP}
+ADD         passwd.template /passwd.template
 
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container
