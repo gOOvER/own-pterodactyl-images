@@ -40,8 +40,8 @@ RUN         apt install -y \
                     tini \
                     tzdata \
                     wget \
-                    lib32gcc-s1 \
-                    lib64gcc-s1 \
+                    lib32gcc-s1-amd64-cross \
+                    libgcc-s1-amd64-cross \
                     lib32stdc++6 \
                     lib32tinfo6 \
                     lib32z1 \
