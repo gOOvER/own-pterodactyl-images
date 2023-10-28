@@ -5,7 +5,7 @@ LABEL           org.opencontainers.image.source="https://github.com/gOOvER/own-p
 LABEL           org.opencontainers.image.licenses=MIT
 
 ## install required packages
-RUN             dpkg --add-architecture i386
+#RUN             dpkg --add-architecture i386
 RUN             apt update
 RUN             apt -y upgrade
 RUN             apt install -y \
@@ -35,7 +35,7 @@ RUN             apt install -y \
                     python3-pip \
                     sed \
                     software-properties-common \
-                    speex:i386 \
+                    #speex:i386 \
                     tar \
                     telnet \
                     tini \
@@ -55,33 +55,33 @@ RUN             apt install -y \
                     libc++1 \
                     libc6 \
                     libcurl4 \
-                    libcurl4-gnutls-dev:i386 \
-                    libcurl4:i386 \
+                    #libcurl4-gnutls-dev:i386 \
+                    #libcurl4:i386 \
                     libfontconfig1 \
                     libgcc1 \
                     libgconf-2-4 \
                     libgdiplus \
                     libgdiplus \
-                    libgtk2.0-0:i386 \
-                    libncurses5-dev:i386 \
-                    libncurses5:i386 \
+                    #libgtk2.0-0:i386 \
+                    #libncurses5-dev:i386 \
+                    #libncurses5:i386 \
                     libncurses6 \
                     libnss-wrapper \
-                    libnss-wrapper:i386 \
+                    #libnss-wrapper:i386 \
                     libnss3 \
                     libntlm0 \
                     libpangocairo-1.0-0 \
                     libpulse-dev \
                     libsdl1.2debian \
-                    libsdl1.2debian:i386 \
+                    #libsdl1.2debian:i386 \
                     libsdl2-2.0-0 \
-                    libsdl2-2.0-0:i386 \
+                    #libsdl2-2.0-0:i386 \
                     libssl3 \
-                    libssl3:i386 \
+                    #libssl3:i386 \
                     libstdc++6 \
-                    libstdc++6:i386 \
+                    #libstdc++6:i386 \
                     libtcmalloc-minimal4 \
-                    libtinfo6:i386 \
+                    #libtinfo6:i386 \
                     libxcomposite1 \
                     libxcursor1 \
                     libxdamage1 \
