@@ -37,6 +37,7 @@ RUN         apt update \
                     xauth \
                     xvfb \
                     lib32gcc-s1 \
+                    lib64gcc-s1 \
                     lib32stdc++6 \
                     lib32tinfo6 \
                     lib32z1 \

@@ -20,6 +20,7 @@ RUN		 		apt install -y --no-install-recommends \
 						unzip \
 						wget \
 						lib32gcc-s1 \
+						lib64gcc-s1 \
 						libcurl4 \
 						libcurl4:i386 \
 						libcurl4-gnutls-dev \
