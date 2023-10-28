@@ -15,109 +15,40 @@ RUN         apt update \
             && curl -o /etc/apt/sources.list https://gist.githubusercontent.com/gOOvER/0629311f86cbacc718a7ef2dee913454/raw/26fa9f1039323b4e3af0dc1c0e8299b7c83bc848/sources.list
 
 RUN         apt update \
-            && apt -y upgrade \
-            && apt -y install --no-install-recommends \
-                    alsa-tools \
-                    ca-certificates \
-                    cabextract \
-                    curl \
-                    dbus \
-                    dirmngr \
-                    g++ \
-                    gcc \
-                    gdb \
-                    gettext \
-                    git \
-                    gnupg \
-                    gnupg2 \
-                    gnutls-bin \
-                    gstreamer1.0-tools \
-                    gstreamer1.0-plugins-bad \
-                    gstreamer1.0-plugins-bad:i386 \
-                    gstreamer1.0-plugins-base \
-                    gstreamer1.0-plugins-base:i386 \
-                    iproute2 \
-                    jq \
-                    locales \
-                    mesa-utils \
-                    net-tools \
-                    netcat-openbsd \
-                    numactl \
-                    psmisc \
-                    pulseaudio \
-                    python3 \
-                    python3-dev \
-                    python3-full \
-                    python3-pip \
-                    python3-setuptools \
-                    sed \
-                    speex:i386 \
-                    tar \
-                    telnet \
-                    tini \
-                    tzdata \
-                    wget \
-                    winbind \
-                    xauth \
-                    lib32gcc-s1-amd64-cross \
-                    lib32stdc++6 \
-                    lib32tinfo6 \
-                    lib32z1 \
-                    libao-common \
-                    libasound2 \
-                    libatk1.0-0 \
-                    libatomic1 \
-                    libc++-dev \
-                    libc++1 \
-                    libc6 \
-                    libc6:i386 \
-                    libcurl3-gnutls \
-                    libcurl3-gnutls:i386 \
-                    libcurl4 \
-                    libcurl4-gnutls-dev:i386 \
-                    libcurl4:i386 \
-                    libfontconfig \
-                    libfreetype6 \
-                    libfreetype6:i386 \
-                    libgcc-s1-amd64-cross \
-                    libgcc1 \
-                    libgconf-2-4 \
-                    libgdiplus \
-                    libgstreamer1.0-0 \
-                    libgstreamer1.0-dev \
-                    libgstreamer1.0-0:i386 \
-                    libgstreamer1.0-dev:i386 \
-                    libgtk2.0-0:i386 \
-                    libncurses5-dev:i386 \
-                    libncurses5:i386 \
-                    libncurses6 \
-                    libnss-wrapper \
-                    libnss3 \
-                    libntlm0 \
-                    libpangocairo-1.0-0 \
-                    libpulse-dev \
-                    libpulse0 \
-                    libsdl1.2debian \
-                    libsdl1.2debian:i386 \
-                    libsdl2-2.0-0 \
-                    libsdl2-2.0-0:i386 \
-                    libssl3 \
-                    libssl3:i386 \
-                    libssl3:i386 libcurl4:i386 \
-                    libstdc++6 \
-                    libstdc++6:i386 \
-                    libtcmalloc-minimal4 \
-                    libtinfo6:i386 \
-                    libxcomposite1 \
-                    libxcursor1 \
-                    libxdamage1 \
-                    libxi6 \
-                    libxrandr2 \
-                    libxss1 \
-                    libxtst6 
-
-#RUN         echo steam steam/question select "I AGREE" | debconf-set-selections
-#RUN         apt install -y steam
+            && apt -y upgrade
+RUN         apt install -y --no-install-recommends  \
+                wget \
+                iproute2 \
+                gnupg2 \
+                software-properties-common \
+                libntlm0 \
+                winbind \
+                xvfb \
+                xauth \
+                libncurses5-dev:i386 \
+                libncurses6 \
+                dbus \
+                libgdiplus \
+                lib32gcc-s1 \
+                alsa-tools \
+                libpulse0 \
+                pulseaudio \
+                libpulse-dev \
+                libasound2 \
+                libao-common \
+                gnutls-bin \
+                gnupg \
+                locales \
+                numactl \
+                cabextract \
+                curl \
+                python3 \
+                python3-pip \
+                python3-setuptools \
+                protontricks \
+                libnss-wrapper \
+                libnss-wrapper:i386 \
+                libnss3
 
 # Download Proton GE
 RUN         curl -sLOJ $(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep .tar.gz)
@@ -130,8 +61,9 @@ RUN         dbus-uuidgen --ensure=/etc/machine-id
 RUN         rm /var/lib/dbus/machine-id
 RUN         dbus-uuidgen --ensure
 
-#Setup Protontricks install
-RUN         apt install -y protontricks
+# Set up Winetricks
+RUN	    wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
+            && chmod +x /usr/sbin/winetricks
 
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
