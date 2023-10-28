@@ -53,7 +53,7 @@ RUN             apt install -y \
                     libasound2 \
                     libatk1.0-0 \
                     libc++1 \
-                    libc6-amd64 \
+                    libc6 \
                     libcurl4 \
                     libcurl4-gnutls-dev:i386 \
                     libcurl4:i386 \
