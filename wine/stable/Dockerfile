@@ -55,8 +55,6 @@ RUN             apt install -y \
                     libc++1 \
                     libc6-amd64 \
                     libc6-amd64:i386 \
-                    libc6 \
-                    libc6:i386 \
                     libcurl4 \
                     libcurl4-gnutls-dev:i386 \
                     libcurl4:i386 \
