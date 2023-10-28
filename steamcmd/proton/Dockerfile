@@ -108,6 +108,10 @@ RUN         apt update \
                     libstdc++6 \
                     libstdc++6:i386 \
                     libtcmalloc-minimal4 \
+                    libunwind \
+                    libunwind:i386 \
+                    libunwind-dev \
+                    libunwind-dev:i386 \
                     libtinfo6:i386 \
                     libxcomposite1 \
                     libxcursor1 \
