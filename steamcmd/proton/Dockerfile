@@ -16,7 +16,7 @@ RUN         apt update \
 
 RUN         apt update \
             && apt -y upgrade \
-            && apt -y install \
+            && apt -y install --no-install-recommends \
                     alsa-tools \
                     ca-certificates \
                     cabextract \
@@ -108,10 +108,6 @@ RUN         apt update \
                     libstdc++6 \
                     libstdc++6:i386 \
                     libtcmalloc-minimal4 \
-                    libunwind \
-                    libunwind:i386 \
-                    libunwind-dev \
-                    libunwind-dev:i386 \
                     libtinfo6:i386 \
                     libxcomposite1 \
                     libxcursor1 \
