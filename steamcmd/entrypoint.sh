@@ -19,13 +19,22 @@ INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 export INTERNAL_IP
 
 # Information output
-echo -e "${BLUE}-------------------------------------------------${NC}"
-echo -e "${RED}SteamCMD Image by gOOvER${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}"
-echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
-echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
-echo -e "${YELLOW}DotNet Version: ${RED} $(dotnet --version) ${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}"
+if [ -f "/usr/local/bin/proton" ]; then
+    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${RED}SteamCMD Proton  Image by gOOvER${NC}"
+    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
+    echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
+    echo -e "${BLUE}-------------------------------------------------${NC}"
+else
+    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${RED}SteamCMD Image by gOOvER${NC}"
+    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
+    echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
+    echo -e "${YELLOW}DotNet Version: ${RED} $(dotnet --version) ${NC}"
+    echo -e "${BLUE}-------------------------------------------------${NC}"
+fi
 
 # Set environment for Steam Proton
 if [ -f "/usr/local/bin/proton" ]; then
@@ -33,10 +42,7 @@ if [ -f "/usr/local/bin/proton" ]; then
 	    mkdir -p /home/container/.steam/steam/steamapps/compatdata/${SRCDS_APPID}
         export STEAM_COMPAT_CLIENT_INSTALL_PATH="/home/container/.steam/steam"
         export STEAM_COMPAT_DATA_PATH="/home/container/.steam/steam/steamapps/compatdata/${SRCDS_APPID}"
-        #protontricks
-        #export STEAM_DIR="/home/container/.steam/steam"
         export WINETRICKS="/usr/sbin/winetricks"
-        #export STEAM_RUNTIME=1
 
     else
         echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
