@@ -44,6 +44,7 @@ RUN             apt install -y \
                     winbind \
                     xauth \
                     xvfb \
+                    lib32gcc-s1-amd64-cross \
                     libgcc-s1-amd64-cross \
                     lib32stdc++6 \
                     lib32tinfo6 \
