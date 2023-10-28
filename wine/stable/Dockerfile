@@ -45,9 +45,7 @@ RUN             apt install -y \
                     xauth \
                     xvfb \
                     lib32gcc-s1-amd64-cross \
-                    lib32gcc-s1-amd64-cross:i386 \
                     libgcc-s1-amd64-cross \
-                    libgcc-s1-amd64-cross:i386 \
                     lib32stdc++6 \
                     lib32tinfo6 \
                     lib32z1 \
