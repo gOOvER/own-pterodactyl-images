@@ -12,57 +12,105 @@ RUN         dpkg --add-architecture i386
 
 RUN         apt update \
             && apt -y install software-properties-common curl \
-            && curl -o /etc/apt/sources.list https://gist.githubusercontent.com/hakerdefo/5e1f51fa93ff37871b9ff738b05ba30f/raw/7b5a0ff76b7f963c52f2b33baa20d8c4033bce4d/sources.list
+            && curl -o /etc/apt/sources.list https://gist.githubusercontent.com/gOOvER/0629311f86cbacc718a7ef2dee913454/raw/26fa9f1039323b4e3af0dc1c0e8299b7c83bc848/sources.list
 
 RUN         apt update \
             && apt -y upgrade \
             && apt -y install \
-					curl \
                     alsa-tools \
+                    ca-certificates \
                     cabextract \
+                    curl \
                     dbus \
+                    dirmngr \
+                    g++ \
+                    gcc \
+                    gdb \
+                    gettext \
+                    git \
                     gnupg \
                     gnupg2 \
                     gnutls-bin \
-                    libgstreamer1.0-0 \
-                    libgstreamer1.0-dev \
                     gstreamer1.0-tools \
                     iproute2 \
-					locales \
+                    jq \
+                    locales \
+                    mesa-utils \
+                    net-tools \
                     netcat-openbsd \
                     numactl \
+                    psmisc \
                     pulseaudio \
+                    python3 \
+                    python3-dev \
                     python3-full \
                     python3-pip \
                     python3-setuptools \
+                    sed \
+                    speex:i386 \
+                    tar \
+                    telnet \
+                    tini \
+                    tzdata \
                     wget \
                     winbind \
                     xauth \
                     xvfb \
                     lib32gcc-s1-amd64-cross \
-                    libgcc-s1-amd64-cross \
                     lib32stdc++6 \
                     lib32tinfo6 \
                     lib32z1 \
                     libao-common \
                     libasound2 \
+                    libatk1.0-0 \
+                    libatomic1 \
+                    libc++-dev \
+                    libc++1 \
+                    libc6 \
+                    libc6:i386 \
+                    libcurl3-gnutls \
                     libcurl3-gnutls:i386 \
+                    libcurl4 \
                     libcurl4-gnutls-dev:i386 \
+                    libcurl4:i386 \
+                    libfontconfig \
                     libfreetype6 \
                     libfreetype6:i386 \
+                    libgcc-s1-amd64-cross \
                     libgcc1 \
+                    libgconf-2-4 \
                     libgdiplus \
+                    libgdiplus \
+                    libgstreamer1.0-0 \
+                    libgstreamer1.0-dev \
+                    libgtk2.0-0:i386 \
                     libncurses5-dev:i386 \
                     libncurses5:i386 \
                     libncurses6 \
-                    libntlm0 \
-                    libnss3 \
                     libnss-wrapper \
+                    libnss3 \
+                    libntlm0 \
+                    libpangocairo-1.0-0 \
                     libpulse-dev \
                     libpulse0 \
+                    libsdl1.2debian \
+                    libsdl1.2debian:i386 \
+                    libsdl2-2.0-0 \
                     libsdl2-2.0-0:i386 \
+                    libssl3 \
+                    libssl3:i386 \
                     libssl3:i386 libcurl4:i386 \
-                    libtinfo6:i386 
+                    libstdc++6 \
+                    libstdc++6:i386 \
+                    libtcmalloc-minimal4 \
+                    libtinfo6:i386 \
+                    libxcomposite1 \
+                    libxcursor1 \
+                    libxdamage1 \
+                    libxi6 \
+                    libxrandr2 \
+                    libxss1 \
+                    libxtst6 
 
 #RUN         echo steam steam/question select "I AGREE" | debconf-set-selections
 #RUN         apt install -y steam
