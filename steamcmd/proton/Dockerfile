@@ -32,6 +32,7 @@ RUN         apt update \
                     gnupg2 \
                     gnutls-bin \
                     gstreamer1.0-tools \
+                    gstreamer1.0-tools:i386 \
                     iproute2 \
                     jq \
                     locales \
@@ -80,9 +81,10 @@ RUN         apt update \
                     libgcc1 \
                     libgconf-2-4 \
                     libgdiplus \
-                    libgdiplus \
                     libgstreamer1.0-0 \
                     libgstreamer1.0-dev \
+                    libgstreamer1.0-0:i386 \
+                    libgstreamer1.0-dev:i386 \
                     libgtk2.0-0:i386 \
                     libncurses5-dev:i386 \
                     libncurses5:i386 \
