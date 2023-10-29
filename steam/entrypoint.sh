@@ -18,17 +18,14 @@ export TZ
 INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 export INTERNAL_IP
 
-echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-echo -e "${RED}SteamCMD Proton-GE  Image by gOOvER${NC}"
-echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-echo -e "${YELLOW}Running on:${NC}"
-echo -e "$(hostnamectl | grep Operating System)"
-echo -e "$(hostnamectl | grep Kernel)"
-echo -e "$(hostnamectl | grep Architecture)"
-echo -e "$(hostnamectl | grep Virtualization)"
-echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
-echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${RED}SteamCMD Proton-GE  Image by gOOvER${NC}"
+    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
+    echo -e "${YELLOW}Hostsystem Kernel: ${RED} $(uname -r)${NC}"
+    echo -e "$(lscpu | grep "Hypervisor vendor")"
+        echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
+    echo -e "${BLUE}-------------------------------------------------${NC}"
 
 # Set environment for Steam Proton
 if [ ! -z ${SRCDS_APPID} ]; then

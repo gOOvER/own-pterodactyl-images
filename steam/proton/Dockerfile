@@ -46,7 +46,6 @@ RUN         apt install -y --no-install-recommends  \
                 python3-venv \
                 pipx \
                 software-properties-common \
-                systemd \
                 tar \
                 tini \
                 wget \
