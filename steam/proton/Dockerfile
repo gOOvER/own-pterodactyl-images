@@ -39,11 +39,12 @@ RUN         apt install -y --no-install-recommends  \
                 libpulse0 \
                 locales \
                 numactl \
-                protontricks \
                 pulseaudio \
                 python3 \
                 python3-pip \
                 python3-setuptools \
+                python3-venv \
+                pipx \
                 software-properties-common \
                 tar \
                 tini \
@@ -66,6 +67,9 @@ RUN         dbus-uuidgen --ensure
 # Set up Winetricks
 RUN	    wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
             && chmod +x /usr/sbin/winetricks
+
+# Install Protontricks
+RUN     pipx install protontricks
 
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
