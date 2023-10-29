@@ -75,15 +75,10 @@ ENV         LANGUAGE en_US:en
 ENV         LC_ALL en_US.UTF-8
 
 ## install rcon
-#RUN         cd /tmp/ \
-#            && curl -sSL https://github.com/gorcon/rcon-cli/releases/download/v0.10.3/rcon-0.10.3-amd64_linux.tar.gz > rcon.tar.gz \
-#            && tar xvf rcon.tar.gz \
-#            && mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/
 RUN         cd /tmp/
-RUN         VER=$(curl --silent -qI https://github.com/gorcon/rcon-cli/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}'); \
-            curl -sSL https://github.com/gorcon/rcon-cli/releases/download/$VER/rcon-{$VER}-amd64_linux.tar.gz > rcon.tar.gz \
-            && tar xvf rcon.tar.gz \
-            && mv rcon-{$VER}-amd64_linux/rcon /usr/local/bin/
+RUN         curl -sLOJ $(curl -s https://api.github.com/repos/gorcon/rcon-cli/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep amd64_linux.tar.gz)
+RUN         tar -xzf rcon-*.tar.gz -C /usr/local/bin/ --strip-components=1
+RUN         rm rcon-*.*
             
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container
