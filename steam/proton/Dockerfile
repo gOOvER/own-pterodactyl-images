@@ -17,36 +17,40 @@ RUN         apt update \
 RUN         apt update \
             && apt -y upgrade
 RUN         apt install -y --no-install-recommends  \
-                wget \
-                iproute2 \
-                gnupg2 \
-                software-properties-common \
-                libntlm0 \
-                winbind \
-                xvfb \
-                xauth \
-                libncurses5-dev:i386 \
-                libncurses6 \
-                dbus \
-                libgdiplus \
-                lib32gcc-s1 \
                 alsa-tools \
-                libpulse0 \
-                pulseaudio \
-                libpulse-dev \
-                libasound2 \
-                libao-common \
-                gnutls-bin \
-                gnupg \
-                locales \
-                numactl \
                 cabextract \
                 curl \
+                curl \
+                dbus \
+                ffmpeg \
+                git \
+                gnupg \
+                gnupg2 \
+                gnutls-bin \
+                iproute2 \
+                lib32gcc-s1 \
+                libao-common \
+                libasound2 \
+                libgdiplus \
+                libncurses5-dev:i386 \
+                libncurses6 \
+                libntlm0 \
+                libpulse-dev \
+                libpulse0 \
+                locales \
+                numactl \
+                protontricks \
+                pulseaudio \
                 python3 \
                 python3-pip \
                 python3-setuptools \
-                protontricks \
-                tini
+                software-properties-common \
+                tar \
+                tini \
+                wget \
+                winbind \
+                xauth \
+                xvfb
 
 # Download Proton GE
 RUN         curl -sLOJ $(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep .tar.gz)
@@ -71,11 +75,16 @@ ENV         LANGUAGE en_US:en
 ENV         LC_ALL en_US.UTF-8
 
 ## install rcon
-RUN         cd /tmp/ \
-            && curl -sSL https://github.com/gorcon/rcon-cli/releases/download/v0.10.3/rcon-0.10.3-amd64_linux.tar.gz > rcon.tar.gz \
+#RUN         cd /tmp/ \
+#            && curl -sSL https://github.com/gorcon/rcon-cli/releases/download/v0.10.3/rcon-0.10.3-amd64_linux.tar.gz > rcon.tar.gz \
+#            && tar xvf rcon.tar.gz \
+#            && mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/
+RUN         cd /tmp/
+RUN         VER=$(curl --silent -qI https://github.com/gorcon/rcon-cli/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}'); \
+            && curl -sSL https://github.com/gorcon/rcon-cli/releases/download/$VER/rcon-{$VER}-amd64_linux.tar.gz > rcon.tar.gz \
             && tar xvf rcon.tar.gz \
-            && mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/
-
+            && mv rcon-{$VER}-amd64_linux/rcon /usr/local/bin/
+            
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container
 USER        container
