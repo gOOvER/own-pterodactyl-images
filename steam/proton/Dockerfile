@@ -48,6 +48,7 @@ RUN         apt install -y --no-install-recommends  \
                 software-properties-common \
                 tar \
                 tini \
+                virt-what \
                 wget \
                 winbind \
                 xauth \
