@@ -81,7 +81,7 @@ ENV         LC_ALL en_US.UTF-8
 #            && mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/
 RUN         cd /tmp/
 RUN         VER=$(curl --silent -qI https://github.com/gorcon/rcon-cli/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}'); \
-            && curl -sSL https://github.com/gorcon/rcon-cli/releases/download/$VER/rcon-{$VER}-amd64_linux.tar.gz > rcon.tar.gz \
+            curl -sSL https://github.com/gorcon/rcon-cli/releases/download/$VER/rcon-{$VER}-amd64_linux.tar.gz > rcon.tar.gz \
             && tar xvf rcon.tar.gz \
             && mv rcon-{$VER}-amd64_linux/rcon /usr/local/bin/
             
