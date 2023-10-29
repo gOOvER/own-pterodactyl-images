@@ -77,7 +77,7 @@ ENV         LC_ALL en_US.UTF-8
 ## install rcon
 RUN         cd /tmp/
 RUN         curl -sLOJ $(curl -s https://api.github.com/repos/gorcon/rcon-cli/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep amd64_linux.tar.gz)
-RUN         tar -xzf rcon-*.tar.gz -C /usr/local/bin/ --strip-components=1
+RUN         tar -xzf rcon-*.tar.gz rcon -C /usr/local/bin/ --strip-components=1
 RUN         rm rcon-*.*
             
 ## Setup user and working directory
