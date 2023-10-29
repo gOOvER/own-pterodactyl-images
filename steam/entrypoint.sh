@@ -23,7 +23,6 @@ echo -e "${BLUE}-------------------------------------------------${NC}"
     echo -e "${BLUE}-------------------------------------------------${NC}"
     echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
     echo -e "${YELLOW}Kernel: ${RED} $(uname -r)${NC}"
-    echo -e "${YELLOW}Virtualization: ${RED} $(virt-what)${NC}"
     echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
     echo -e "${BLUE}-------------------------------------------------${NC}"
 
