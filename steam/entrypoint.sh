@@ -57,6 +57,7 @@ else
     echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
 fi    
 
+sleep 2
 
 # Switch to the container's working directory
 cd /home/container || exit 1
