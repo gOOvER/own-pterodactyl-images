@@ -24,7 +24,7 @@ echo -e "${BLUE}-------------------------------------------------${NC}"
     echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
     echo -e "${YELLOW}Hostsystem Kernel: ${RED} $(uname -r)${NC}"
     echo -e "$(lscpu | grep "Hypervisor vendor")"
-        echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
+    echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
     echo -e "${BLUE}-------------------------------------------------${NC}"
 
 # Set environment for Steam Proton
