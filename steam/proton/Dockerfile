@@ -46,9 +46,6 @@ RUN         apt install -y --no-install-recommends  \
                 python3-pip \
                 python3-setuptools \
                 protontricks \
-                libnss-wrapper \
-                libnss-wrapper:i386 \
-                libnss3 \
                 tini
 
 # Download Proton GE
@@ -78,13 +75,6 @@ RUN         cd /tmp/ \
             && curl -sSL https://github.com/gorcon/rcon-cli/releases/download/v0.10.3/rcon-0.10.3-amd64_linux.tar.gz > rcon.tar.gz \
             && tar xvf rcon.tar.gz \
             && mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/
-
-## Prepare NSS Wrapper for the entrypoint as a workaround for games requiring a valid UID
-ENV         NSS_WRAPPER_PASSWD=/tmp/passwd NSS_WRAPPER_GROUP=/tmp/group
-RUN         touch ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
-            && chgrp 0 ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
-            && chmod g+rw ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP}
-ADD         passwd.template /passwd.template
 
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container
