@@ -91,6 +91,7 @@ RUN             apt install -y --no-install-recommends \
                     libxss1 \
                     libxtst6
             
+RUN             rm -rf /var/lib/apt/lists/*
 
 # Install wine and with recommends
 RUN             mkdir -pm755 /etc/apt/keyrings
