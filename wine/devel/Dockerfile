@@ -5,6 +5,8 @@ LABEL           org.opencontainers.image.source="https://github.com/gOOvER/own-p
 LABEL           org.opencontainers.image.licenses=MIT
 
 ## install required packages
+ARG             DEBIAN_FRONTEND=noninteractive
+COPY            sources.list /etc/apt/sources.list
 RUN             dpkg --add-architecture i386
 RUN             apt update
 RUN             apt -y upgrade
