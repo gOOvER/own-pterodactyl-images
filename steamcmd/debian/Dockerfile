@@ -4,8 +4,13 @@ LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
 LABEL       org.opencontainers.image.licenses=MIT
 
-ENV         DEBIAN_FRONTEND=noninteractive
+# Insert Steam prompt answers
+SHELL       ["/bin/bash", "-o", "pipefail", "-c"]
+RUN         echo steam steam/question select "I AGREE" | debconf-set-selections \
+                && echo steam steam/license note '' | debconf-set-selections
 
+# Update the repository and install needed packages
+ARG         DEBIAN_FRONTEND=noninteractive
 RUN         dpkg --add-architecture i386
 RUN         apt update \ 
             && apt -y upgrade
@@ -35,6 +40,7 @@ RUN         apt install -y \
                     python3-pip \
                     sed \
                     speex:i386 \
+                    steamcmd \
                     tar \
                     telnet \
                     tini \
@@ -115,6 +121,12 @@ RUN         touch ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
             && chgrp 0 ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
             && chmod g+rw ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP}
 ADD         passwd.template /passwd.template
+
+# Create symlink for executable
+RUN         ln -s /usr/games/steamcmd /usr/bin/steamcmd
+
+# Update SteamCMD and verify latest version
+RUN         steamcmd +quit
 
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container
