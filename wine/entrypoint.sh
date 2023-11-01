@@ -122,10 +122,9 @@ for trick in $WINETRICKS_RUN; do
         winetricks -q $trick
 done
 
-# Replace variables in the startup command
-PARSED=$(echo -e "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g' | eval echo "$(cat -)")
-printf "%s%s\n" "$IMAGE_PROMPT" "$PARSED"
+# Replace Startup Variables
+MODIFIED_STARTUP=$(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
+echo ":/home/container$ ${MODIFIED_STARTUP}"
 
-# Run the startup command
-# shellcheck disable=SC2086
-eval env ${PARSED}
+# Run the Server
+eval ${MODIFIED_STARTUP}
