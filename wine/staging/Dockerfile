@@ -36,6 +36,7 @@ RUN             apt install -y --no-install-recommends \
                     python3-dev \
                     python3-pip \
                     sed \
+                    sqlite3 \
                     software-properties-common \
                     speex:i386 \
                     tar \
@@ -98,7 +99,7 @@ RUN             mkdir -pm755 /etc/apt/keyrings
 RUN             wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
 RUN             wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
 RUN             apt update
-RUN             apt install --install-recommends winehq-staging cabextract fonts-wine libwine libwine-dev wine64 wine32 wine64-tools -y
+RUN             apt install --install-recommends winehq-staging cabextract wine-binfmt -y
 
 # Set up Winetricks
 RUN	            wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks

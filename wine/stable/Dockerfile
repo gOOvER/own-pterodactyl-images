@@ -36,6 +36,7 @@ RUN             apt install -y \
                     python3-dev \
                     python3-pip \
                     sed \
+                    sqlite3 \
                     software-properties-common \
                     speex:i386 \
                     tar \
