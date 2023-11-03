@@ -11,6 +11,7 @@ RUN         echo steam steam/question select "I AGREE" | debconf-set-selections 
 
 # Update the repository and install needed packages
 ARG         DEBIAN_FRONTEND=noninteractive
+COPY        sources.list /etc/apt/sources.list
 RUN         dpkg --add-architecture i386
 RUN         apt update \ 
             && apt -y upgrade
