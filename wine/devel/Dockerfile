@@ -48,6 +48,7 @@ RUN             apt install -y --no-install-recommends \
                     xauth \
                     xvfb \
                     lib32gcc-s1 \
+                    libgcc-s1 \
                     lib32stdc++6 \
                     lib32tinfo6 \
                     lib32z1 \
@@ -68,9 +69,6 @@ RUN             apt install -y --no-install-recommends \
                     libncurses5-dev:i386 \
                     libncurses5:i386 \
                     libncurses6 \
-                    libnss-wrapper \
-                    libnss-wrapper:i386 \
-                    libnss3 \
                     libntlm0 \
                     libpangocairo-1.0-0 \
                     libpulse-dev \

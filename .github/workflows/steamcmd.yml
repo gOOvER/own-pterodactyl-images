@@ -24,7 +24,6 @@ jobs:
         distro:
           - debian
           - ubuntu
-          - proton
           - parker
     
     steps:
