@@ -11,84 +11,62 @@ RUN             dpkg --add-architecture i386
 RUN             apt update
 RUN             apt -y upgrade
 RUN             apt install -y --no-install-recommends \
-                    alsa-tools \
+                    apt-transport-https \
+                    binutils \
                     ca-certificates \
+                    cabextract \
                     curl \
-                    dbus \
-                    dirmngr \
+                    ffmpeg \
                     g++ \
                     gcc \
                     gdb \
                     git \
-                    git-lfs \
-                    gnupg \
                     gnupg2 \
-                    gnutls-bin \
+                    icu-devtools \
                     iproute2 \
-                    jq \
                     locales \
-                    mesa-utils \
                     net-tools \
                     netcat-openbsd \
                     numactl \
-                    psmisc \
+                    procps \
                     python3 \
-                    python3-dev \
-                    python3-pip \
-                    sed \
-                    sqlite3 \
+                    rapidjson-dev \
                     software-properties-common \
-                    speex:i386 \
+                    sqlite3 \
                     tar \
                     telnet \
                     tini \
                     tzdata \
+                    unzip \
                     wget \
                     winbind \
                     xauth \
                     xvfb \
-                    lib32gcc-s1 \
-                    libgcc-s1 \
-                    lib32stdc++6 \
-                    lib32tinfo6 \
-                    lib32z1 \
-                    libao-common \
-                    libasound2 \
-                    libatk1.0-0 \
-                    libc++1 \
-                    libc6:i386 \
-                    libcurl4 \
-                    libcurl4-gnutls-dev:i386 \
-                    libcurl4:i386 \
-                    libfontconfig1 \
+                    xz-utils \
+                    zip \
+                    libatomic1 \
+                    libc++-dev \
+                    libc6 \
+                    libduktape207 \
+                    libevent-dev \
+                    libfluidsynth3 \
+                    libfontconfig \
                     libgcc1 \
-                    libgconf-2-4 \
-                    libgdiplus \
-                    libgdiplus \
-                    libgtk2.0-0:i386 \
-                    libncurses5-dev:i386 \
-                    libncurses5:i386 \
-                    libncurses6 \
+                    libicu72 \
+                    liblua5.4-0 \
+                    liblzo2-2 \
+                    libmariadbclient-dev-compat \
+                    libncurses6:i386 \
                     libntlm0 \
-                    libpangocairo-1.0-0 \
-                    libpulse-dev \
+                    libprotobuf32 \
                     libsdl1.2debian \
-                    libsdl1.2debian:i386 \
                     libsdl2-2.0-0 \
                     libsdl2-2.0-0:i386 \
-                    libssl3 \
-                    libssl3:i386 \
+                    libsqlite3-dev \
                     libstdc++6 \
-                    libstdc++6:i386 \
-                    libtcmalloc-minimal4 \
-                    libtinfo6:i386 \
-                    libxcomposite1 \
-                    libxcursor1 \
-                    libxdamage1 \
-                    libxi6 \
-                    libxrandr2 \
-                    libxss1 \
-                    libxtst6
+                    libunwind8 \
+                    libz-dev \
+                    libzip4
             
 RUN             rm -rf /var/lib/apt/lists/*
 
