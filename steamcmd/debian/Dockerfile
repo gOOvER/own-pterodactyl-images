@@ -16,7 +16,7 @@ RUN         dpkg --add-architecture i386
 RUN         apt update \ 
             && apt -y upgrade
 
-RUN         apt install -y \
+RUN         apt install -y --install-recommends \
                     ca-certificates \
                     curl \
                     dbus \
@@ -68,6 +68,8 @@ RUN         apt install -y \
                     libgconf-2-4 \
                     libgdiplus \
                     libgtk2.0-0:i386 \
+                    libjemalloc2 \
+                    libjemalloc2:i386 \
                     libnss3 \
                     libnss-wrapper \
                     libpangocairo-1.0-0 \
@@ -75,6 +77,8 @@ RUN         apt install -y \
                     libpulse0 \
                     libsdl1.2debian \
                     libsdl1.2debian:i386 \
+                    libsdl1.2-compat \
+                    libsdl1.2-compat:i386 \
                     libsdl2-2.0-0 \
                     libsdl2-2.0-0:i386 \
                     libssl3 \
