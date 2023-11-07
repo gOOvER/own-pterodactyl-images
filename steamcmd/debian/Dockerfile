@@ -28,7 +28,6 @@ RUN         apt install -y \
                     git \
                     gnupg \
                     iproute2 \
-                    iproute2 \
                     jq \
                     locales \
                     mesa-utils \
@@ -41,14 +40,13 @@ RUN         apt install -y \
                     python3-pip \
                     sed \
                     speex:i386 \
-                    steamcmd \
                     tar \
                     telnet \
                     tini \
                     tzdata \
                     wget \
-                    lib32gcc-s1-amd64-cross \
-                    libgcc-s1-amd64-cross \
+                    lib32gcc-s1 \
+                    libgcc-s1 \
                     lib32stdc++6 \
                     lib32tinfo6 \
                     lib32z1 \
@@ -61,8 +59,9 @@ RUN         apt install -y \
                     libc6:i386 \
                     libcurl3-gnutls \
                     libcurl3-gnutls:i386 \
-                    libcurl4 \
+                    libcurl4-gnutls-dev \
                     libcurl4-gnutls-dev:i386 \
+                    libcurl4 \
                     libcurl4:i386 \
                     libfontconfig \
                     libgcc1 \
@@ -83,6 +82,7 @@ RUN         apt install -y \
                     libstdc++6 \
                     libstdc++6:i386 \
                     libtcmalloc-minimal4 \
+                    libtcmalloc-minimal4:i386 \
                     libtinfo6:i386 \
                     libxcomposite1 \
                     libxcursor1 \
@@ -122,12 +122,6 @@ RUN         touch ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
             && chgrp 0 ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
             && chmod g+rw ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP}
 ADD         passwd.template /passwd.template
-
-# Create symlink for executable
-RUN         ln -s /usr/games/steamcmd /usr/bin/steamcmd
-
-# Update SteamCMD and verify latest version
-RUN         steamcmd +quit
 
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container
