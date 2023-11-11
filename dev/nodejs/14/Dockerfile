@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH node:14-bullseye
+FROM        --platform=$TARGETOS/$TARGETARCH node:14-bullseye-slim
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
