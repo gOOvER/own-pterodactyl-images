@@ -19,7 +19,7 @@ RUN         apt -y install --no-install-recommends \
 				ffmpeg \
                 g++ \
                 git \
-                gpg \
+                gnupg \
                 gnupg2 \
                 iproute2 \
                 iputils-ping \
