@@ -22,9 +22,12 @@ jobs:
       fail-fast: false
       matrix:
         tag:
+          - 12
+          - 14
           - 16
           - 18
           - 20
+          - 21
     
     steps:
       - uses: actions/checkout@v4

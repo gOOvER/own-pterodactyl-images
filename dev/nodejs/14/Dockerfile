@@ -1,8 +1,8 @@
-FROM        --platform=$TARGETOS/$TARGETARCH node:20-bookworm-slim
+FROM        --platform=$TARGETOS/$TARGETARCH node:14-bullseye
 
-LABEL           author="Torsten Widmann" maintainer="info@goover.de"
-LABEL           org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL           org.opencontainers.image.licenses=MIT
+LABEL       author="Torsten Widmann" maintainer="info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.licenses=MIT
 
 ARG         DEBIAN_FRONTEND=noninteractive
 COPY        sources.list /etc/apt/sources.list
@@ -20,8 +20,6 @@ RUN         apt -y install --no-install-recommends \
 				ffmpeg \
                 g++ \
                 git \
-                gpg \
-                gnupg2 \
                 iproute2 \
                 iputils-ping \
                 libtool \
@@ -34,13 +32,7 @@ RUN         apt -y install --no-install-recommends \
 				libnss3 \
                 libsqlite3-dev
 
-# updating npm 
-RUN         npm install npm@latest -g
 RUN         npm install -g typescript ts-node
-
-# install pnpm
-RUN         corepack enable
-RUN         corepack prepare pnpm@latest --activate
 
 # add Yarn
 RUN         curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \

@@ -4,11 +4,6 @@ LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
 LABEL       org.opencontainers.image.licenses=MIT
 
-# Insert Steam prompt answers
-SHELL       ["/bin/bash", "-o", "pipefail", "-c"]
-RUN         echo steam steam/question select "I AGREE" | debconf-set-selections \
-                && echo steam steam/license note '' | debconf-set-selections
-
 # Update the repository and install needed packages
 ARG         DEBIAN_FRONTEND=noninteractive
 COPY        sources.list /etc/apt/sources.list
