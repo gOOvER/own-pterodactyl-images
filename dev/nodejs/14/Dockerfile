@@ -5,7 +5,6 @@ LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-ptero
 LABEL       org.opencontainers.image.licenses=MIT
 
 ARG         DEBIAN_FRONTEND=noninteractive
-COPY        sources.list /etc/apt/sources.list
 
 RUN         apt update \
              && apt -y upgrade
@@ -23,6 +22,7 @@ RUN         apt -y install --no-install-recommends \
                 iproute2 \
                 iputils-ping \
                 libtool \
+                locales \
                 python3 \
                 python3-dev \
                 sqlite3 \
