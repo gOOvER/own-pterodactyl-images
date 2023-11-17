@@ -1,15 +1,15 @@
 FROM        --platform=$TARGETOS/$TARGETARCH node:21-bookworm-slim
 
-LABEL           author="Torsten Widmann" maintainer="info@goover.de"
-LABEL           org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL           org.opencontainers.image.licenses=MIT
+LABEL       author="Torsten Widmann" maintainer="info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.licenses=MIT
 
 ARG         DEBIAN_FRONTEND=noninteractive
 
 RUN         apt update \
              && apt -y upgrade
 
-RUN         apt -y install --no-install-recommends \
+RUN         apt -y install \
                 autoconf \
                 automake \
                 build-essential \

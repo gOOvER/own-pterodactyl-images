@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH node:12-bullseye-slim
+FROM    debian:bookworm-slim
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
@@ -9,38 +9,19 @@ ARG         DEBIAN_FRONTEND=noninteractive
 RUN         apt update \
              && apt -y upgrade
 
-RUN         apt -y install --no-install-recommends \
-                autoconf \
-                automake \
-                build-essential \
-                ca-certificates\
-                curl \
-                dnsutils \
-				ffmpeg \
-                g++ \
-                git \
-                gnupg \
-                gnupg2 \
+RUN         apt install -y \
+                apt-transport-https \
                 iproute2 \
-                iputils-ping \
-                libtool \
-                locales \
-                python3 \
-                python3-dev \
                 sqlite3 \
-                tzdata \
                 tini \
-                zip \
-				libnss3 \
-                libsqlite3-dev
+                wget
 
-RUN         npm install -g typescript ts-node
-
-# add Yarn
-RUN         curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-            && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
-            && apt update \
-            && apt -y install yarn
+## add dotnet repos
+RUN         wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
+            && dpkg -i packages-microsoft-prod.deb \
+            && rm packages-microsoft-prod.deb \
+            && apt update -y \
+            && apt install -y dotnet-sdk-8.0 libgdiplus
 
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \

@@ -99,8 +99,8 @@ RUN         apt update -y \
                 && rm packages-microsoft-prod.deb \
                 && apt update -y \
                 && apt install -y \
-                    aspnetcore-runtime-7.0 \
-                    dotnet-sdk-7.0
+                    aspnetcore-runtime-8.0 \
+                    dotnet-sdk-8.0
 
 ## install rcon
 RUN         cd /tmp/ \

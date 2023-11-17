@@ -26,7 +26,9 @@ jobs:
           - '6-sdk'
           - '7'
           - '7-sdk'
-
+          - '8'
+          - '8-sdk'
+          
     steps:
       - uses: actions/checkout@v4
       
