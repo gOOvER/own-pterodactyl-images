@@ -12,6 +12,7 @@ RUN         apt update \
 RUN         apt install -y \
                 apt-transport-https \
                 iproute2 \
+                locales \
                 sqlite3 \
                 tini \
                 wget
