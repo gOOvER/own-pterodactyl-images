@@ -36,7 +36,7 @@ RUN         apt -y install --no-install-recommends \
 
 # updating npm 
 RUN         npm install npm@latest -g
-RUN         npm install typescript ts-node @types/node --location=global
+RUN         npm install tsc typescript ts-node @types/node --location=global
 
 # install pnpm
 RUN         corepack enable
