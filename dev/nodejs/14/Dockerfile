@@ -34,7 +34,7 @@ RUN         apt -y install --no-install-recommends \
 				libnss3 \
                 libsqlite3-dev
 
-RUN         npm install -g typescript ts-node
+RUN         npm install typescript ts-node @types/node --location=global
 
 # add Yarn
 RUN         curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
