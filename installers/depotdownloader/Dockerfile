@@ -18,6 +18,7 @@ RUN         apt install -y \
                     g++ \
                     gcc \
                     gdb \
+                    gpg \
                     gettext \
                     git \
                     gnupg \
@@ -41,6 +42,7 @@ RUN         apt install -y \
                     tzdata \
                     wget \
                     unzip \
+                    libgcc-s1 \
                     lib32gcc-s1 \
                     lib32stdc++6 \
                     lib32tinfo6 \
@@ -62,8 +64,7 @@ RUN         apt install -y \
                     libgconf-2-4 \
                     libgdiplus \
                     libgtk2.0-0:i386 \
-                    libnss3 \
-                    libnss-wrapper \
+                    libicu72 \
                     libpangocairo-1.0-0 \
                     libpulse-dev \
                     libpulse0 \
@@ -83,17 +84,17 @@ RUN         apt install -y \
                     libxi6 \
                     libxrandr2 \
                     libxss1 \
-                    libxtst6
+                    libxtst6 \
+                    zlib1g
 
-## install dotnet to support STEAM dotnet games
-RUN         apt update -y \
-                && apt upgrade -y \
-                && wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
-                && dpkg -i packages-microsoft-prod.deb \
-                && rm packages-microsoft-prod.deb \
-                && apt update -y \
-                && apt install -y \
+## add dotnet repos
+RUN         wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
+            && dpkg -i packages-microsoft-prod.deb \
+            && rm packages-microsoft-prod.deb \
+            && apt update -y \
+            && apt install -y \
                     aspnetcore-runtime-6.0 \
+                    libgdiplus \
                     dotnet-sdk-6.0
 
 RUN         curl -sLOJ $(curl -s https://api.github.com/repos/SteamRE/DepotDownloader/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep linux-x64.zip)

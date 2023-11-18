@@ -5,7 +5,7 @@ LABEL           org.opencontainers.image.source="https://github.com/gOOvER/own-p
 LABEL           org.opencontainers.image.licenses=MIT
 
 ## update base packages
-ENV             DEBIAN_FRONTEND noninteractive
+ARG             DEBIAN_FRONTEND noninteractive
 RUN         	dpkg --add-architecture i386
 RUN             apt update \
                 && apt -y upgrade
@@ -20,7 +20,6 @@ RUN		 		apt install -y --no-install-recommends \
 						unzip \
 						wget \
 						lib32gcc-s1 \
-						lib64gcc-s1 \
 						libcurl4 \
 						libcurl4:i386 \
 						libcurl4-gnutls-dev \
