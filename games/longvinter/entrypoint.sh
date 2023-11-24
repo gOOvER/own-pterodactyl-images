@@ -110,8 +110,58 @@ else
     echo -e "${BLUE}---------------------------------------------------------------${NC}"
 fi
 
+## updating mods
+if [ -z ${MODS_UPDATE} ] || [ "${MODS_UPDATE}" == "1" ]; then
+    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${YELLOW}updating mods...${NC}"
+    echo -e "${BLUE}-------------------------------------------------${NC}"
+
+STEAMSERVERID=1635450
+
+GAMEMODDIR=./mods
+GAMEMODLIST=${GAMEMODDIR}/modlist.txt
+
+cd /home/container
+
+if [ ! -f ./modlist.txt ]; then
+    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${YELLOW}found no modlist.txt. creating one...${NC}"
+    echo -e "${BLUE}-------------------------------------------------${NC}"
+    touch ./modlist.txt
+    echo -e "${GREEN}[DONE]${NC}"
+fi
+
+# Clear server modlist so we don't end up with duplicates
+echo "" > ${GAMEMODLIST}
+MODS=$(awk '{print $1}' ./modlist.txt)
+
+MODCMD="./steamcmd/steamcmd.sh +login anonymous"
+for MODID in ${MODS}
+do
+    echo "Adding $MODID to update list..."
+    MODCMD="${MODCMD} +workshop_download_item ${STEAMSERVERID} ${MODID}"
+done
+MODCMD="${MODCMD} +quit"
+${MODCMD}
+
+echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${YELLOW}linking mods...${NC}"
+echo -e "${BLUE}-------------------------------------------------${NC}"
+mkdir -p ${GAMEMODDIR}
+# make dir to prevent errors
+mkdir -p /home/container/Steam/steamapps/workshop
+
+for MODID in ${MODS}
+do
+    echo -e "${BLUE}Linking ${NC}${RED}$MODID${NC}"
+    MODDIR=/home/container/Steam/steamapps/workshop/content/${STEAMSERVERID}/${MODID}/
+    find "${MODDIR}" -iname '*.pak' >> ${GAMEMODLIST}
+done
+fi
+echo -e "${GREEN}[DONE]${NC}"
+
 # Replace Startup Variables
-MODIFIED_STARTUP=$(echo ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
+MODIFIED_STARTUP=$(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
 echo -e ":/home/container$ ${MODIFIED_STARTUP}"
 
 # Run the Server
