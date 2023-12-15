@@ -33,7 +33,6 @@ else
     echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
     echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
     echo -e "${YELLOW}DotNet Version: ${RED} $(dotnet --version) ${NC}"
-    echo -e "${YELLOW}DotNet Info: ${RED} $(dotnet --info) ${NC}"
     echo -e "${BLUE}-------------------------------------------------${NC}"
 fi
 
