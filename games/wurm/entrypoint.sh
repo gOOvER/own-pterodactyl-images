@@ -23,7 +23,7 @@ export IMAGE_PROMPT
 echo -e "${BLUE}-------------------------------------------------${NC}"
 echo -e "${YELLOW}Running on Debian $(cat /etc/debian_version)${NC}"
 echo -e "${YELLOW}Current timezone: $(cat /etc/timezone)${NC}"
-echo -e "${YELLOW}Java Version:${NC} ${RED} $(java --version)${NC}"
+echo -e "${YELLOW}Java Version:${NC} ${RED} $(java -version)${NC}"
 echo -e "${BLUE}-------------------------------------------------${NC}"
 
 # Set environment variable that holds the Internal Docker IP
