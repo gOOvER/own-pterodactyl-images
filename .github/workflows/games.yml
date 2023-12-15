@@ -23,6 +23,7 @@ jobs:
       matrix:
         game:
           - altv
+          - bannerlord
           - conan
           - dayz
           - interstellarrift
