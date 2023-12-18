@@ -73,6 +73,11 @@ RUN         echo "deb [signed-by=/etc/apt/keyrings/adoptium.asc] https://package
 RUN         apt update
 RUN         apt install temurin-8-jdk -y
 
+ENV         DISPLAY=:0
+ENV         DISPLAY_WIDTH=1024
+ENV         DISPLAY_HEIGHT=768
+ENV         DISPLAY_DEPTH=16         
+
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container
 USER        container
