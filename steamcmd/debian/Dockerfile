@@ -18,6 +18,7 @@ RUN         apt install -y --install-recommends \
                     dirmngr \
                     g++ \
                     gcc \
+                    gcc-12-base \
                     gdb \
                     gettext \
                     git \
@@ -34,6 +35,7 @@ RUN         apt install -y --install-recommends \
                     python3-dev \
                     python3-pip \
                     sed \
+                    software-properties-common \
                     speex:i386 \
                     tar \
                     telnet \
@@ -41,9 +43,9 @@ RUN         apt install -y --install-recommends \
                     tzdata \
                     wget \
                     lib32gcc-s1 \
-                    libgcc-s1 \
                     lib32stdc++6 \
                     lib32tinfo6 \
+                    libtinfo6:i386 \
                     lib32z1 \
                     libasound2 \
                     libatk1.0-0 \
@@ -54,26 +56,27 @@ RUN         apt install -y --install-recommends \
                     libc6:i386 \
                     libcurl3-gnutls \
                     libcurl3-gnutls:i386 \
+                    libcurl4 \
                     libcurl4-gnutls-dev \
                     libcurl4-gnutls-dev:i386 \
-                    libcurl4 \
                     libcurl4:i386 \
                     libfontconfig \
+                    libgcc-s1 \
                     libgcc1 \
                     libgconf-2-4 \
                     libgdiplus \
                     libgtk2.0-0:i386 \
                     libjemalloc2 \
                     libjemalloc2:i386 \
-                    libnss3 \
                     libnss-wrapper \
+                    libnss3 \
                     libpangocairo-1.0-0 \
                     libpulse-dev \
                     libpulse0 \
-                    libsdl1.2debian \
-                    libsdl1.2debian:i386 \
                     libsdl1.2-compat \
                     libsdl1.2-compat:i386 \
+                    libsdl1.2debian \
+                    libsdl1.2debian:i386 \
                     libsdl2-2.0-0 \
                     libsdl2-2.0-0:i386 \
                     libssl3 \
