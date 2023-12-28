@@ -14,6 +14,7 @@ RUN     apt update \
 RUN     apt -y install \
                 git \
                 iproute2 \
+                locales \
                 net-tools \
                 netcat-openbsd \
                 tini
