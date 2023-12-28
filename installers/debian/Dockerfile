@@ -11,11 +11,14 @@ RUN             apt update \
                 && apt -y upgrade
 
 RUN		 		apt install -y --no-install-recommends \
+						build-essential \
 						ca-certificates \
 						curl \
 						git \
 						git-lfs \
 						jq \
+						python3 \
+						python3-pip \
 						tar \
 						unzip \
 						wget \
