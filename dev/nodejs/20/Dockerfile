@@ -32,7 +32,12 @@ RUN         apt -y install --no-install-recommends \
                 tini \
                 zip \
 				libnss3 \
-                libsqlite3-dev
+                libsqlite3-dev \
+                libcairo2-dev \ 
+                libpango1.0-dev \
+                libjpeg-dev \
+                libgif-dev \
+                librsvg2-dev
 
 # updating npm 
 RUN         npm install npm@latest -g
