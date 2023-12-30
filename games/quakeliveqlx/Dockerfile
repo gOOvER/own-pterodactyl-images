@@ -115,7 +115,8 @@ RUN         cd /tmp/ \
             && mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/
 
 ##python redis
-RUN         pip install redis zmq requests --no-input --break-system-packages
+RUN         wget https://github.com/MinoMino/minqlx-plugins/raw/master/requirements.txt
+RUN         pip install -r requirements.txt --break-system-packages
 
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
