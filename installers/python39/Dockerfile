@@ -18,9 +18,6 @@ RUN		 		apt install -y --no-install-recommends \
 						git-lfs \
 						jq \
 						locales \
-						python3 \
-                    	python3-dev \
-                    	python3-pip \
 						tar \
 						unzip \
 						wget \
