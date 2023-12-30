@@ -114,6 +114,9 @@ RUN         cd /tmp/ \
             && tar xvf rcon.tar.gz \
             && mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/
 
+##python redis
+RUN         pip install redis --no-input --break-system-packages
+
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
             locale-gen

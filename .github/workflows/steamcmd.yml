@@ -26,7 +26,6 @@ jobs:
           - ubuntu
           - parker
           - notini
-          - python39
     
     steps:
       - uses: actions/checkout@v4
