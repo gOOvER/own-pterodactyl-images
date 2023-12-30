@@ -1,4 +1,4 @@
-FROM        --platform=$BUILDPLATFORM debian:bookworm-slim
+FROM        --platform=$BUILDPLATFORM python:3.9-slim-bookworm
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
@@ -101,16 +101,6 @@ RUN         apt update -y \
                 && apt install -y \
                     aspnetcore-runtime-8.0 \
                     dotnet-sdk-8.0
-
-## Python 3.9
-RUN         wget https://www.python.org/ftp/python/3.9.18/Python-3.9.18.tar.gz
-RUN         tar -xf Python-3.9.18.tar.gz
-RUN         mv Python-3.9.18 /usr/local/share/python3.9
-RUN         cd /usr/local/share/python3.9
-RUN         ./configure --enable-optimizations --enable-shared
-RUN         make
-RUN         make altinstall
-RUN         ldconfig /usr/local/share/python3.9
 
 ## install Mono
 RUN         gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
