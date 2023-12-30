@@ -27,6 +27,7 @@ jobs:
           - depotdownloader
           - nodejs
           - python
+          - python39
           - ubuntu
     
     steps:
