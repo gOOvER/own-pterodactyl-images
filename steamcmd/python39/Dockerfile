@@ -103,8 +103,8 @@ RUN         apt update -y \
                     dotnet-sdk-8.0
 
 ## Python 3.9
-RUN         wget https://www.python.org/ftp/python/3.9.18/Python-3.9.18.tar.xz
-RUN         tar -xf Python-3.9.18.tar.xz
+RUN         wget https://www.python.org/ftp/python/3.9.18/Python-3.9.18.tar.gz
+RUN         tar -xf Python-3.9.18.tar.gz
 RUN         mv Python-3.9.18 /usr/local/share/python3.9
 RUN         cd /usr/local/share/python3.9
 RUN         ./configure --enable-optimizations --enable-shared
