@@ -1,14 +1,15 @@
-FROM    --platform=$TARGETOS/$TARGETARCH debian:bookworm-slim
+FROM            --platform=$TARGETOS/$TARGETARCH debian:bookworm-slim
 
-LABEL   author="Torsten Widmann" maintainer="info@goover.de"
-LABEL   org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL   org.opencontainers.image.licenses=MIT
+LABEL           author="Torsten Widmann" maintainer="info@goover.de"
+LABEL           org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL           org.opencontainers.image.licenses=MIT
 
-ENV     DEBIAN_FRONTEND noninteractive
+ARG             DEBIAN_FRONTEND=noninteractive
+COPY            sources.list /etc/apt/sources.list
 
 ## update base packages
-RUN     apt update \
-        && apt -y upgrade
+RUN             apt update \
+                && apt -y upgrade
 
 ## Install dependencies
 RUN           apt install -y \
@@ -17,6 +18,7 @@ RUN           apt install -y \
                     cabextract \
                     curl \
                     ffmpeg \
+                    file \
                     g++ \
                     gcc \
                     gdb \
@@ -25,6 +27,7 @@ RUN           apt install -y \
                     gnupg2 \
                     icu-devtools \
                     iproute2 \
+                    jq \
 					locales \
                     net-tools \
                     netcat-openbsd \
