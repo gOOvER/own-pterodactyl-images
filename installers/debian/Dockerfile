@@ -14,6 +14,7 @@ RUN		 		apt install -y --no-install-recommends \
 						build-essential \
 						ca-certificates \
 						curl \
+						file \
 						git \
 						git-lfs \
 						jq \
