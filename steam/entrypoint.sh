@@ -18,13 +18,14 @@ export TZ
 INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 export INTERNAL_IP
 
-echo -e "${BLUE}-------------------------------------------------${NC}"
-    echo -e "${RED}SteamCMD Proton-GE  Image by gOOvER${NC}"
-    echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+    echo -e "${RED}SteamCMD Proton-GE Image by gOOvER${NC}"
+    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
     echo -e "${YELLOW}Kernel: ${RED} $(uname -r)${NC}"
     echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
-    echo -e "${BLUE}-------------------------------------------------${NC}"
+    eche -e "${YELLOW}Proton Version: ${RED} $(cat /usr/local/bin/version)${NC}"
+    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
 
 # Set environment for Steam Proton
 if [ ! -z ${SRCDS_APPID} ]; then
@@ -42,16 +43,17 @@ else
     exit 0
 fi
 
-# dependency check TODO
-if [ -f "/usr/local/bin/rcon" ]; then
-    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-    echo -e "${GREEN}RCON-CLI is installed ${NC}"
-    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-else
-    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-    echo -e "${RED}RCON-CLI is NOT installed${NC}"
-    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-fi    
+#TODO
+# dependency check
+#if [ -f "/usr/local/bin/rcon" ]; then
+#    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+#    echo -e "${GREEN}RCON-CLI is installed ${NC}"
+#    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+#else
+#    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+#    echo -e "${RED}RCON-CLI is NOT installed${NC}"
+#    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+#fi    
 
 sleep 2
 
@@ -59,7 +61,7 @@ sleep 2
 cd /home/container || exit 1
 
 echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-echo -e "${GREEN}Starting Server.... Please wait...${NC}"
+echo -e "${GREEN}SteamCMD updating Server... Please wait...${NC}"
 echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
 
 ## just in case someone removed the defaults.
@@ -82,29 +84,35 @@ if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
     # Update Source Server
     if [ ! -z ${SRCDS_APPID} ]; then
 	    if [ "${STEAM_USER}" == "anonymous" ]; then
-            ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +app_update ${SRCDS_APPID} $( [[ -z ${SRCDS_BETAID} ]] || printf %s "-beta ${SRCDS_BETAID}" ) $( [[ -z ${SRCDS_BETAPASS} ]] || printf %s "-betapassword ${SRCDS_BETAPASS}" ) $( [[ -z ${HLDS_GAME} ]] || printf %s "+app_set_config 90 mod ${HLDS_GAME}" ) $( [[ -z ${VALIDATE} ]] || printf %s "validate" ) +quit
+            ./steamcmd.sh +force_install_dir /mnt/server +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) $( [[ "${STEAM_SDK}" == "1" ]] && printf %s '+app_update 1007' ) +app_update ${SRCDS_APPID} $( [[ -z ${SRCDS_BETAID} ]] || printf %s "-beta ${SRCDS_BETAID}" ) $( [[ -z ${SRCDS_BETAPASS} ]] || printf %s "-betapassword ${SRCDS_BETAPASS}" ) ${INSTALL_FLAGS} validate +quit
 	    else
-            numactl --physcpubind=+0 ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +app_update ${SRCDS_APPID} $( [[ -z ${SRCDS_BETAID} ]] || printf %s "-beta ${SRCDS_BETAID}" ) $( [[ -z ${SRCDS_BETAPASS} ]] || printf %s "-betapassword ${SRCDS_BETAPASS}" ) $( [[ -z ${HLDS_GAME} ]] || printf %s "+app_set_config 90 mod ${HLDS_GAME}" ) $( [[ -z ${VALIDATE} ]] || printf %s "validate" ) +quit
+            numactl --physcpubind=+0 ./steamcmd.sh +force_install_dir /mnt/server +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) $( [[ "${STEAM_SDK}" == "1" ]] && printf %s '+app_update 1007' ) +app_update ${SRCDS_APPID} $( [[ -z ${SRCDS_BETAID} ]] || printf %s "-beta ${SRCDS_BETAID}" ) $( [[ -z ${SRCDS_BETAPASS} ]] || printf %s "-betapassword ${SRCDS_BETAPASS}" ) ${INSTALL_FLAGS} validate +quit
 	    fi
     else
         echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-        echo -e "${YELLOW}No appid set. Starting Server${NC}"
+        echo -e "${YELLOW}No appid set. Stopping Server${NC}"
         echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+        exit 0
     fi
 
 else
     echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-    echo -e "${YELLOW}Not updating game server as auto update was set to 0. Starting Server${NC}"
+    echo -e "${YELLOW}Not updating game server as auto update was set to 0.${NC}"
     echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
 fi
 
+# TODO
 # List and install other packages
-for trick in $PROTONTRICKS_RUN; do
-        echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-        echo -e "${YELLOW}Installing: ${NC} ${GREEN} $trick ${NC}"
-        echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-        protontricks ${SRCDS_APPID} $trick
-done
+#for trick in $PROTONTRICKS_RUN; do
+#        echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+#        echo -e "${YELLOW}Installing: ${NC} ${GREEN} $trick ${NC}"
+#        echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+#        protontricks ${SRCDS_APPID} $trick
+#done
+
+echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+echo -e "${GREEN}Starting Server.... Please wait...${NC}"
+echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
 
 # Replace Startup Variables
 MODIFIED_STARTUP=$(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
