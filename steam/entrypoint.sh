@@ -55,6 +55,8 @@ fi
 #    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
 #fi    
 
+if [ -f "/" ]; then
+
 sleep 2
 
 # Switch to the container's working directory
