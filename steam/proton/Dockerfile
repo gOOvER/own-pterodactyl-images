@@ -17,7 +17,6 @@ RUN         apt install -y --no-install-recommends  \
                 alsa-tools \
                 cabextract \
                 curl \
-                curl \
                 dbus \
                 ffmpeg \
                 git \
@@ -27,6 +26,9 @@ RUN         apt install -y --no-install-recommends  \
                 iproute2 \
                 locales \
                 numactl \
+                mesa-utils \
+                net-tools \
+                netcat-openbsd \
                 pulseaudio \
                 python3 \
                 python3-pip \
@@ -44,6 +46,12 @@ RUN         apt install -y --no-install-recommends  \
                 lib32gcc-s1 \
                 libao-common \
                 libasound2 \
+                libsdl1.2debian \
+                libsdl1.2debian:i386 \
+                libsdl2-2.0-0 \
+                libsdl2-2.0-0:i386 \
+                libssl3 \
+                libssl3:i386 \
                 libgdiplus \
                 libncurses5-dev:i386 \
                 libncurses6 \
