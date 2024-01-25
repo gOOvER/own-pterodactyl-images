@@ -43,20 +43,6 @@ else
     exit 0
 fi
 
-#TODO
-# dependency check
-#if [ -f "/usr/local/bin/rcon" ]; then
-#    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-#    echo -e "${GREEN}RCON-CLI is installed ${NC}"
-#    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-#else
-#    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-#    echo -e "${RED}RCON-CLI is NOT installed${NC}"
-#    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-#fi    
-
-if [ -f "/" ]; then
-
 sleep 2
 
 # Switch to the container's working directory
@@ -102,15 +88,6 @@ else
     echo -e "${YELLOW}Not updating game server as auto update was set to 0.${NC}"
     echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
 fi
-
-# TODO
-# List and install other packages
-#for trick in $PROTONTRICKS_RUN; do
-#        echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-#        echo -e "${YELLOW}Installing: ${NC} ${GREEN} $trick ${NC}"
-#        echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-#        protontricks ${SRCDS_APPID} $trick
-#done
 
 echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
 echo -e "${GREEN}Starting Server.... Please wait...${NC}"
