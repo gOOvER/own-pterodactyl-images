@@ -24,7 +24,7 @@ echo -e "${BLUE}----------------------------------------------------------------
     echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
     echo -e "${YELLOW}Kernel: ${RED} $(uname -r)${NC}"
     echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
-    eche -e "${YELLOW}Proton Version: ${RED} $(cat /usr/local/bin/version)${NC}"
+    echo -e "${YELLOW}Proton Version: ${RED} $(cat /usr/local/bin/version)${NC}"
     echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
 
 # Set environment for Steam Proton
