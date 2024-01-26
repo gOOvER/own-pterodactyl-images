@@ -19,6 +19,7 @@ RUN         apt install -y --no-install-recommends  \
                 curl \
                 dbus \
                 ffmpeg \
+                file \
                 git \
                 gnupg \
                 gnupg2 \
