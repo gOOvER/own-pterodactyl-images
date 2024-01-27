@@ -31,6 +31,7 @@ RUN         apt install -y --no-install-recommends  \
                 mesa-utils \
                 net-tools \
                 netcat-openbsd \
+                openssl \
                 pulseaudio \
                 python3 \
                 python3-pip \
