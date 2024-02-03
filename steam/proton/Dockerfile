@@ -89,7 +89,9 @@ RUN         wget -q -O /usr/share/bash-completion/completions/winetricks https:/
 
 # Install Protontricks 
 RUN         pipx install protontricks
-RUN         find -name "protontricks"
+RUN         pipx ensurepath
+# Debug
+#RUN         find -name "protontricks"
 
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
