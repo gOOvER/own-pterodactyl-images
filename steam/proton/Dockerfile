@@ -90,6 +90,7 @@ RUN         wget -q -O /usr/share/bash-completion/completions/winetricks https:/
 # Install Protontricks 
 RUN         pipx install protontricks
 RUN         pipx ensurepath
+RUN         ln -s /root/.local/bin/protontricks /usr/sbin/protontricks
 # Debug
 #RUN         find -name "protontricks"
 
