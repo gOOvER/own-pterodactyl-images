@@ -81,7 +81,7 @@ RUN	        wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Wi
 
 # add flatpak repo and Install Protontricks
 RUN         flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-RUN         flatpak install flathub com.github.Matoking.protontricks
+RUN         flatpak -y install flathub com.github.Matoking.protontricks
 RUN         echo "alias protontricks='flatpak run com.github.Matoking.protontricks'" >> ~/.bashrc
 RUN         echo "alias protontricks-launch='flatpak run --command=protontricks-launch com.github.Matoking.protontricks'" >> ~/.bashrc
 
