@@ -21,7 +21,7 @@ RUN         apt install -y --no-install-recommends  \
                 dbus \
                 ffmpeg \
                 file \
-                flatpak \
+                #flatpak \
                 git \
                 gnupg \
                 gnupg2 \
@@ -47,6 +47,7 @@ RUN         apt install -y --no-install-recommends  \
                 winbind \
                 xauth \
                 xvfb \
+                yad \
                 lib32gcc-s1 \
                 libao-common \
                 libasound2 \
@@ -78,15 +79,16 @@ RUN         dbus-uuidgen --ensure
 # Set up Winetricks
 RUN	        wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
                 && chmod +x /usr/sbin/winetricks
+RUN         wget -q -O /usr/share/bash-completion/completions/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion
 
 # add flatpak repo and Install Protontricks
-RUN         flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-RUN         flatpak -y install flathub com.github.Matoking.protontricks
-RUN         echo "alias protontricks='flatpak run com.github.Matoking.protontricks'" >> ~/.bashrc
-RUN         echo "alias protontricks-launch='flatpak run --command=protontricks-launch com.github.Matoking.protontricks'" >> ~/.bashrc
+#RUN         flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+#RUN         flatpak -y install flathub com.github.Matoking.protontricks
+#RUN         echo "alias protontricks='flatpak run com.github.Matoking.protontricks'" >> ~/.bashrc
+#RUN         echo "alias protontricks-launch='flatpak run --command=protontricks-launch com.github.Matoking.protontricks'" >> ~/.bashrc
 
 # Install Protontricks 
-#RUN     pipx install protontricks
+RUN         pipx install protontricks
 
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
