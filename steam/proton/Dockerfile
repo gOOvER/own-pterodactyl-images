@@ -8,6 +8,10 @@ LABEL       org.opencontainers.image.description "STEAM Proton-GE Image to use w
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
 LABEL       org.opencontainers.image.licenses=MIT
 
+# Env Setup
+SHELL       [ "/bin/bash", "-c" ]
+
+# setup apt and install needed packages
 ARG         DEBIAN_FRONTEND=noninteractive
 COPY        sources.list /etc/apt/sources.list
 RUN         dpkg --add-architecture i386
