@@ -67,7 +67,22 @@ RUN         apt install -y --no-install-recommends  \
                 libncurses6 \
                 libntlm0 \
                 libpulse-dev \
-                libpulse0 
+                libpulse0 \
+                libgstreamer1.0-dev \
+                libgstreamer-plugins-base1.0-dev \
+                libgstreamer-plugins-bad1.0-dev \
+                gstreamer1.0-plugins-base \
+                gstreamer1.0-plugins-good \
+                gstreamer1.0-plugins-bad \
+                gstreamer1.0-plugins-ugly \
+                gstreamer1.0-libav \
+                gstreamer1.0-tools \
+                #gstreamer1.0-x \
+                gstreamer1.0-alsa \
+                gstreamer1.0-gl \
+                #gstreamer1.0-gtk3 \
+                #gstreamer1.0-qt5 \
+                gstreamer1.0-pulseaudio
 
 # Download Proton GE
 RUN         curl -sLOJ $(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep .tar.gz)
