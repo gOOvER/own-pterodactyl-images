@@ -98,7 +98,7 @@ for trick in $PROTONTRICKS_RUN; do
         echo -e "${BLUE}-------------------------------------------------${NC}"
         echo -e "${YELLOW}Installing: ${NC} ${GREEN} $trick ${NC}"
         echo -e "${BLUE}-------------------------------------------------${NC}"
-        protontricks ${SRCDS_APPID} $trick
+        flatpak run com.github.Matoking.protontricks ${SRCDS_APPID} $trick
 done
 
 # Replace Startup Variables
