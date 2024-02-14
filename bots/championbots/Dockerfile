@@ -4,25 +4,42 @@ LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
 LABEL       org.opencontainers.image.licenses=MIT
 
-## install basic reqs
-RUN         apt update \         
-            && apt install -y \
+# Update the repository and install needed packages
+ARG         DEBIAN_FRONTEND=noninteractive
+COPY        sources.list /etc/apt/sources.list
+RUN         dpkg --add-architecture i386
+RUN         apt update \ 
+            && apt -y upgrade
+RUN         apt -y install --no-install-recommends \
+                  autoconf \
+                  automake \
+                  build-essential \
                   ca-certificates \
                   curl \
+                  dnsutils \
                   ffmpeg \
+                  g++ \
                   git \
                   gnupg \
+                  gnupg2 \
                   iproute2 \
-                  libtool \
+                  iputils-ping \
+                  locales \
                   netcat \
+                  python3 \
+                  python3-dev \
                   software-properties-common \
+                  sqlite3 \
+                  tini \
                   tzdata \
-                  libsqlite3-dev \
+                  zip \
                   libcairo2-dev \ 
-                  libpango1.0-dev \
-                  libjpeg-dev \
                   libgif-dev \
-                  librsvg2-dev
+                  libnss3 \
+                  libpango1.0-dev \
+                  librsvg2-dev \
+                  libsqlite3-dev \
+                  libtool
 
 ## install nodejs & yarn
 RUN         mkdir -p /etc/apt/keyrings \
@@ -37,11 +54,23 @@ RUN         apt update \
 RUN         npm install npm@latest -g
 RUN         npm install -g typescript ts-node
 
-## add container user
-RUN         useradd -d /home/container -m container -s /bin/bash
+# Set the locale
+RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+            locale-gen
+ENV         LANG en_US.UTF-8  
+ENV         LANGUAGE en_US:en  
+ENV         LC_ALL en_US.UTF-8
+
+## Setup user and working directory
+RUN         useradd -m -d /home/container -s /bin/bash container
 USER        container
 ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
 
-COPY        ./entrypoint.sh /entrypoint.sh
-CMD         ["/bin/bash", "/entrypoint.sh"]
+# Sets the default stop signal as wings can (currently) only send a kill or generic stop
+STOPSIGNAL SIGINT
+
+COPY        --chown=container:container ../entrypoint.sh /entrypoint.sh
+RUN         chmod +x /entrypoint.sh
+ENTRYPOINT  ["/usr/bin/tini", "-g", "--"]
+CMD         ["/entrypoint.sh"]
