@@ -25,6 +25,7 @@ jobs:
           - bastion
           - championbots
           - corvin
+          - multibot
           - parkertron
           - red
           - sinusbot
