@@ -49,8 +49,13 @@ RUN         mkdir -p /etc/apt/keyrings \
 RUN         apt update \
                 && apt install -y nodejs yarn
 
+# updating npm 
 RUN         npm install npm@latest -g
-RUN         npm install -g typescript ts-node
+RUN         npm install tsc typescript ts-node @types/node --location=global
+
+# install pnpm
+RUN         corepack enable
+RUN         corepack prepare pnpm@latest --activate
 
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
