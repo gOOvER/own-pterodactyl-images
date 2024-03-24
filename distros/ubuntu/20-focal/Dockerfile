@@ -35,7 +35,6 @@ RUN             apt install -y \
                         xz-utils \
                         zip \
                         zlib1g \
-                        lib32gcc1 \
                         libatomic1 \
                         libc++-dev \
                         libc6 \
