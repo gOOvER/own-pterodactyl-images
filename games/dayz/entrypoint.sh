@@ -164,7 +164,7 @@ function ModsLowercase {
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     echo -e "\n\tMaking mod ${CYAN}$1${NC} files/folders lowercase..."
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-    for SRC in `find ./@$1 -depth`
+    for SRC in `find ./$1 -depth`
     do
         DST=`dirname "${SRC}"`/`basename "${SRC}" | tr '[A-Z]' '[a-z]'`
         if [ "${SRC}" != "${DST}" ]
