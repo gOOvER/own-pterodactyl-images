@@ -131,7 +131,7 @@ function RunSteamCMD { #[Input: int server=0 mod=1; int id]
 # Takes a directory (string) as input, and recursively makes all files & folders lowercase.
 function ModsLowercase {
     echo -e "\n\tMaking mod ${CYAN}$1${NC} files/folders lowercase..."
-    for SRC in `find ./$1 -depth`
+    for SRC in `find ./@$1 -depth`
     do
         DST=`dirname "${SRC}"`/`basename "${SRC}" | tr '[A-Z]' '[a-z]'`
         if [ "${SRC}" != "${DST}" ]
@@ -271,7 +271,7 @@ envsubst < /passwd.template > ${NSS_WRAPPER_PASSWD}
 export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnss_wrapper.so
 
 # Replace Startup Variables
-modifiedStartup=`eval echo $(echo ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')`
+modifiedStartup=`eval echo $(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')`
 
 # Start the Server
 echo -e "\n${GREEN}[STARTUP]:${NC} Starting server with the following startup command:"
