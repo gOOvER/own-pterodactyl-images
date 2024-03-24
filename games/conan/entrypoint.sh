@@ -10,10 +10,10 @@ cd /home/container
 
 # Information output
 echo
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}Conan Exile Docker Image with Mod Support${NC}"
 echo -e "${YELLOW}Copyright 2023 by gOOvER${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}" 
+echo -e "${BLUE}---------------------------------------------------------------------${NC}" 
 echo "Running on Debian $(cat /etc/debian_version)"
 echo "Current timezone: $(cat /etc/timezone)"
 wine --version
@@ -24,17 +24,17 @@ export INTERNAL_IP
 
 ## just in case someone removed the defaults.
 if [ "${STEAM_USER}" == "" ]; then
-    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}Steam user is not set.\n ${NC}"
     echo -e "${YELLOW}Using anonymous user.\n ${NC}"
-    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     STEAM_USER=anonymous
     STEAM_PASS=""
     STEAM_AUTH=""
 else
-    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}user set to ${STEAM_USER} ${NC}"
-    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 fi
 
 ## if auto_update is not set or to 1 update
@@ -47,9 +47,9 @@ if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
             numactl --physcpubind=+0 ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +app_update ${SRCDS_APPID} $( [[ -z ${SRCDS_BETAID} ]] || printf %s "-beta ${SRCDS_BETAID}" ) $( [[ -z ${SRCDS_BETAPASS} ]] || printf %s "-betapassword ${SRCDS_BETAPASS}" ) $( [[ -z ${HLDS_GAME} ]] || printf %s "+app_set_config 90 mod ${HLDS_GAME}" ) $( [[ -z ${VALIDATE} ]] || printf %s "validate" ) +quit
 	    fi
     else
-        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         echo -e "${YELLOW}No appid set. Starting Server${NC}"
-        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     fi
 else
     echo -e "${BLUE}---------------------------------------------------------------${NC}"
@@ -59,9 +59,9 @@ fi
 
 ## updating mods
 if [ -z ${MODS_UPDATE} ] || [ "${MODS_UPDATE}" == "1" ]; then
-    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}updating mods...${NC}"
-    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
 STEAMSERVERID=440900
 
@@ -71,9 +71,9 @@ GAMEMODLIST=${GAMEMODDIR}/modlist.txt
 cd /home/container
 
 if [ ! -f ./modlist.txt ]; then
-    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}found no modlist.txt. creating one...${NC}"
-    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     touch ./modlist.txt
     echo -e "${GREEN}[DONE]${NC}"
 fi
@@ -91,9 +91,9 @@ done
 MODCMD="${MODCMD} +quit"
 ${MODCMD}
 
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}linking mods...${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 mkdir -p ${GAMEMODDIR}
 # make dir to prevent errors
 mkdir -p /home/container/Steam/steamapps/workshop
@@ -121,9 +121,9 @@ mkdir -p $WINEPREFIX
 
 # Check if wine-gecko required and install it if so
 if [[ $WINETRICKS_RUN =~ gecko ]]; then
-        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         echo -e "${YELLOW}Installing Wine Gecko${NC}"
-        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         WINETRICKS_RUN=${WINETRICKS_RUN/gecko}
 
         if [ ! -f "$WINEPREFIX/gecko_x86.msi" ]; then
@@ -140,9 +140,9 @@ fi
 
 # Check if wine-mono required and install it if so
 if [[ $WINETRICKS_RUN =~ mono ]]; then
-        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         echo -e "${YELLOW}Installing Wine Mono${NC}"
-        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         WINETRICKS_RUN=${WINETRICKS_RUN/mono}
 
         if [ ! -f "$WINEPREFIX/mono.msi" ]; then
@@ -154,9 +154,9 @@ fi
 
 # List and install other packages
 for trick in $WINETRICKS_RUN; do
-        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         echo -e "${YELLOW}Installing: ${NC} ${GREEN} $trick ${NC}"
-        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         winetricks -q $trick
 done
 

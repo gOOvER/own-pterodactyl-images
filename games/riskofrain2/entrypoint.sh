@@ -66,9 +66,9 @@ mkdir -p $WINEPREFIX
 
 # Check if wine-gecko required and install it if so
 if [[ $WINETRICKS_RUN =~ gecko ]]; then
-        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         echo -e "${YELLOW}Installing Wine Gecko${NC}"
-        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         WINETRICKS_RUN=${WINETRICKS_RUN/gecko}
 
         if [ ! -f "$WINEPREFIX/gecko_x86.msi" ]; then
@@ -85,9 +85,9 @@ fi
 
 # Check if wine-mono required and install it if so
 if [[ $WINETRICKS_RUN =~ mono ]]; then
-        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         echo -e "${YELLOW}Installing Wine Mono${NC}"
-        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         WINETRICKS_RUN=${WINETRICKS_RUN/mono}
 
         if [ ! -f "$WINEPREFIX/mono.msi" ]; then
@@ -99,9 +99,9 @@ fi
 
 # List and install other packages
 for trick in $WINETRICKS_RUN; do
-        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         echo -e "${YELLOW}Installing: ${NC} ${GREEN} $trick ${NC}"
-        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         winetricks -q $trick
 done
 

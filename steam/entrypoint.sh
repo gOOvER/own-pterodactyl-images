@@ -95,9 +95,9 @@ echo -e "${BLUE}----------------------------------------------------------------
 
 # List and install other packages
 for trick in $PROTONTRICKS_RUN; do
-        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         echo -e "${YELLOW}Installing: ${NC} ${GREEN} $trick ${NC}"
-        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         flatpak run com.github.Matoking.protontricks ${SRCDS_APPID} $trick
 done
 

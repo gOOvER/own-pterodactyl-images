@@ -22,13 +22,13 @@ INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 export INTERNAL_IP
 
 # System informations
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${RED}NodeJS Image by gOOvER${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
 echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
 echo -e "${YELLOW}Dart Version: ${RED} $(dart --version) ${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
 # Convert all of the "{{VARIABLE}}" parts of the command into the expected shell
 # variable format of "${VARIABLE}" before evaluating the string and automatically

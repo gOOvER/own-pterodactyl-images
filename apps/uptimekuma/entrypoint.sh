@@ -22,14 +22,14 @@ INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 export INTERNAL_IP
 
 # system informations
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${RED}Uptime Kuma Image by gOOvER${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}Running on Alpine: ${RED} $(cat /etc/alpine-release)${NC}"
 echo -e "${YELLOW}Current timezone: ${RED} ${TZ} ${NC}"
 echo -e "${YELLOW}NodeJS Version: ${RED} $(node -v) ${NC}"
 echo -e "${YELLOW}Cloudflared Version: ${RED} $(/usr/bin/cloudflared --version) ${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
 # Replace Startup Variables
 MODIFIED_STARTUP=$(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')

@@ -9,16 +9,16 @@ NC='\033[0m'
 clear
 
 #show versions
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}CorvinBot Installation${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}MongoDB Version:${NC} " && mongod --version
 echo -e "${YELLOW}NodeJS Version:${NC} " && node -v
 echo -e "${YELLOW}NPM Version:${NC} " && npm -v
 echo -e "${YELLOW}Java Version:${NC} " && java -version
 echo -e "${YELLOW}Running on Debian:${NC} " && cat /etc/debian_version
 echo -e "${YELLOW}Current timezone:${NC} " && cat /etc/timezone
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
 cd /home/container
 
@@ -31,15 +31,15 @@ MODIFIED_STARTUP=$(echo -e $(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/
 echo -e "${YELLOW}:/home/container${NC} ${MODIFIED_STARTUP}"
 
 # start mongo
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}starting MongoDB...${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 mongod --fork --dbpath /home/container/mongodb/ --port 27017 --logpath /home/container/mongod.log --logRotate reopen --logappend && until nc -z -v -w5 127.0.0.1 27017; do echo 'Waiting for mongodb connection...'; sleep 5; done
 
 # Run the Server
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}starting CorvinBot${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 eval ${MODIFIED_STARTUP}
 
 # stop mongo

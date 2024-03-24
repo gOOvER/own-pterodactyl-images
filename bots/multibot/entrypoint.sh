@@ -22,32 +22,32 @@ INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 export INTERNAL_IP
 
 # system informations
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${RED}Multi-Bot Image by gOOvER${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}Running on: ${RED} $(. /etc/os-release ; echo $NAME $VERSION)${NC}"
 echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}NodeJS Version: ${RED} $(node -v) ${NC}"
 echo -e "${YELLOW}npm Version: ${RED} $(npm -v) ${NC}"
 echo -e "${YELLOW}yarn Version: ${RED} $(yarn --version) ${NC}"
 echo -e "${YELLOW}MongoDB Version: ${RED}$(mongod --version)${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
 # Replace Startup Variables
 MODIFIED_STARTUP=$(echo -e $(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g'))
 echo -e "${YELLOW}:/home/container${NC} ${MODIFIED_STARTUP}"
 
 # start mongo
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}starting MongoDB...${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 mongod --fork --dbpath /home/container/mongodb/ --port 27017 --logpath /home/container/mongod.log --logRotate reopen --logappend && until nc -z -v -w5 127.0.0.1 27017; do echo 'Waiting for mongodb connection...'; sleep 5; done
 
 # Run the Server
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}starting Multi-Bot${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 eval ${MODIFIED_STARTUP}
 
 # stop mongo

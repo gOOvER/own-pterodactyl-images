@@ -19,13 +19,13 @@ INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 export INTERNAL_IP
 
 # Information output
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${RED}SteamCMD Image by gOOvER${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
 echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
 echo -e "${YELLOW}DotNet Version: ${RED} $(dotnet --version) ${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
 # Set environment for Steam Proton
 if [ -f "/usr/local/bin/proton" ]; then
@@ -50,23 +50,23 @@ fi
 # Switch to the container's working directory
 cd /home/container || exit 1
 
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${GREEN}Starting Server.... Please wait...${NC}"
-echo -e "${BLUE}-------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
 ## just in case someone removed the defaults.
 if [ "${STEAM_USER}" == "" ]; then
-    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}Steam user is not set. ${NC}"
     echo -e "${YELLOW}Using anonymous user.${NC}"
-    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     STEAM_USER=anonymous
     STEAM_PASS=""
     STEAM_AUTH=""
 else
-    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}user set to ${STEAM_USER} ${NC}"
-    echo -e "${BLUE}-------------------------------------------------${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 fi
 
 ## if auto_update is not set or to 1 update
@@ -79,9 +79,9 @@ if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
             numactl --physcpubind=+0 DepotDownloader -dir /home/container -username ${STEAM_USER} -password ${STEAM_PASS} -remember-password $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) -app 1007 -app ${SRCDS_APPID} $( [[ -z ${SRCDS_BETAID} ]] || printf %s "-beta ${SRCDS_BETAID}" ) $( [[ -z ${SRCDS_BETAPASS} ]] || printf %s "-betapassword ${SRCDS_BETAPASS}" ) $( [[ -z ${VALIDATE} ]] || printf %s "-validate" )
 	    fi
     else
-        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         echo -e "${YELLOW}No appid set. Starting Server${NC}"
-        echo -e "${BLUE}-------------------------------------------------${NC}"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     fi
 
 else
