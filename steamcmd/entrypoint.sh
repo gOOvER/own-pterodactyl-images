@@ -78,7 +78,6 @@ fi
 export USER_ID=$(id -u)
 export GROUP_ID=$(id -g)
 envsubst < /passwd.template > ${NSS_WRAPPER_PASSWD}
-
 export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnss_wrapper.so
 
 # Replace Startup Variables
