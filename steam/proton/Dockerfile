@@ -101,15 +101,15 @@ RUN	        wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Wi
 RUN         wget -q -O /usr/share/bash-completion/completions/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion
 
 # add flatpak repo and Install Protontricks
-RUN         flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-RUN         flatpak -y install flathub com.github.Matoking.protontricks
-RUN         echo "alias protontricks='flatpak run com.github.Matoking.protontricks'" >> ~/.bashrc
-RUN         echo "alias protontricks-launch='flatpak run --command=protontricks-launch com.github.Matoking.protontricks'" >> ~/.bashrc
+#RUN         flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+#RUN         flatpak -y install flathub com.github.Matoking.protontricks
+#RUN         echo "alias protontricks='flatpak run com.github.Matoking.protontricks'" >> ~/.bashrc
+#RUN         echo "alias protontricks-launch='flatpak run --command=protontricks-launch com.github.Matoking.protontricks'" >> ~/.bashrc
 
 # Install Protontricks 
-RUN         pipx install protontricks
-RUN         pipx ensurepath
-RUN         ln -s /root/.local/bin/protontricks /usr/sbin/protontricks
+#RUN         pipx install protontricks
+#RUN         pipx ensurepath
+#RUN         ln -s /root/.local/bin/protontricks /usr/sbin/protontricks
 # Debug
 #RUN         find -name "protontricks"
 
