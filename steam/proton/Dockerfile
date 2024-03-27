@@ -107,9 +107,9 @@ RUN         echo "alias protontricks='flatpak run com.github.Matoking.protontric
 RUN         echo "alias protontricks-launch='flatpak run --command=protontricks-launch com.github.Matoking.protontricks'" >> ~/.bashrc
 
 # Install Protontricks 
-#RUN         pipx install protontricks
-#RUN         pipx ensurepath
-#RUN         ln -s /root/.local/bin/protontricks /usr/sbin/protontricks
+RUN         pipx install protontricks
+RUN         pipx ensurepath
+RUN         ln -s /root/.local/bin/protontricks /usr/sbin/protontricks
 # Debug
 #RUN         find -name "protontricks"
 
