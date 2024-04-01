@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH eclipse-temurin:16-jdk-jammy
+FROM        --platform=$TARGETOS/$TARGETARCH eclipse-temurin:22-jdk-jammy
 
 LABEL   	author="Torsten Widmann" maintainer="info@goover.de"
 LABEL   	org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
