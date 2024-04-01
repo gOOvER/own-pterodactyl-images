@@ -11,7 +11,7 @@ STEAMCMD_DIR="./steamcmd"                       # SteamCMD's directory containin
 WORKSHOP_DIR="./Steam/steamapps/workshop"       # SteamCMD's directory containing workshop downloads
 STEAMCMD_LOG="${STEAMCMD_DIR}/steamcmd.log"     # Log file for SteamCMD
 GAME_ID=107410                                  # SteamCMD ID for the Arma 3 GAME (not server). Only used for Workshop mod downloads.
-EGG_URL='https://github.com/parkervcp/eggs/tree/master/game_eggs/steamcmd_servers/arma/arma3'   # URL for Pterodactyl Egg & Info (only used as info to legacy users)
+EGG_URL='https://github.com/goover/eggs/tree/master/game_eggs/steamcmd_servers/arma/arma3'   # URL for Pterodactyl Egg & Info (only used as info to legacy users)
 
 # Color Codes
 CYAN='\033[0;36m'
