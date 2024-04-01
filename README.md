@@ -16,7 +16,7 @@ these images on an arm system, no modification to them or the tag is needed, the
 ## ➡️ NodeJS
 | Image              | Status                                                                                                                                                          | Description                                            |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `goover/nodejs` | [![build nodejs](https://github.com/goover/images/actions/workflows/nodejs_github.yml/badge.svg)](https://github.com/goover/images/actions/workflows/nodejs_github.yml) | NodeJS versions from `12` to `20`.
+| `goover/nodejs` | [![build nodejs](https://github.com/goover/images/actions/workflows/dev-nodejs.yml/badge.svg)](https://github.com/goover/images/actions/workflows/dev-node-js.yml) | NodeJS versions from `12` to `20`.
 
 | Image            | URI                                    | AMD64 | ARM64 |
 | ---------------- | -------------------------------------- | ------| ----- |
@@ -30,7 +30,7 @@ these images on an arm system, no modification to them or the tag is needed, the
 ## ➡️ GO
 | Image              | Status                                                                                                                                                          | Description                                            |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `goover/go` | [![build go ](https://github.com/goover/images/actions/workflows/nodejs_github.yml/badge.svg)](https://github.com/goover/images/actions/workflows/dev-go.yml) | GO versions from `1.14` to `1.22`.
+| `goover/go` | [![build go ](https://github.com/goover/images/actions/workflows/dev-go.yml/badge.svg)](https://github.com/goover/images/actions/workflows/dev-go.yml) | GO versions from `1.14` to `1.22`.
 
 | Image            | URI                                    | AMD64 | ARM64 |
 | ---------------- | -------------------------------------- | ------| ----- |
@@ -47,7 +47,7 @@ these images on an arm system, no modification to them or the tag is needed, the
 ## ➡️ Python
 | Image              | Status                                                                                                                                                          | Description                                            |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `goover/python` | [![build python ](https://github.com/goover/images/actions/workflows/nodejs_github.yml/badge.svg)](https://github.com/goover/images/actions/workflows/dev-python.yml) | Python versions from `3.7` to `3.11`.
+| `goover/python` | [![build python ](https://github.com/goover/images/actions/workflows/dev-python.yml/badge.svg)](https://github.com/goover/images/actions/workflows/dev-python.yml) | Python versions from `3.7` to `3.11`.
 
 | Image            | URI                                    | AMD64 | ARM64 |
 | ---------------- | -------------------------------------- | ------| ----- |
