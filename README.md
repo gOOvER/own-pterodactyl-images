@@ -17,7 +17,7 @@ periodically to ensure dependencies are always up-to-date.
 | `goover/nodejs` | [![build nodejs](https://github.com/goover/own-pterodactyl-images/actions/workflows/dev-nodejs.yml/badge.svg)](https://github.com/goover/own-pterodactyl-images/actions/workflows/dev-nodejs.yml) | NodeJS versions from `12` to `20`. |
 
 | Image            | URI                                    | AMD64 | ARM64 |
-| ---------------- | -------------------------------------- | ------| ----- |
+| ---------------- | :--------------------------------------: | :------:| :------: |
 | nodejs:12    | `ghcr.io/goover/nodejs:12` | ✅ | ✅ |
 | nodejs:14    | `ghcr.io/goover/nodejs:14` | ✅ | ✅ |
 | nodejs:16    | `ghcr.io/goover/nodejs:16` | ✅ | ✅ |
@@ -32,7 +32,7 @@ periodically to ensure dependencies are always up-to-date.
 | `goover/go` | [![build go ](https://github.com/goover/own-pterodactyl-images/actions/workflows/dev-go.yml/badge.svg)](https://github.com/goover/own-pterodactyl-images/actions/workflows/dev-go.yml) | GO versions from `1.14` to `1.22`. |
 
 | Image            | URI                                    | AMD64 | ARM64 |
-| ---------------- | -------------------------------------- | ------| ----- |
+| ---------------- | :--------------------------------------: | :------:| :------: |
 | go:1.14ㅤㅤ      | `ghcr.io/goover/go:1.14`ㅤ ㅤ           |  ✅  |   ✅  |
 | go:1.15 ㅤㅤ     | `ghcr.io/goover/go:1.15`ㅤ ㅤ           |  ✅  |   ✅  |
 | go:1.16   ㅤㅤ   | `ghcr.io/goover/go:1.16`ㅤㅤ  | ✅ | ✅ |
@@ -50,7 +50,7 @@ periodically to ensure dependencies are always up-to-date.
 | `goover/python` | [![build python ](https://github.com/goover/own-pterodactyl-images/actions/workflows/dev-python.yml/badge.svg)](https://github.com/goover/own-pterodactyl-images/actions/workflows/dev-python.yml) | Python versions from `3.7` to `3.11`. |
 
 | Image            | URI                                    | AMD64 | ARM64 |
-| ---------------- | -------------------------------------- | ------| ----- |
+| ---------------- | :--------------------------------------: | :------:| :------: |
 | python:3.7ㅤ   | `ghcr.io/goover/images:python_3.7`  |  |  |
 | python:3.8ㅤ   | `ghcr.io/goover/images:python_3.8`  |  |  |
 | python:3.9 ㅤ  | `ghcr.io/goover/images:python_3.9`  |  |  |
