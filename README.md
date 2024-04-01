@@ -7,14 +7,14 @@ periodically to ensure dependencies are always up-to-date.
 ---
 
 > [!NOTE]
-> You can view all images available here: https://github.com/goover/images/pkgs/container/images
+> You can view all images available here: https://github.com/goover/own-pterodactyl-images/pkgs/container/images
 
 ## ➡️ Image usage uris
 
 ## ➡️ NodeJS
 | Image              | Status                                                                                                                                                          | Description                                            |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `goover/nodejs` | [![build nodejs](https://github.com/goover/images/actions/workflows/dev-nodejs.yml/badge.svg)](https://github.com/goover/images/actions/workflows/dev-node-js.yml) | NodeJS versions from `12` to `20`. |
+| `goover/nodejs` | [![build nodejs](https://github.com/goover/own-pterodactyl-images/actions/workflows/dev-nodejs.yml/badge.svg)](https://github.com/goover/own-pterodactyl-images/actions/workflows/dev-nodejs.yml) | NodeJS versions from `12` to `20`. |
 
 | Image            | URI                                    | AMD64 | ARM64 |
 | ---------------- | -------------------------------------- | ------| ----- |
@@ -29,7 +29,7 @@ periodically to ensure dependencies are always up-to-date.
 ## ➡️ GO
 | Image              | Status                                                                                                                                                          | Description                                            |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `goover/go` | [![build go ](https://github.com/goover/images/actions/workflows/dev-go.yml/badge.svg)](https://github.com/goover/images/actions/workflows/dev-go.yml) | GO versions from `1.14` to `1.22`. |
+| `goover/go` | [![build go ](https://github.com/goover/own-pterodactyl-images/actions/workflows/dev-go.yml/badge.svg)](https://github.com/goover/own-pterodactyl-images/actions/workflows/dev-go.yml) | GO versions from `1.14` to `1.22`. |
 
 | Image            | URI                                    | AMD64 | ARM64 |
 | ---------------- | -------------------------------------- | ------| ----- |
@@ -47,7 +47,7 @@ periodically to ensure dependencies are always up-to-date.
 ## ➡️ Python
 | Image              | Status                                                                                                                                                          | Description                                            |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `goover/python` | [![build python ](https://github.com/goover/images/actions/workflows/dev-python.yml/badge.svg)](https://github.com/goover/images/actions/workflows/dev-python.yml) | Python versions from `3.7` to `3.11`. |
+| `goover/python` | [![build python ](https://github.com/goover/own-pterodactyl-images/actions/workflows/dev-python.yml/badge.svg)](https://github.com/goover/own-pterodactyl-images/actions/workflows/dev-python.yml) | Python versions from `3.7` to `3.11`. |
 
 | Image            | URI                                    | AMD64 | ARM64 |
 | ---------------- | -------------------------------------- | ------| ----- |
