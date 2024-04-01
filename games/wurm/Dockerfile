@@ -2,7 +2,7 @@ FROM        --platform=$BUILDPLATFORM debian:bullseye-slim
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 
-ENV         DEBIAN_FRONTEND=noninteractive
+ARG         DEBIAN_FRONTEND=noninteractive
 
 RUN         dpkg --add-architecture i386
 RUN         apt update

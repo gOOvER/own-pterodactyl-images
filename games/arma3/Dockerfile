@@ -6,7 +6,7 @@ LABEL       org.opencontainers.image.source="https://github.com/parkervcp/yolks"
 LABEL       org.opencontainers.image.licenses=MIT
 
 ## Update base packages and install dependencies
-ENV         DEBIAN_FRONTEND=noninteractive
+ARG         DEBIAN_FRONTEND=noninteractive
 RUN         dpkg --add-architecture i386 \
             && apt-get update \
             && apt-get upgrade -y \

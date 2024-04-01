@@ -1,10 +1,10 @@
 FROM        --platform=$TARGETOS/$TARGETARCH ubuntu:jammy
 
-LABEL   author="Torsten Widmann" maintainer="info@goover.de"
-LABEL   org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL   org.opencontainers.image.licenses=MIT
+LABEL       author="Torsten Widmann" maintainer="info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.licenses=MIT
 
-ENV         DEBIAN_FRONTEND=noninteractive
+ARG         DEBIAN_FRONTEND=noninteractive
 
 RUN 		apt update -y
 RUN         apt -y upgrade
@@ -41,10 +41,11 @@ ENV         LANGUAGE en_US:en
 ENV         LC_ALL en_US.UTF-8 
 
 ## Setup user and working directory
-RUN     useradd -m -d /home/container -s /bin/bash container
-USER    container
-ENV     USER=container HOME=/home/container
-WORKDIR /home/container
+RUN         useradd -m -d /home/container -s /bin/bash container
+USER        container
+ENV         USER=container HOME=/home/container
+WORKDIR     /home/container
 
 COPY        ./../entrypoint.sh /entrypoint.sh
 CMD         [ "/bin/bash", "/entrypoint.sh" ]
+

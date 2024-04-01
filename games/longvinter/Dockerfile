@@ -7,7 +7,7 @@ LABEL       org.opencontainers.image.licenses=MIT
 # Sets the default stop signal as wings can (currently) only send a kill or generic stop
 STOPSIGNAL SIGINT
 
-ENV         DEBIAN_FRONTEND=noninteractive
+ARG         DEBIAN_FRONTEND=noninteractive
 
 RUN         dpkg --add-architecture i386
 RUN         apt update \ 
