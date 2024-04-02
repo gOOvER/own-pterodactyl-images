@@ -29,6 +29,7 @@ RUN         apk add --no-cache \
                 py3-pip \
                 python3 \
                 python3-dev \
+                pipx \
                 sqlite \
                 tzdata \
                 zip \
@@ -47,7 +48,7 @@ RUN         if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCHITECTURE=amd64; e
 RUN         chmod +x /usr/bin/cloudflared
 
 # install apprise
-RUN         pip install apprise
+RUN         pipx install apprise
 
 # Set the locale
 #RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
