@@ -30,7 +30,6 @@ echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}NodeJS Version: ${RED} $(node -v) ${NC}"
 echo -e "${YELLOW}npm Version: ${RED} $(npm -v) ${NC}"
-echo -e "${YELLOW}yarn Version: ${RED} $(yarn --version) ${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
 # Replace Startup Variables
