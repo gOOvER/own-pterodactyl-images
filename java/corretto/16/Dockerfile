@@ -31,7 +31,7 @@ RUN         apt install -y \
 RUN         wget -O- -q https://apt.corretto.aws/corretto.key | apt-key add -
 RUN         add-apt-repository 'deb https://apt.corretto.aws stable main'
 RUN         apt update
-RUN         apt install -y java-21-amazon-corretto-jdk
+RUN         apt install -y java-16-amazon-corretto-jdk
 
 ## configure locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
