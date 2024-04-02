@@ -49,7 +49,6 @@ RUN         chmod +x /usr/bin/cloudflared
 
 # install apprise
 RUN         pipx install apprise
-RUN         pipx ensurepath
 
 # Set the locale
 #RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
