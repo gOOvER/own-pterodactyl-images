@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH ubuntu:jammy
+FROM        --platform=$TARGETOS/$TARGETARCH debian:bullseye-slim
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
