@@ -22,8 +22,10 @@ RUN         apk add --no-cache \
                 gnupg \
                 iproute2 \
                 iputils-ping \
-                locales \
                 libtool \
+                musl \
+                musl-utils \
+                musl-locales \
                 py3-pip \
                 python3 \
                 python3-dev \
@@ -48,11 +50,11 @@ RUN         chmod +x /usr/bin/cloudflared
 RUN         pip install apprise
 
 # Set the locale
-RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
-            locale-gen
-ENV         LANG en_US.UTF-8  
-ENV         LANGUAGE en_US:en  
-ENV         LC_ALL en_US.UTF-8
+#RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+#            locale-gen
+#ENV         LANG en_US.UTF-8  
+#ENV         LANGUAGE en_US:en  
+#ENV         LC_ALL en_US.UTF-8
 
 ## Setup user and working directory
 RUN         adduser -D -h /home/container container -s /bin/bash container
