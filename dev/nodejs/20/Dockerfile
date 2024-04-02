@@ -44,6 +44,7 @@ RUN         npm install npm@latest -g
 RUN         npm install tsc typescript ts-node @types/node --location=global
 
 # install pnpm
+RUN         npm install -g corepack
 RUN         corepack enable
 RUN         corepack prepare pnpm@latest --activate
 
