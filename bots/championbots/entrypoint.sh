@@ -31,7 +31,7 @@ echo -e "${BLUE}----------------------------------------------------------------
 echo -e "${YELLOW}Java Version: ${RED} $(java -version)${NC}"
 echo -e "${YELLOW}NodeJS Version: ${RED} $(node -v) ${NC}"
 echo -e "${YELLOW}npm Version: ${RED} $(npm -v) ${NC}"
-echo -e "${YELLOW}yarn Version: ${RED} $(yarn --version) ${NC}"
+#echo -e "${YELLOW}yarn Version: ${RED} $(yarn --version) ${NC}"
 echo -e "${YELLOW}MongoDB Version: ${RED}$(mongod --version)${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 

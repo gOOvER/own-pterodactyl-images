@@ -29,7 +29,6 @@ RUN         apt -y install \
                 tzdata \
                 unzip \
                 zip \
-                zip \
                 zstd \
                 libcairo2-dev \ 
                 libgif-dev \
