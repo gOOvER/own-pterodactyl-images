@@ -4,31 +4,70 @@ LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
 
 ## install required packages
-RUN     dpkg --add-architecture i386
-RUN     apt update
-RUN     apt -y upgrade
-RUN     apt install -y --no-install-recommends \
-            wget \
-            iproute2 \
-            gnupg2 \
-            software-properties-common \
-            libntlm0 \
-            winbind \
-            xvfb \
-            xauth \
-            python3 \
-            libncurses5-dev:i386 \
-            libncurses6 \
-            dbus \
-            libgdiplus \
-            lib32gcc-s1 \
-            numactl \
-            alsa-tools \
-            libpulse-dev \
-            libasound2 \
-            libao-common \
-            gnutls-bin \
-            tini
+ARG             DEBIAN_FRONTEND=noninteractive
+COPY            sources.list /etc/apt/sources.list
+RUN             dpkg --add-architecture i386
+RUN             apt update
+RUN             apt -y upgrade
+RUN             apt install -y \
+                    apt-transport-https \
+                    binutils \
+                    ca-certificates \
+                    cabextract \
+                    curl \
+                    ffmpeg \
+                    g++ \
+                    gcc \
+                    gdb \
+                    git \
+                    gnupg2 \
+                    icu-devtools \
+                    iproute2 \
+                    locales \
+                    net-tools \
+                    netcat-openbsd \
+                    numactl \
+                    procps \
+                    python3 \
+                    rapidjson-dev \
+                    software-properties-common \
+                    sqlite3 \
+                    tar \
+                    telnet \
+                    tini \
+                    tzdata \
+                    unzip \
+                    wget \
+                    winbind \
+                    xauth \
+                    xvfb \
+                    xz-utils \
+                    zip \
+                    libatomic1 \
+                    libc++-dev \
+                    libc6 \
+                    libduktape207 \
+                    libevent-dev \
+                    libfluidsynth3 \
+                    libfontconfig \
+                    libgcc1 \
+                    libicu72 \
+                    liblua5.4-0 \
+                    liblzo2-2 \
+                    libmariadbclient-dev-compat \
+                    libncurses6:i386 \
+                    libntlm0 \
+                    libprotobuf32 \
+                    libsdl1.2debian \
+                    libsdl2-2.0-0 \
+                    libsdl2-2.0-0:i386 \
+                    libsqlite3-dev \
+                    libstdc++6 \
+                    libunwind8 \
+                    libz-dev \
+                    libzip4
+            
+RUN             rm -rf /var/lib/apt/lists/*
 
 # Install wine and with recommends
 RUN     mkdir -pm755 /etc/apt/keyrings

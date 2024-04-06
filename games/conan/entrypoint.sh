@@ -7,6 +7,11 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+#define variables
+SRCDS_USER=${STEAM_USER}
+SRCDS_PASS=${STEAM_PASS}
+SRCDS_AUTH=${STEAM_AUTH}
+SRCDS_APPID=${STEAM_APPID}
 
 # Wait for the container to fully initialize
 sleep 1
