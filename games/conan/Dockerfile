@@ -3,9 +3,6 @@ FROM    debian:bookworm-slim
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
 
-# Sets the default stop signal as wings can (currently) only send a kill or generic stop
-STOPSIGNAL SIGINT
-
 ## install required packages
 RUN     dpkg --add-architecture i386
 RUN     apt update
@@ -53,6 +50,9 @@ ENV     DISPLAY_HEIGHT=768
 ENV     DISPLAY_DEPTH=16
 ENV     AUTO_UPDATE=1
 ENV     XVFB=1
+
+# Sets the default stop signal as wings can (currently) only send a kill or generic stop
+STOPSIGNAL SIGINT
 
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container

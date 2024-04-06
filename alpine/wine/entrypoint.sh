@@ -22,8 +22,8 @@ fi
 ## if auto_update is not set or to 1 update
 if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
     # Update Source Server
-    if [ ! -z ${SRCDS_APPID} ]; then
-        ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_GUARDCODE} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +app_update ${SRCDS_APPID} $( [[ ! -z ${SRCDS_BETAID} ]] && printf %s "-beta ${SRCDS_BETAID}" ) $( [[ ! -z ${SRCDS_BETAPASS} ]] && printf %s "-betapassword ${SRCDS_BETAPASS}" ) +app_update 1007 $( [[ ! -z ${VALIDATE} ]] && printf %s "validate" ) +quit
+    if [ ! -z ${STEAM_APPID} ]; then
+        ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_GUARDCODE} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +app_update ${STEAM_APPID} $( [[ ! -z ${STEAM_BETAID} ]] && printf %s "-beta ${STEAM_BETAID}" ) $( [[ ! -z ${STEAM_BETAPASS} ]] && printf %s "-betapassword ${STEAM_BETAPASS}" ) +app_update 1007 $( [[ ! -z ${VALIDATE} ]] && printf %s "validate" ) +quit
     else
         echo -e "No appid set. Starting Server"
     fi

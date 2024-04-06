@@ -29,10 +29,10 @@ echo -e "${BLUE}----------------------------------------------------------------
 
 # Set environment for Steam Proton
 if [ -f "/usr/local/bin/proton" ]; then
-    if [ ! -z ${SRCDS_APPID} ]; then
-	    mkdir -p /home/container/.steam/steam/steamapps/compatdata/${SRCDS_APPID}
+    if [ ! -z ${STEAM_APPID} ]; then
+	    mkdir -p /home/container/.steam/steam/steamapps/compatdata/${STEAM_APPID}
         export STEAM_COMPAT_CLIENT_INSTALL_PATH="/home/container/.steam/steam"
-        export STEAM_COMPAT_DATA_PATH="/home/container/.steam/steam/steamapps/compatdata/${SRCDS_APPID}"
+        export STEAM_COMPAT_DATA_PATH="/home/container/.steam/steam/steamapps/compatdata/${STEAM_APPID}"
         #protontricks
         #export STEAM_DIR="/home/container/.steam/steam"
         export WINETRICKS="/usr/sbin/winetricks"
@@ -40,7 +40,7 @@ if [ -f "/usr/local/bin/proton" ]; then
 
     else
         echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-        echo -e "${RED}WARNING!!! Proton needs variable SRCDS_APPID, else it will not work. Please add it${NC}"
+        echo -e "${RED}WARNING!!! Proton needs variable STEAM_APPID, else it will not work. Please add it${NC}"
         echo -e "${RED}Server stops now${NC}"
         echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
         exit 0
@@ -72,11 +72,11 @@ fi
 ## if auto_update is not set or to 1 update
 if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then 
     # Update Source Server
-    if [ ! -z ${SRCDS_APPID} ]; then
+    if [ ! -z ${STEAM_APPID} ]; then
 	    if [ "${STEAM_USER}" == "anonymous" ]; then
-            DepotDownloader -dir /home/container -username ${STEAM_USER} -password ${STEAM_PASS} -remember-password $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) -app 1007 -app ${SRCDS_APPID} $( [[ -z ${SRCDS_BETAID} ]] || printf %s "-beta ${SRCDS_BETAID}" ) $( [[ -z ${SRCDS_BETAPASS} ]] || printf %s "-betapassword ${SRCDS_BETAPASS}" ) $( [[ -z ${VALIDATE} ]] || printf %s "-validate" )
+            DepotDownloader -dir /home/container -username ${STEAM_USER} -password ${STEAM_PASS} -remember-password $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) -app 1007 -app ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ -z ${VALIDATE} ]] || printf %s "-validate" )
 	    else
-            numactl --physcpubind=+0 DepotDownloader -dir /home/container -username ${STEAM_USER} -password ${STEAM_PASS} -remember-password $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) -app 1007 -app ${SRCDS_APPID} $( [[ -z ${SRCDS_BETAID} ]] || printf %s "-beta ${SRCDS_BETAID}" ) $( [[ -z ${SRCDS_BETAPASS} ]] || printf %s "-betapassword ${SRCDS_BETAPASS}" ) $( [[ -z ${VALIDATE} ]] || printf %s "-validate" )
+            numactl --physcpubind=+0 DepotDownloader -dir /home/container -username ${STEAM_USER} -password ${STEAM_PASS} -remember-password $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) -app 1007 -app ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ -z ${VALIDATE} ]] || printf %s "-validate" )
 	    fi
     else
         echo -e "${BLUE}---------------------------------------------------------------------${NC}"
