@@ -27,7 +27,7 @@ RUN             apt install -y \
                         iproute2 \
                         locales \
                         net-tools \
-                        netcat \
+                        netcat-openbsd \
                         sqlite3 \
                         tar \
                         telnet \
