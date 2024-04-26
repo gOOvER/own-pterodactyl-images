@@ -20,32 +20,12 @@ export INTERNAL_IP
 
 # Information output
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${RED}SteamCMD Image by gOOvER${NC}"
+echo -e "${RED}DepotDownloader Image by gOOvER${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
 echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
 echo -e "${YELLOW}DotNet Version: ${RED} $(dotnet --version) ${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-
-# Set environment for Steam Proton
-if [ -f "/usr/local/bin/proton" ]; then
-    if [ ! -z ${STEAM_APPID} ]; then
-	    mkdir -p /home/container/.steam/steam/steamapps/compatdata/${STEAM_APPID}
-        export STEAM_COMPAT_CLIENT_INSTALL_PATH="/home/container/.steam/steam"
-        export STEAM_COMPAT_DATA_PATH="/home/container/.steam/steam/steamapps/compatdata/${STEAM_APPID}"
-        #protontricks
-        #export STEAM_DIR="/home/container/.steam/steam"
-        export WINETRICKS="/usr/sbin/winetricks"
-        #export STEAM_RUNTIME=1
-
-    else
-        echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-        echo -e "${RED}WARNING!!! Proton needs variable STEAM_APPID, else it will not work. Please add it${NC}"
-        echo -e "${RED}Server stops now${NC}"
-        echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-        exit 0
-        fi
-fi
 
 # Switch to the container's working directory
 cd /home/container || exit 1
@@ -74,9 +54,9 @@ if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
     # Update Source Server
     if [ ! -z ${STEAM_APPID} ]; then
 	    if [ "${STEAM_USER}" == "anonymous" ]; then
-            DepotDownloader -dir /home/container -username ${STEAM_USER} -password ${STEAM_PASS} -remember-password $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) -app 1007 -app ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ -z ${VALIDATE} ]] || printf %s "-validate" )
+            DepotDownloader -dir /home/container -username ${STEAM_USER} -password ${STEAM_PASS} -remember-password $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) $( [[ "${STEAM_SDK}" == "1" ]] && printf %s '-app 1007' ) -app ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ "${STEAM_VALIDATE}" == "1" ]] && printf %s '-validate' )
 	    else
-            numactl --physcpubind=+0 DepotDownloader -dir /home/container -username ${STEAM_USER} -password ${STEAM_PASS} -remember-password $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) -app 1007 -app ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ -z ${VALIDATE} ]] || printf %s "-validate" )
+            numactl --physcpubind=+0 DepotDownloader -dir /home/container -username ${STEAM_USER} -password ${STEAM_PASS} -remember-password $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) $( [[ "${STEAM_SDK}" == "1" ]] && printf %s '-app 1007' ) -app ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ "${STEAM_VALIDATE}" == "1" ]] && printf %s '-validate' )
 	    fi
     else
         echo -e "${BLUE}---------------------------------------------------------------------${NC}"

@@ -93,11 +93,12 @@ RUN         apt update -y \
                 && rm packages-microsoft-prod.deb \
                 && apt update -y \
                 && apt install -y \
-                    aspnetcore-runtime-6.0 \
-                    dotnet-sdk-6.0
+                    aspnetcore-runtime-8.0 \
+                    dotnet-sdk-8.0
 
 RUN         curl -sLOJ $(curl -s https://api.github.com/repos/SteamRE/DepotDownloader/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep linux-x64.zip)
 RUN         unzip DepotDownloader-linux-x64.zip -d /usr/local/bin/
+RUN         chmod +x /usr/local/bin/DepotDownloader
 
 ## install rcon
 RUN         cd /tmp/ \
