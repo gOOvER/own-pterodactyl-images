@@ -25,6 +25,7 @@ jobs:
           - '18-bionic'
           - '20-focal'
           - '22-jammy'
+          - '24-noble'
     
     steps:
       - uses: actions/checkout@v4
