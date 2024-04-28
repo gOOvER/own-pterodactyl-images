@@ -23,6 +23,7 @@ jobs:
       matrix:
         distro:
           - debian
+          - wine
 
     steps:
       - uses: actions/checkout@v4
