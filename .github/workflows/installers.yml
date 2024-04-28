@@ -24,7 +24,7 @@ jobs:
         tag:
           - alpine
           - debian
-          - depotdownloader
+          - depotdl
           - nodejs
           - python
           - python39
