@@ -97,8 +97,10 @@ RUN         wget https://packages.microsoft.com/config/debian/12/packages-micros
                     libgdiplus \
                     dotnet-sdk-6.0
 
-RUN         curl -sLOJ $(curl -s https://api.github.com/repos/SteamRE/DepotDownloader/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep linux-x64.zip)
-RUN         unzip DepotDownloader-linux-x64.zip -d /usr/local/bin/
+# Install DepotDownloader
+RUN             curl -sLOJ $(curl -s https://api.github.com/repos/SteamRE/DepotDownloader/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep linux-x64.zip)
+RUN             unzip DepotDownloader-linux-x64.zip -d /usr/local/bin/
+RUN             chmod +x /usr/local/bin/DepotDownloader
 
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
