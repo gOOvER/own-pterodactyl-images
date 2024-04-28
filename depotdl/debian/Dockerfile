@@ -6,11 +6,11 @@ LABEL       org.opencontainers.image.licenses=MIT
 
 ARG         DEBIAN_FRONTEND=noninteractive
 
+COPY        sources.list /etc/apt/sources.list
 RUN         dpkg --add-architecture i386
-RUN         apt update \ 
-            && apt -y upgrade
-
-RUN         apt install -y \
+RUN         apt update
+RUN         apt -y upgrade
+RUN         apt install -y --no-install-recommends \
                     ca-certificates \
                     curl \
                     dbus \
@@ -84,6 +84,8 @@ RUN         apt install -y \
                     libxrandr2 \
                     libxss1 \
                     libxtst6
+
+RUN             rm -rf /var/lib/apt/lists/*
 
 ## install dotnet to support STEAM dotnet games
 RUN         apt update -y \
