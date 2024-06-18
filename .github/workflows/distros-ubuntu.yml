@@ -42,7 +42,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       
-      - uses: docker/build-push-action@v5
+      - uses: docker/build-push-action@v6
         with:
           context: ./distros/ubuntu/${{ matrix.oses }}
           file: ./distros/ubuntu/${{ matrix.oses }}/Dockerfile
