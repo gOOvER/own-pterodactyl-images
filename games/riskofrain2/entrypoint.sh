@@ -136,11 +136,15 @@ if [ -f BEPINEX_FLAG ] || [ "${BEPINEX}" = 1 ] ; then
     echo -e "${GREEN}Done installing BepInEx!${NC}"
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 else
-    echo "Removing BepInEx..."
-     rm -fR BepInEx
-     rm -f doorstop_config.ini
-     rm -f winhttp.dll
-     echo "Done removing BepInEx"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    echo -e "${RED}Removing BepInEx...${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    rm -fR BepInEx
+    rm -f doorstop_config.ini
+    rm -f winhttp.dll
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    echo -e "${RED}Done removing BepInEx${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 fi
 
 #cleanup
