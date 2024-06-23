@@ -129,7 +129,7 @@ if [ -f BEPINEX_FLAG ] || [ "${BEPINEX}" = 1 ] ; then
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     curl -sSL "https://thunderstore.io/package/download/bbepis/BepInExPack/${BEP_VERSION}/" > bepinex.zip
     unzip -o -q bepinex.zip
-    mv -f /home/container/BepInExPack/* /home/container
+    cp -R /home/container/BepInExPack/* /home/container
     rm -f bepinex.zip
     rm -fR /home/container/BepInExPack
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"

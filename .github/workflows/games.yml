@@ -28,14 +28,14 @@ jobs:
           - dayz
           - interstellarrift
           - longvinter
-          - mohaa
-          - palworld
+          #- mohaa
+          #- palworld
           - quakeliveqlx
           - riskofrain2
           - samp
           - screeps
           - staxel
-          - thebattleofwesnod
+          #- thebattleofwesnod
           - thefront
           - valheim
           - wurm
