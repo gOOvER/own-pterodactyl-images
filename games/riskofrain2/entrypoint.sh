@@ -1,67 +1,84 @@
 #!/bin/bash
-cd /home/container
+
+clear
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+
+# Wait for the container to fully initialize
+sleep 1
+
+# Default the TZ environment variable to UTC.
+TZ=${TZ:-UTC}
+export TZ
+
+# Default the IMAGE_PROMPT environment variable to something nice
+IMAGE_PROMPT=${IMAGE_PROMPT:-$'\033[1m\033[33mcontainer@pterodactyl~ \033[0m'}
+export IMAGE_PROMPT
 
 # Information output
-echo "Running on Debian $(cat /etc/debian_version)"
-echo "Current timezone: $(cat /etc/timezone)"
-wine --version
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+echo -e "${YELLOW}Risk of Rain2 Image from gOOvER${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+echo -e "${YELLOW}Running on Debian $(cat /etc/debian_version)${NC}"
+echo -e "${YELLOW}Current timezone: $(cat /etc/timezone)${NC}"
+echo -e "${YELLOW}Wine Version:${NC} ${RED} $(wine --version)${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
 # Set environment variable that holds the Internal Docker IP
 INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 export INTERNAL_IP
 
+# Switch to the container's working directory
+cd /home/container || exit 1
+
 ## just in case someone removed the defaults.
 if [ "${STEAM_USER}" == "" ]; then
-    echo -e "steam user is not set.\n"
-    echo -e "Using anonymous user.\n"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    echo -e "${YELLOW}Steam user is not set.\n ${NC}"
+    echo -e "${YELLOW}Using anonymous user.\n ${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     STEAM_USER=anonymous
     STEAM_PASS=""
     STEAM_AUTH=""
 else
-    echo -e "user set to ${STEAM_USER}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    echo -e "${YELLOW}user set to ${STEAM_USER} ${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 fi
 
 ## if auto_update is not set or to 1 update
-if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
+if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then 
     # Update Source Server
     if [ ! -z ${STEAM_APPID} ]; then
-        ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +app_update ${STEAM_APPID} $( [[ ! -z ${STEAM_BETAID} ]] && printf %s "-beta ${STEAM_BETAID}" ) $( [[ ! -z ${STEAM_BETAPASS} ]] && printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ ! -z ${HLDS_GAME} ]] && printf %s "+app_set_config 90 mod ${HLDS_GAME}" ) $( [[ ! -z ${VALIDATE} ]] && printf %s "validate" ) +quit
+	    if [ "${STEAM_USER}" == "anonymous" ]; then
+            ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) $( [[ "${STEAM_SDK}" == "1" ]] && printf %s '+app_update 1007' ) +app_update ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) ${INSTALL_FLAGS} $( [[ "${VALIDATE}" == "1" ]] && printf %s 'validate' ) +quit
+	    else
+            numactl --physcpubind=+0 ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) $( [[ "${STEAM_SDK}" == "1" ]] && printf %s '+app_update 1007' ) +app_update ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) ${INSTALL_FLAGS} $( [[ "${VALIDATE}" == "1" ]] && printf %s 'validate' ) +quit
+	    fi
     else
-        echo -e "No appid set. Starting Server"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+        echo -e "${YELLOW}No appid set. Starting Server${NC}"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     fi
+
 else
-    echo -e "Not updating game server as auto update was set to 0. Starting Server"
+    echo -e "${BLUE}---------------------------------------------------------------${NC}"
+    echo -e "${YELLOW}Not updating game server as auto update was set to 0. Starting Server${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------${NC}"
 fi
 
 if [[ $XVFB == 1 ]]; then
         Xvfb :0 -screen 0 ${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_DEPTH} &
 fi
 
-# BepInEx install
-if [ -f BEPINEX_FLAG ] || [ "${BEPINEX}" = 1 ] ; then
-    echo "Updating BepInEx..."
-    curl -sSL "https://thunderstore.io/package/download/bbepis/BepInExPack/${BEP_VERSION}/" > bepinex.zip
-    unzip -o -q bepinex.zip
-    mv -f /home/container/BepInExPack/* /home/container
-    rm -f bepinex.zip
-    rm -fR /home/container/BepInExPack
-    echo "Done installing BepInEx!"
-else
-    echo "Removing BepInEx..."
-     rm -fR BepInEx
-     rm -f doorstop_config.ini
-     rm -f winhttp.dll
-     echo "Done removing BepInEx"
-fi
-
-#cleanup
-rm -f icon.png
-rm -f README.md
-rm -f manifest.json
-
 # Install necessary to run packages
-echo "First launch will throw some errors. Ignore them"
-
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+echo -e "${RED}First launch will throw some errors. Ignore them${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 mkdir -p $WINEPREFIX
 
 # Check if wine-gecko required and install it if so
@@ -91,7 +108,7 @@ if [[ $WINETRICKS_RUN =~ mono ]]; then
         WINETRICKS_RUN=${WINETRICKS_RUN/mono}
 
         if [ ! -f "$WINEPREFIX/mono.msi" ]; then
-                wget -q -O $WINEPREFIX/mono.msi https://dl.winehq.org/wine/wine-mono/8.0.0/wine-mono-8.0.0-x86.msi
+                wget -q -O $WINEPREFIX/mono.msi https://dl.winehq.org/wine/wine-mono/9.1.0/wine-mono-9.1.0-x86.msi
         fi
 
         wine msiexec /i $WINEPREFIX/mono.msi /qn /quiet /norestart /log $WINEPREFIX/mono_install.log
@@ -105,8 +122,34 @@ for trick in $WINETRICKS_RUN; do
         winetricks -q $trick
 done
 
+# BepInEx install
+if [ -f BEPINEX_FLAG ] || [ "${BEPINEX}" = 1 ] ; then
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    echo -e "${YELLOW}Updating BepInEx...${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    curl -sSL "https://thunderstore.io/package/download/bbepis/BepInExPack/${BEP_VERSION}/" > bepinex.zip
+    unzip -o -q bepinex.zip
+    mv -f /home/container/BepInExPack/* /home/container
+    rm -f bepinex.zip
+    rm -fR /home/container/BepInExPack
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    echo -e "${GREEN}Done installing BepInEx!${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+else
+    echo "Removing BepInEx..."
+     rm -fR BepInEx
+     rm -f doorstop_config.ini
+     rm -f winhttp.dll
+     echo "Done removing BepInEx"
+fi
+
+#cleanup
+rm -f icon.png
+rm -f README.md
+rm -f manifest.json
+
 # Replace Startup Variables
-MODIFIED_STARTUP=$(echo ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
+MODIFIED_STARTUP=$(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
 echo ":/home/container$ ${MODIFIED_STARTUP}"
 
 # Run the Server
