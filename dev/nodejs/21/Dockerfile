@@ -39,6 +39,7 @@ RUN         npm install npm@latest -g
 RUN         npm install -g typescript ts-node
 
 # install pnpm
+RUN         npm install -g corepack
 RUN         corepack enable
 RUN         corepack prepare pnpm@latest --activate
 

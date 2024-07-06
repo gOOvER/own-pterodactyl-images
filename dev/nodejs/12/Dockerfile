@@ -34,9 +34,10 @@ RUN         apt -y install --no-install-recommends \
 				libnss3 \
                 libsqlite3-dev
 
-RUN         npm install typescript ts-node @types/node --location=global
+RUN         npm install npm@9.8.1 typescript ts-node @types/node --location=global
 
 # install pnpm
+RUN         npm install -g corepack
 RUN         corepack enable
 RUN         corepack prepare pnpm@latest --activate
 

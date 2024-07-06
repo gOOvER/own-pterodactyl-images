@@ -44,7 +44,8 @@ RUN         curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
 RUN         npm install npm@latest -g
 RUN         npm install typescript ts-node @types/node --location=global
 
-#install pnpm
+# install pnpm
+RUN         npm install -g corepack
 RUN         corepack enable
 RUN         corepack prepare pnpm@latest --activate
 
