@@ -29,6 +29,20 @@ echo -e "${YELLOW}Running on Ubuntu ${RED} $(cat /etc/debian_version)${NC}"
 echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
+## check for serverupdates
+if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
+    cd /home/container
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    echo -e "${YELLOW}checkig for Server update. please wait...${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    export DOTNET_BUNDLE_EXTRACT_BASE_DIR=./temp/
+    ./AlderonGamesCmd --game path-of-titans --server true --beta-branch $BETA_BRANCH --install-dir ./ --username $AG_SERVER_EMAIL --password $AG_SERVER_PASS
+ else
+    echo -e "${BLUE}---------------------------------------------------------------${NC}"
+    echo -e "${YELLOW}Not updating game server as auto update was set to 0. Starting Server${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------${NC}"
+fi
+
 # Replace Startup Variables
 MODIFIED_STARTUP=$(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
 echo -e ":/home/container$ ${MODIFIED_STARTUP}"
