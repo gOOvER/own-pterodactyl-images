@@ -29,6 +29,8 @@ echo -e "${YELLOW}Running on Ubuntu ${RED} $(cat /etc/debian_version)${NC}"
 echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
+chmod +x /PathOfTitans/Binaries/Linux/PathOfTitansServer-Linux-Shipping
+
 ## check for serverupdates
 if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
     cd /home/container
