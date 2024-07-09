@@ -25,6 +25,7 @@ RUN		 		apt install -y --no-install-recommends \
 						tar \
 						unzip \
 						wget \
+						zstd \
 						lib32gcc-s1 \
 						libcurl4 \
 						libcurl4:i386 \
