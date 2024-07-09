@@ -41,6 +41,7 @@ RUN           apt install -y \
                     wget \
                     xz-utils \
                     zip \
+                    zstd \
                     libatomic1 \
                     libc++-dev \
                     libc6 \
