@@ -46,7 +46,7 @@ mongod --fork --dbpath /home/container/mongodb/ --port 27017 --logpath /home/con
 
 # Run the Server
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${YELLOW}starting Multi-Bot${NC}"
+echo -e "${YELLOW}starting AthenaBot${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 eval ${MODIFIED_STARTUP}
 
