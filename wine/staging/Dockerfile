@@ -22,6 +22,7 @@ RUN             apt install -y --no-install-recommends \
                     gdb \
                     git \
                     gnupg2 \
+					gnutls-bin \
                     icu-devtools \
                     iproute2 \
                     locales \
