@@ -23,6 +23,7 @@ jobs:
       matrix:
         oses:
           - node16132
+          - rustserverredirect
     
     steps:
       - uses: actions/checkout@v4
