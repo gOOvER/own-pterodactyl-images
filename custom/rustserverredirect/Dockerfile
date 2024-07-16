@@ -47,7 +47,7 @@ RUN         apt install -y --install-recommends \
                     lib32tinfo6 \
                     libtinfo6:i386 \
                     lib32z1 \
-                    libasound2 \
+                    liboss4-salsa-asound2 \
                     libatk1.0-0 \
                     libatomic1 \
                     libc++-dev \
@@ -63,7 +63,6 @@ RUN         apt install -y --install-recommends \
                     libfontconfig \
                     libgcc-s1 \
                     libgcc1 \
-                    libgconf-2-4 \
                     libgdiplus \
                     libgtk2.0-0:i386 \
                     libjemalloc2 \
