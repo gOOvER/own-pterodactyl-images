@@ -83,7 +83,6 @@ RUN         apt install -y --install-recommends \
                     libstdc++6 \
                     libstdc++6:i386 \
                     libtcmalloc-minimal4 \
-                    libtcmalloc-minimal4:i386 \
                     libtinfo6:i386 \
                     libxcomposite1 \
                     libxcursor1 \
