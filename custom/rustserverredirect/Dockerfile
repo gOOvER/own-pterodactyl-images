@@ -73,11 +73,8 @@ RUN         apt install -y --install-recommends \
                     libpulse-dev \
                     libpulse0 \
                     libsdl1.2-compat \
-                    libsdl1.2-compat:i386 \
                     libsdl1.2debian \
-                    libsdl1.2debian:i386 \
                     libsdl2-2.0-0 \
-                    libsdl2-2.0-0:i386 \
                     libssl3 \
                     libssl3:i386 \
                     libstdc++6 \
