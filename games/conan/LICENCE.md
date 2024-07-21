@@ -5,9 +5,9 @@ This End-User License Agreement (“EULA”) is a legal agreement between you (e
 
 License Grant
 Licensor grants you a revocable, non-exclusive, non-transferable, limited license to download, install, and use the Software solely for your personal, non-commercial purposes strictly in accordance with the terms of this Agreement.
+
 Restrictions on Use
 You agree not to, and you will not permit others to:
-
 * Copy, modify, or create derivative works of the Software.
 * Distribute, transfer, sublicense, lease, lend, or rent the Software to any third party.
 * Reverse engineer, decompile or disassemble the Software, except to the extent expressly permitted by applicable law.
