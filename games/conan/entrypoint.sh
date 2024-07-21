@@ -28,6 +28,7 @@ export IMAGE_PROMPT
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}Conan Exile Docker Image with Mod Support${NC}"
 echo -e "${YELLOW}Copyright 2024 by gOOvER - All rights reserved${NC}"
+echo -e "${RED}Please note; the egg & image are NOT licensed under the MIT license!!! Redistribution is not permitted${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}" 
 echo -e "${YELLOW}Running on Debian $(cat /etc/debian_version)${NC}"
 echo -e "${YELLOW}Current timezone: $(cat /etc/timezone)${NC}"
