@@ -61,6 +61,7 @@ RUN         apt install -y \
                     libgcc1 \
                     libgdiplus \
                     libgtk2.0-0:i386 \
+                    libicu74 \
                     libnss3 \
                     libpangocairo-1.0-0 \
                     libpulse-dev \
@@ -91,8 +92,8 @@ RUN         apt update -y \
                 && rm packages-microsoft-prod.deb \
                 && apt update -y \
                 && apt install -y \
-                    aspnetcore-runtime-7.0 \
-                    dotnet-sdk-7.0
+                    aspnetcore-runtime-8.0 \
+                    dotnet-sdk-8.0
 
 ## install rcon
 RUN         cd /tmp/ \
