@@ -35,26 +35,26 @@ echo -e "${GREEN}Starting Server.... Please wait...${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
 ## just in case someone removed the defaults.
-if [ "${STEAM_USER}" == "" ]; then
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-    echo -e "${YELLOW}Steam user is not set. ${NC}"
-    echo -e "${YELLOW}Using anonymous user.${NC}"
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-    STEAM_USER=anonymous
-    STEAM_PASS=""
-    STEAM_AUTH=""
-else
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-    echo -e "${YELLOW}user set to ${STEAM_USER} ${NC}"
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-fi
+#if [ "${STEAM_USER}" == "" ]; then
+#    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+#    echo -e "${YELLOW}Steam user is not set. ${NC}"
+#    echo -e "${YELLOW}Using anonymous user.${NC}"
+#    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+#    STEAM_USER=anonymous
+#    STEAM_PASS=""
+#    STEAM_AUTH=""
+#else
+#    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+#    echo -e "${YELLOW}user set to ${STEAM_USER} ${NC}"
+#    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+#fi
 
 ## if auto_update is not set or to 1 update
 if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then 
     # Update Source Server
     if [ ! -z ${STEAM_APPID} ]; then
 	    if [ "${STEAM_USER}" == "anonymous" ]; then
-            DepotDownloader -dir /home/container -username ${STEAM_USER} -password ${STEAM_PASS} -remember-password $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) $( [[ "${STEAM_SDK}" == "1" ]] && printf %s '-app 1007' ) -app ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ "${STEAM_VALIDATE}" == "1" ]] && printf %s '-validate' )
+            DepotDownloader -dir /home/container $( [[ -z ${STEAM_USER} ]] || printf %s "-username ${STEAM_USER} -password ${STEAM_PASS} -remember-password" ) $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) $( [[ "${STEAM_SDK}" == "1" ]] && printf %s '-app 1007' ) -app ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ "${STEAM_VALIDATE}" == "1" ]] && printf %s '-validate' )
 	    else
             numactl --physcpubind=+0 DepotDownloader -dir /home/container -username ${STEAM_USER} -password ${STEAM_PASS} -remember-password $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) $( [[ "${STEAM_SDK}" == "1" ]] && printf %s '-app 1007' ) -app ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ "${STEAM_VALIDATE}" == "1" ]] && printf %s '-validate' )
 	    fi
