@@ -45,7 +45,6 @@ RUN         apt install -y \
                     lib32stdc++6 \
                     lib32tinfo6 \
                     lib32z1 \
-                    libasound2 \
                     libatk1.0-0 \
                     libatomic1 \
                     libc++-dev \
@@ -60,7 +59,6 @@ RUN         apt install -y \
                     libfontconfig \
 					libnss-wrapper \
                     libgcc1 \
-                    libgconf-2-4 \
                     libgdiplus \
                     libgtk2.0-0:i386 \
                     libnss3 \
