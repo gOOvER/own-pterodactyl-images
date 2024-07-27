@@ -15,6 +15,8 @@ RUN         apt install -y \
                     curl \
                     dbus \
                     dirmngr \
+                    aspnetcore-runtime-8.0 \
+                    dotnet-sdk-8.0
                     g++ \
                     gcc \
                     gdb \
@@ -83,14 +85,6 @@ RUN         apt install -y \
                     libxrandr2 \
                     libxss1 \
                     libxtst6
-
-## install dotnet to support STEAM dotnet games
-
-RUN         add-apt-repository ppa:dotnet/backports
-RUN         apt update -y \
-                && apt install -y \
-                    aspnetcore-runtime-8.0 \
-                    dotnet-sdk-8.0
 
 ## install rcon
 RUN         cd /tmp/ \
