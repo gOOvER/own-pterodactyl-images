@@ -16,7 +16,7 @@ RUN         apt install -y \
                     dbus \
                     dirmngr \
                     aspnetcore-runtime-8.0 \
-                    dotnet-sdk-8.0
+                    dotnet-sdk-8.0 \
                     g++ \
                     gcc \
                     gdb \
