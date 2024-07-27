@@ -1,6 +1,9 @@
 FROM        --platform=$TARGETOS/$TARGETARCH node:18-bookworm-slim
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.licenses=MIT
+LABEL       org.opencontainers.image.description Dockerimage for Pelican Hosting Panel and PterodactylLABEL       org.opencontainers.image.description Dockerimage for Pelican Hosting Panel and Pterodactyl
 
 RUN         apt update \
             && apt -y upgrade \
