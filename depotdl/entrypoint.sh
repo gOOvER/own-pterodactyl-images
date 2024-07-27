@@ -66,6 +66,8 @@ else
     echo -e "${BLUE}---------------------------------------------------------------${NC}"
 fi
 
+chmod +x /home/container/7DaysToDieServer.x86_64
+
 # Replace Startup Variables
 MODIFIED_STARTUP=$(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
 echo -e ":/home/container$ ${MODIFIED_STARTUP}"
