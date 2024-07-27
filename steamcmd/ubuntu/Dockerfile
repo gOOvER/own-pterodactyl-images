@@ -85,12 +85,9 @@ RUN         apt install -y \
                     libxtst6
 
 ## install dotnet to support STEAM dotnet games
+
+RUN         add-apt-repository ppa:dotnet/backports
 RUN         apt update -y \
-                && apt upgrade -y \
-                && wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
-                && dpkg -i packages-microsoft-prod.deb \
-                && rm packages-microsoft-prod.deb \
-                && apt update -y \
                 && apt install -y \
                     aspnetcore-runtime-8.0 \
                     dotnet-sdk-8.0
