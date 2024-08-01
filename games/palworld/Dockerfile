@@ -136,7 +136,7 @@
     STOPSIGNAL SIGINT
     
     COPY        --chown=container:container ./entrypoint.sh /entrypoint.sh
-    COPY        --chown=container:container ./hibernate.py /hibernate.py
+    COPY        ./hibernate.py /hibernate.py
     RUN         chmod +x ./entrypoint.sh ./hibernate.py
     ENTRYPOINT  ["/usr/bin/tini", "-g", "--"]
     CMD         ["/entrypoint.sh"]
