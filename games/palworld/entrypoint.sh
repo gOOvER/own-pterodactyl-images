@@ -18,39 +18,53 @@ export TZ
 INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 export INTERNAL_IP
 
-# Information output
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${RED}SteamCMD Image by gOOvER${NC}"
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
-echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
-echo -e "${YELLOW}DotNet Version: ${RED} $(dotnet --version) ${NC}"
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+    echo -e "${RED}SteamCMD Proton-GE Image by gOOvER${NC}"
+    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+    echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
+    echo -e "${YELLOW}Kernel: ${RED} $(uname -r)${NC}"
+    echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
+    echo -e "${YELLOW}Proton Version: ${RED} $(cat /usr/local/bin/version)${NC}"
+    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+
+# Set environment for Steam Proton
+if [ ! -z ${STEAM_APPID} ]; then
+    mkdir -p /home/container/.steam/steam/steamapps/compatdata/${STEAM_APPID}
+    export STEAM_COMPAT_CLIENT_INSTALL_PATH="/home/container/.steam/steam"
+    export STEAM_COMPAT_DATA_PATH="/home/container/.steam/steam/steamapps/compatdata/${STEAM_APPID}"
+    export WINETRICKS="/usr/sbin/winetricks"
+    export STEAM_DIR="/home/container/.steam/steam/"
+
+else
+    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+    echo -e "${RED}WARNING!!! Proton needs variable STEAM_APPID, else it will not work. Please add it${NC}"
+    echo -e "${RED}Server stops now${NC}"
+    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+    exit 0
+fi
+
+sleep 2
 
 # Switch to the container's working directory
 cd /home/container || exit 1
 
-# writing dotnet infos to file
-#dotnetinfo=$(dotnet --info)
-#echo $dotnetinfo >| dotnet_info.txt
-
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${GREEN}Starting Server.... Please wait...${NC}"
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+echo -e "${GREEN}SteamCMD updating Server... Please wait...${NC}"
+echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
 
 ## just in case someone removed the defaults.
 if [ "${STEAM_USER}" == "" ]; then
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}Steam user is not set. ${NC}"
     echo -e "${YELLOW}Using anonymous user.${NC}"
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
     STEAM_USER=anonymous
     STEAM_PASS=""
     STEAM_AUTH=""
 else
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}user set to ${STEAM_USER} ${NC}"
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
 fi
 
 ## if auto_update is not set or to 1 update
@@ -58,41 +72,44 @@ if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
     # Update Source Server
     if [ ! -z ${STEAM_APPID} ]; then
 	    if [ "${STEAM_USER}" == "anonymous" ]; then
-            ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) $( [[ "${STEAM_SDK}" == "1" ]] && printf %s '+app_update 1007' ) +app_update ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ -z ${HLDS_GAME} ]] || printf %s "+app_set_config 90 mod ${HLDS_GAME}" ) $( [[ -z ${VALIDATE} ]] || printf %s "validate" ) +quit
+            ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) $( [[ "${STEAM_SDK}" == "1" ]] && printf %s '+app_update 1007' ) +app_update ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) ${INSTALL_FLAGS} $( [[ "${VALIDATE}" == "1" ]] && printf %s 'validate' ) +quit
 	    else
-            numactl --physcpubind=+0 ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +app_update ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ -z ${HLDS_GAME} ]] || printf %s "+app_set_config 90 mod ${HLDS_GAME}" ) $( [[ -z ${VALIDATE} ]] || printf %s "validate" ) +quit
+            numactl --physcpubind=+0 ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) $( [[ "${STEAM_SDK}" == "1" ]] && printf %s '+app_update 1007' ) +app_update ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) ${INSTALL_FLAGS} $( [[ "${VALIDATE}" == "1" ]] && printf %s 'validate' ) +quit
 	    fi
     else
-        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-        echo -e "${YELLOW}No appid set. Starting Server${NC}"
-        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+        echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+        echo -e "${YELLOW}No appid set. Stopping Server${NC}"
+        echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+        exit 0
     fi
 
 else
-    echo -e "${BLUE}---------------------------------------------------------------${NC}"
-    echo -e "${YELLOW}Not updating game server as auto update was set to 0. Starting Server${NC}"
-    echo -e "${BLUE}---------------------------------------------------------------${NC}"
+    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+    echo -e "${YELLOW}Not updating game server as auto update was set to 0.${NC}"
+    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
 fi
 
-echo -e "${BLUE}---------------------------------------------------------------${NC}"
-echo -e "${YELLOW}Setting up configfile${NC}"
-echo -e "${BLUE}---------------------------------------------------------------${NC}"
+echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+echo -e "${GREEN}Starting Server.... Please wait...${NC}"
+echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
 
-rm -f /home/container/Pal/Saved/Config/LinuxServer/PalWorldSettings.ini
-touch /home/container/Pal/Saved/Config/LinuxServer/PalWorldSettings.ini
-echo "[/Script/Pal.PalGameWorldSettings]" >> /home/container/Pal/Saved/Config/LinuxServer/PalWorldSettings.ini
-echo "OptionSettings=(Difficulty=None,DayTimeSpeedRate=1.000000,NightTimeSpeedRate=1.000000,ExpRate=1.000000,PalCaptureRate=1.000000,PalSpawnNumRate=1.000000,PalDamageRateAttack=1.000000,PalDamageRateDefense=1.000000,PlayerDamageRateAttack=1.000000,PlayerDamageRateDefense=1.000000,PlayerStomachDecreaceRate=1.000000,PlayerStaminaDecreaceRate=1.000000,PlayerAutoHPRegeneRate=1.000000,PlayerAutoHpRegeneRateInSleep=1.000000,PalStomachDecreaceRate=1.000000,PalStaminaDecreaceRate=1.000000,PalAutoHPRegeneRate=1.000000,PalAutoHpRegeneRateInSleep=1.000000,BuildObjectDamageRate=1.000000,BuildObjectDeteriorationDamageRate=1.000000,CollectionDropRate=1.000000,CollectionObjectHpRate=1.000000,CollectionObjectRespawnSpeedRate=1.000000,EnemyDropItemRate=1.000000,DeathPenalty=All,bEnablePlayerToPlayerDamage=False,bEnableFriendlyFire=False,bEnableInvaderEnemy=True,bActiveUNKO=False,bEnableAimAssistPad=True,bEnableAimAssistKeyboard=False,DropItemMaxNum=3000,DropItemMaxNum_UNKO=100,BaseCampMaxNum=128,BaseCampWorkerMaxNum=15,DropItemAliveMaxHours=1.000000,bAutoResetGuildNoOnlinePlayers=False,AutoResetGuildTimeNoOnlinePlayers=72.000000,GuildPlayerMaxNum=20,PalEggDefaultHatchingTime=72.000000,WorkSpeedRate=1.000000,bIsMultiplay=False,bIsPvP=False,bCanPickupOtherGuildDeathPenaltyDrop=False,bEnableNonLoginPenalty=True,bEnableFastTravel=True,bIsStartLocationSelectByMap=True,bExistPlayerAfterLogout=False,bEnableDefenseOtherGuildPlayer=False,CoopPlayerMaxNum=${MAX_COOP},ServerPlayerMaxNum=${MAX_PLAYERS},ServerName=\"${SRV_NAME}\",ServerDescription=\"${SRV_DES}\",AdminPassword=\"${ADMIN_PW}\",ServerPassword=\"${SRV_PW}\",PublicPort=${SERVER_PORT},PublicIP=\"${SERVER_IP}\",RCONEnabled=False,RCONPort=25575,Region=\"\",bUseAuth=True,BanListURL=\"https://api.palworldgame.com/api/banlist.txt\")" >> /home/container/Pal/Saved/Config/LinuxServer/PalWorldSettings.ini
-
-# Setup NSS Wrapper for use ($NSS_WRAPPER_PASSWD and $NSS_WRAPPER_GROUP have been set by the Dockerfile)
-export USER_ID=$(id -u)
-export GROUP_ID=$(id -g)
-envsubst < /passwd.template > ${NSS_WRAPPER_PASSWD}
-
-export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnss_wrapper.so
+# List and install other packages
+#for trick in $PROTONTRICKS_RUN; do
+#        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+#        echo -e "${YELLOW}Installing: ${NC} ${GREEN} $trick ${NC}"
+#        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+#        flatpak run com.github.Matoking.protontricks ${STEAM_APPID} $trick
+#done
 
 # Replace Startup Variables
 MODIFIED_STARTUP=$(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
 echo -e ":/home/container$ ${MODIFIED_STARTUP}"
+
+# Start Hibernation Script
+python3 /hibernate.py &
+
+# Keep the container running
+tail -f /dev/null
 
 # Run the Server
 eval ${MODIFIED_STARTUP}
