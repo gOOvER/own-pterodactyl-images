@@ -22,14 +22,14 @@ jobs:
       fail-fast: false
       matrix:
         game:
-          - altv
+          #- altv
           - bannerlord
           - conan
           - dayz
           - interstellarrift
           - longvinter
           #- mohaa
-          - palworld
+          #- palworld
           #- pathoftitans
           - quakeliveqlx
           - riskofrain2
