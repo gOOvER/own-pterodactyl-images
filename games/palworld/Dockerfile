@@ -137,6 +137,7 @@
     
     COPY        --chown=container:container ./entrypoint.sh /entrypoint.sh
     COPY        ./hibernate.py /hibernate.py
-    RUN         chmod +x ./entrypoint.sh ./hibernate.py
+    RUN         chmod +x ./entrypoint.sh
+    RUN         chmod +x ./hibernate.py
     ENTRYPOINT  ["/usr/bin/tini", "-g", "--"]
     CMD         ["/entrypoint.sh"]
