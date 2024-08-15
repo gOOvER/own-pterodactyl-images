@@ -66,7 +66,7 @@ RUN             apt install -y \
                     libunwind8 \
                     libz-dev \
                     libzip4
-            
+
 RUN             rm -rf /var/lib/apt/lists/*
 
 # Install wine and with recommends
