@@ -2,7 +2,7 @@ FROM    --platform=$TARGETOS/$TARGETARCH postgres:11-bookworm
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL       org.opencontainers.image.licenses=MIT
+LABEL       org.opencontainers.image.licenses=AGPL
 LABEL       org.opencontainers.image.description Dockerimage for Pelican Hosting Panel and Pterodactyl
 ENV         DEBIAN_FRONTEND noninteractive
 RUN         apt update \

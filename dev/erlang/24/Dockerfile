@@ -3,7 +3,7 @@ FROM        --platform=$BUILDPLATFORM erlang:24-alpine
 LABEL       author="Pascal Zarrad" maintainer="p.zarrad@outlook.de"
 
 LABEL       org.opencontainers.image.source="https://github.com/pterodactyl/yolks"
-LABEL       org.opencontainers.image.licenses=MIT
+LABEL       org.opencontainers.image.licenses=AGPL
 
 RUN         apk add --update --no-cache ca-certificates curl git openssl sqlite tar tzdata \
 				&& adduser -D -h /home/container container
