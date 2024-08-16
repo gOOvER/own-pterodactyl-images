@@ -23,9 +23,9 @@ jobs:
       matrix:
         game:
           #- altv
-          - bannerlord
+          #- bannerlord
           - conan
-          - dayz
+          #- dayz
           - foundry
           - interstellarrift
           - longvinter
@@ -34,7 +34,7 @@ jobs:
           #- pathoftitans
           - quakeliveqlx
           - riskofrain2
-          - samp
+          #- samp
           - screeps
           - staxel
           #- thebattleofwesnod
