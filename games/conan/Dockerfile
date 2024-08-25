@@ -14,6 +14,7 @@ RUN             apt install -y \
                     ca-certificates \
                     cabextract \
                     curl \
+                    dos2unix \
                     g++ \
                     gcc \
                     gdb \
