@@ -5,11 +5,10 @@ LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-ptero
 
 ## install required packages
 ARG             DEBIAN_FRONTEND=noninteractive
-COPY            sources.list /etc/apt/sources.list
 RUN             dpkg --add-architecture i386
 RUN             apt update
 RUN             apt -y upgrade
-RUN             apt install -y --install-recommends \
+RUN             apt install -y \
                     apt-transport-https \
                     binutils \
                     ca-certificates \
@@ -61,7 +60,8 @@ RUN             apt install -y --install-recommends \
                     libsqlite3-dev \
                     libstdc++6 \
                     libz-dev \
-                    libzip4
+                    libzip4 \
+                    libsystemd0:i386
             
 RUN             rm -rf /var/lib/apt/lists/*
 
@@ -70,7 +70,7 @@ RUN     mkdir -pm755 /etc/apt/keyrings
 RUN     wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
 RUN     wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
 RUN     apt update
-RUN     apt install --install-recommends winehq-staging cabextract -y
+RUN     apt install winehq-staging cabextract -y
 
 # Set up Winetricks
 RUN	    wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
