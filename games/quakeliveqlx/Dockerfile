@@ -78,7 +78,6 @@ RUN         apt install -y --install-recommends \
                     libsdl2-2.0-0 \
                     libsdl2-2.0-0:i386 \
                     libsystemd0 \
-                    libsystemd0:i386 \
                     libssl3 \
                     libssl3:i386 \
                     libstdc++6 \

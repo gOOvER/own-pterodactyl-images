@@ -62,7 +62,6 @@ RUN             apt install -y \
                     libsdl2-2.0-0 \
                     libsdl2-2.0-0:i386 \
                     libsystemd0 \
-                    libsystemd0:i386 \
                     libsqlite3-dev \
                     libstdc++6 \
                     libunwind8 \
