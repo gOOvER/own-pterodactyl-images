@@ -9,7 +9,7 @@ COPY            sources.list /etc/apt/sources.list
 RUN             dpkg --add-architecture i386
 RUN             apt update
 RUN             apt -y upgrade
-RUN             apt install -y \
+RUN             apt install -y --no-install-recommends \
                     apt-transport-https \
                     binutils \
                     ca-certificates \
@@ -21,6 +21,7 @@ RUN             apt install -y \
                     gdb \
                     git \
                     gnupg2 \
+					gnutls-bin \
                     icu-devtools \
                     iproute2 \
                     locales \
@@ -61,7 +62,6 @@ RUN             apt install -y \
                     libsdl1.2debian \
                     libsdl2-2.0-0 \
                     libsdl2-2.0-0:i386 \
-                    libsystemd0 \
                     libsqlite3-dev \
                     libstdc++6 \
                     libunwind8 \
