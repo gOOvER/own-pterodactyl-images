@@ -6,11 +6,10 @@ LABEL           org.opencontainers.image.licenses=MIT
 
 ## install required packages
 ARG             DEBIAN_FRONTEND=noninteractive
-COPY            sources.list /etc/apt/sources.list
 RUN             dpkg --add-architecture i386
 RUN             apt update
 RUN             apt -y upgrade
-RUN             apt install -y --no-install-recommends \
+RUN             apt install -y \
                     apt-transport-https \
                     binutils \
                     ca-certificates \
@@ -62,13 +61,13 @@ RUN             apt install -y --no-install-recommends \
                     libsdl1.2debian \
                     libsdl2-2.0-0 \
                     libsdl2-2.0-0:i386 \
-                    libsystemd0 \
+                    libsystemd0:i386 \
                     libsqlite3-dev \
                     libstdc++6 \
                     libunwind8 \
                     libz-dev \
                     libzip4
-            
+
 RUN             rm -rf /var/lib/apt/lists/*
 
 # Install wine and with recommends
@@ -76,7 +75,7 @@ RUN             mkdir -pm755 /etc/apt/keyrings
 RUN             wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
 RUN             wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
 RUN             apt update
-RUN             apt install --install-recommends winehq-staging winbind cabextract -y
+RUN             apt install winehq-staging winbind cabextract -y
 
 # Set up Winetricks
 RUN	            wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
