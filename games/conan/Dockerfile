@@ -15,7 +15,6 @@ RUN             apt install -y --no-install-recommends \
                     ca-certificates \
                     cabextract \
                     curl \
-                    ffmpeg \
                     g++ \
                     gcc \
                     gdb \
@@ -44,12 +43,10 @@ RUN             apt install -y --no-install-recommends \
                     xvfb \
                     xz-utils \
                     zip \
-                    libatomic1 \
                     libc++-dev \
                     libc6 \
                     libduktape207 \
                     libevent-dev \
-                    libfluidsynth3 \
                     libfontconfig \
                     libgcc1 \
                     libicu72 \
@@ -58,7 +55,6 @@ RUN             apt install -y --no-install-recommends \
                     libmariadbclient-dev-compat \
                     libncurses6:i386 \
                     libntlm0 \
-                    libprotobuf32 \
                     libsdl1.2debian \
                     libsdl2-2.0-0 \
                     libsdl2-2.0-0:i386 \
