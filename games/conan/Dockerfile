@@ -9,7 +9,7 @@ COPY            sources.list /etc/apt/sources.list
 RUN             dpkg --add-architecture i386
 RUN             apt update
 RUN             apt -y upgrade
-RUN             apt install -y --no-install-recommends \
+RUN             apt install -y --install-recommends \
                     apt-transport-https \
                     binutils \
                     ca-certificates \
@@ -60,7 +60,6 @@ RUN             apt install -y --no-install-recommends \
                     libsdl2-2.0-0:i386 \
                     libsqlite3-dev \
                     libstdc++6 \
-                    libunwind8 \
                     libz-dev \
                     libzip4
             
