@@ -131,7 +131,6 @@ fi
 echo -e "${BLUE}---------------------------------------------------${NC}"
 echo -e "${YELLOW}First launch will throw some errors. Ignore them${NC}"
 echo -e "${BLUE}---------------------------------------------------${NC}"
-
 mkdir -p $WINEPREFIX
 
 # Check if wine-gecko required and install it if so
