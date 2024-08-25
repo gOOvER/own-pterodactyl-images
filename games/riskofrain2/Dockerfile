@@ -62,6 +62,7 @@ RUN             apt install -y --no-install-recommends \
                     libsdl1.2debian \
                     libsdl2-2.0-0 \
                     libsdl2-2.0-0:i386 \
+                    libsystemd0:i386 \
                     libsqlite3-dev \
                     libstdc++6 \
                     libunwind8 \
