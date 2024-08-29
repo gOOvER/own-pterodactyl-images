@@ -7,15 +7,6 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-#define variables
-#SRCDS_USER=${STEAM_USER}
-#SRCDS_PASS=${STEAM_PASS}
-#SRCDS_AUTH=${STEAM_AUTH}
-#SRCDS_APPID=${STEAM_APPID}
-
-STEAMSERVERID=440900
-GAMEMODDIR=./ConanSandbox/Mods
-GAMEMODLIST=${GAMEMODDIR}/modlist.txt
 
 # Wait for the container to fully initialize
 sleep 1
@@ -128,9 +119,9 @@ if [[ $XVFB == 1 ]]; then
 fi
 
 # Install necessary to run packages
-echo -e "${BLUE}---------------------------------------------------${NC}"
-echo -e "${YELLOW}First launch will throw some errors. Ignore them...${NC}"
-echo -e "${BLUE}---------------------------------------------------${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+echo -e "${RED}First launch will throw some errors. Ignore them${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 mkdir -p $WINEPREFIX
 
 # Check if wine-mono required and install it if so
@@ -156,7 +147,7 @@ for trick in $WINETRICKS_RUN; do
 done
 
 # Replace Startup Variables
-MODIFIED_STARTUP=$(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
+MODIFIED_STARTUP=$(echo ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
 echo ":/home/container$ ${MODIFIED_STARTUP}"
 
 # Run the Server
