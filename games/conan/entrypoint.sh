@@ -56,8 +56,7 @@ fi
 if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then 
     # Update Server
     if [ ! -z ${STEAM_APPID} ]; then
-	    if [ "${STEAM_USER}" == "anonymous" ]; then
-            ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +app_update ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ "${VALIDATE}" == "1" ]] && printf %s 'validate' ) +quit
+        ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +app_update ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ "${VALIDATE}" == "1" ]] && printf %s 'validate' ) +quit
     else
         echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         echo -e "${YELLOW}No appid set. Starting Server${NC}"
@@ -74,6 +73,7 @@ if [ -z ${MODS_UPDATE} ] || [ "${MODS_UPDATE}" == "1" ]; then
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}updating mods...${NC}"
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+fi
 
 cd /home/container
 
