@@ -15,6 +15,7 @@ RUN         apt install -y \
                     curl \
                     dbus \
                     dirmngr \
+                    dos2unix \
                     aspnetcore-runtime-8.0 \
                     dotnet-sdk-8.0 \
                     g++ \
@@ -121,5 +122,6 @@ STOPSIGNAL SIGINT
 
 COPY        --chown=container:container ../entrypoint.sh /entrypoint.sh
 RUN         chmod +x /entrypoint.sh
+RUN         dos2unix /entrypoint.sh
 ENTRYPOINT  ["/usr/bin/tini", "-g", "--"]
 CMD         ["/entrypoint.sh"]
