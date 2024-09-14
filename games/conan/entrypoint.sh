@@ -69,6 +69,12 @@ else
 fi
 
 ## updating mods
+STEAMSERVERID=440900
+GAMEMODDIR=./ConanSandbox/Mods
+GAMEMODLIST=${GAMEMODDIR}/modlist.txt
+
+cd /home/container
+
 if [ -z ${MODS_UPDATE} ] || [ "${MODS_UPDATE}" == "1" ]; then
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}updating mods...${NC}"
