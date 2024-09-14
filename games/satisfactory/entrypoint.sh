@@ -71,6 +71,7 @@ else
     echo -e "${BLUE}---------------------------------------------------------------${NC}"
 fi
 
+# check, if hostmode oon proxmox is enabled
 cpu_model=$(lscpu | grep 'Model name:' | sed 's/Model name:[[:space:]]*//g')
     if [[ "$cpu_model" == "Common KVM processor" || "$cpu_model" == *"QEMU"* ]]; then
         printf "${MSGERROR} Your CPU model is configured as \"${cpu_model}\", which will cause Satisfactory to crash.\\nIf you have control over your hypervisor (ESXi, Proxmox, etc.), you should be able to easily change this.\\nOtherwise contact your host/administrator for assistance.\\n"
