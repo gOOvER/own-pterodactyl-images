@@ -36,7 +36,7 @@ RUN		 	apt install -y --no-install-recommends \
 				libsdl2-2.0-0:i386
 
 ## download lastest 7zip for archives				
-RUN 	wget https://www.7-zip.org/a/7z2407-linux-x64.tar.xz \
-			&& tar xf 7z2407-linux-x64.tar.xz \
+RUN 	wget https://www.7-zip.org/a/7z2408-linux-x64.tar.xz \
+			&& tar xf 7z2408-linux-x64.tar.xz \
 			&& mv 7zz /usr/local/bin \
-			&& rm -f 7z2407-linux-x64.tar.xz
+			&& rm -f 7z2408-linux-x64.tar.xz
