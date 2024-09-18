@@ -35,6 +35,18 @@ echo -e "${BLUE}----------------------------------------------------------------
 # Switch to the container's working directory
 cd /home/container || exit 1
 
+# check, if hostmode oon proxmox is enabled and stop if hostmode is not set
+cpu_model=$(lscpu | grep 'Model name:' | sed 's/Model name:[[:space:]]*//g')
+    if [[ "$cpu_model" == "Common KVM processor" || "$cpu_model" == *"QEMU"* ]]; then
+        printf "${MSGERROR} Your CPU model is configured as \"${cpu_model}\", which will cause Satisfactory to crash.\\nIf you have control over your hypervisor (ESXi, Proxmox, etc.), you should be able to easily change this.\\nOtherwise contact your host/administrator for assistance.\\n"
+        exit 1
+    fi
+
+printf "Checking available memory: %sGB detected\\n" "$RAMAVAILABLE"
+if [[ "$RAMAVAILABLE" -lt 12 ]]; then
+    printf "${MSGWARNING} You have less than the required 12GB minmum (%sGB detected) of available RAM to run the game server.\\nIt is likely that the server will fail to load properly.\\n" "$RAMAVAILABLE"
+fi
+
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${GREEN}Starting Server.... Please wait...${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
@@ -57,7 +69,7 @@ fi
 ## if auto_update is not set or to 1 update
 if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then 
     # Update Source Server
-    if [ ! -z ${STEAM_APPID} ]; then
+    if [ ! -z ${STEAM_APPID} ] || [ ! -z ${SRCDS_APPID} ]; then
 	   ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) $( [[ "${STEAM_SDK}" == "1" ]] && printf %s '+app_update 1007' ) +app_update ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) ${INSTALL_FLAGS} $( [[ "${VALIDATE}" == "1" ]] && printf %s 'validate' ) +quit
     else
         echo -e "${BLUE}---------------------------------------------------------------------${NC}"
@@ -69,18 +81,6 @@ else
     echo -e "${BLUE}---------------------------------------------------------------${NC}"
     echo -e "${YELLOW}Not updating game server as auto update was set to 0. Starting Server${NC}"
     echo -e "${BLUE}---------------------------------------------------------------${NC}"
-fi
-
-# check, if hostmode oon proxmox is enabled and stop if hostmode is not set
-cpu_model=$(lscpu | grep 'Model name:' | sed 's/Model name:[[:space:]]*//g')
-    if [[ "$cpu_model" == "Common KVM processor" || "$cpu_model" == *"QEMU"* ]]; then
-        printf "${MSGERROR} Your CPU model is configured as \"${cpu_model}\", which will cause Satisfactory to crash.\\nIf you have control over your hypervisor (ESXi, Proxmox, etc.), you should be able to easily change this.\\nOtherwise contact your host/administrator for assistance.\\n"
-        exit 1
-    fi
-
-printf "Checking available memory: %sGB detected\\n" "$RAMAVAILABLE"
-if [[ "$RAMAVAILABLE" -lt 12 ]]; then
-    printf "${MSGWARNING} You have less than the required 12GB minmum (%sGB detected) of available RAM to run the game server.\\nIt is likely that the server will fail to load properly.\\n" "$RAMAVAILABLE"
 fi
 
 # Setup NSS Wrapper for use ($NSS_WRAPPER_PASSWD and $NSS_WRAPPER_GROUP have been set by the Dockerfile)
