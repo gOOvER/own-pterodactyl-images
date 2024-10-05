@@ -1,5 +1,5 @@
-# Pterodactyl-Images (Yolks)
-Docker Images for the Hosting Panel Pterodactyl created by gOOvER
+# Docker-Images (Yolks) for Pelican Gamepanel and Pterodactyl
+Docker Images for the Hosting Panel Pelican and Pterodactyl created by gOOvER
 
 A curated collection of core images that can be used with Pterodactyl's Egg system. Each image is rebuilt
 periodically to ensure dependencies are always up-to-date.
