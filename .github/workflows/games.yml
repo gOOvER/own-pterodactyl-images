@@ -22,27 +22,19 @@ jobs:
       fail-fast: false
       matrix:
         game:
-          #- altv
-          #- bannerlord
-          - conan
-          #- dayz
           - foundry
           - interstellarrift
           - longvinter
-          #- mohaa
-          #- palworld
-          #- pathoftitans
           - quakeliveqlx
           - riskofrain2
           - satisfactory
-          #- samp
           - screeps
           - staxel
           #- thebattleofwesnod
           - thefront
           - valheim
           - wurm
-    
+
     steps:
       - uses: actions/checkout@v4
 
