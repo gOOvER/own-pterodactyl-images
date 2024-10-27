@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH eclipse-temurin:11-jdk-jammy
+FROM        --platform=$TARGETOS/$TARGETARCH eclipse-temurin:11-jdk-noble
 
 LABEL   	author="Torsten Widmann" maintainer="info@goover.de"
 LABEL   	org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
@@ -25,8 +25,8 @@ RUN  		apt install -y \
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
             locale-gen
-ENV         LANG en_US.UTF-8  
-ENV         LANGUAGE en_US:en  
+ENV         LANG en_US.UTF-8
+ENV         LANGUAGE en_US:en
 ENV         LC_ALL en_US.UTF-8
 
 ## Setup user and working directory

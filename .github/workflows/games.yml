@@ -24,13 +24,10 @@ jobs:
         game:
           - foundry
           - interstellarrift
-          - longvinter
           - quakeliveqlx
-          - riskofrain2
           - satisfactory
           - screeps
           - staxel
-          #- thebattleofwesnod
           - thefront
           - valheim
           - wurm
