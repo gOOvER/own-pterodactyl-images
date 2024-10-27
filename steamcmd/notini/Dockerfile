@@ -8,7 +8,7 @@ LABEL       org.opencontainers.image.description Dockerimage for Pelican Hosting
 ARG         DEBIAN_FRONTEND=noninteractive
 COPY        sources.list /etc/apt/sources.list
 RUN         dpkg --add-architecture i386
-RUN         apt update \ 
+RUN         apt update \
             && apt -y upgrade
 
 RUN         apt install -y --install-recommends \
@@ -105,12 +105,6 @@ RUN         apt update -y \
                     aspnetcore-runtime-8.0 \
                     dotnet-sdk-8.0
 
-## install Mono
-RUN         gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-RUN         echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/debian stable-buster main" | tee /etc/apt/sources.list.d/mono-official-stable.list
-RUN         apt update
-RUN         apt install -y mono-complete
-
 ## install rcon
 RUN         cd /tmp/ \
             && curl -sSL https://github.com/gorcon/rcon-cli/releases/download/v0.10.3/rcon-0.10.3-amd64_linux.tar.gz > rcon.tar.gz \
@@ -120,16 +114,9 @@ RUN         cd /tmp/ \
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
             locale-gen
-ENV         LANG en_US.UTF-8  
-ENV         LANGUAGE en_US:en  
+ENV         LANG en_US.UTF-8
+ENV         LANGUAGE en_US:en
 ENV         LC_ALL en_US.UTF-8
-
-## Prepare NSS Wrapper for the entrypoint as a workaround for games requiring a valid UID
-ENV         NSS_WRAPPER_PASSWD=/tmp/passwd NSS_WRAPPER_GROUP=/tmp/group
-RUN         touch ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
-            && chgrp 0 ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
-            && chmod g+rw ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP}
-ADD         passwd.template /passwd.template
 
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container
@@ -138,5 +125,5 @@ ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
 
 ## Copy over and execute entrypoint.sh
-COPY        ./entrypoint.sh /entrypoint.sh
+COPY        ./../entrypoint.sh /entrypoint.sh
 CMD         [ "/bin/bash", "/entrypoint.sh" ]
