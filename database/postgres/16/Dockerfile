@@ -10,7 +10,8 @@ RUN         apt update \
 
 RUN         apt install -y \
                 netcat-openbsd \
-                iproute2
+                iproute2 \
+				postgresql-16-postgis-3
 
 ## Setup user and working directory
 RUN             useradd -m -d /home/container -s /bin/bash container
