@@ -6,6 +6,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
+HOME=/home/container
 
 # Wait for the container to fully initialize
 sleep 1
@@ -35,38 +36,29 @@ echo -e "${GREEN}Starting Server.... Please wait...${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
 ## just in case someone removed the defaults.
-#if [ "${STEAM_USER}" == "" ]; then
-#    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-#    echo -e "${YELLOW}Steam user is not set. ${NC}"
-#    echo -e "${YELLOW}Using anonymous user.${NC}"
-#    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-#    STEAM_USER=anonymous
-#    STEAM_PASS=""
-#    STEAM_AUTH=""
-#else
-#    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-#    echo -e "${YELLOW}user set to ${STEAM_USER} ${NC}"
-#    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-#fi
+if [ "${STEAM_USER}" == "" ]; then
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    echo -e "${YELLOW}Steam user is not set. ${NC}"
+    echo -e "${YELLOW}Using anonymous user.${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    STEAM_USER=anonymous
+    STEAM_PASS=""
+    STEAM_AUTH=""
+else
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    echo -e "${YELLOW}user set to ${STEAM_USER} ${NC}"
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+fi
 
 ## if auto_update is not set or to 1 update
-if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then 
-    # Update Source Server
-    if [ ! -z ${STEAM_APPID} ]; then
-	    DepotDownloader -dir $HOME $( [[ -z ${STEAM_USER} ]] || printf %s "-username ${STEAM_USER} -password ${STEAM_PASS} -remember-password" ) $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) -app ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ "${STEAM_VALIDATE}" == "1" ]] && printf %s '-validate' )
-    else
-        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-        echo -e "${YELLOW}No appid set. Starting Server${NC}"
-        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-    fi
-
+if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
+    DepotDownloader -dir /home/container $( [[ -z ${STEAM_USER} ]] || printf %s "-username ${STEAM_USER} -password ${STEAM_PASS} -remember-password" ) $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) -app ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ "${STEAM_VALIDATE}" == "1" ]] && printf %s '-validate' )
+	DepotDownloader -dir /home/container -app 1007
 else
     echo -e "${BLUE}---------------------------------------------------------------${NC}"
     echo -e "${YELLOW}Not updating game server as auto update was set to 0. Starting Server${NC}"
     echo -e "${BLUE}---------------------------------------------------------------${NC}"
 fi
-
-chmod +x /home/container/7DaysToDieServer.x86_64
 
 # Replace Startup Variables
 MODIFIED_STARTUP=$(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')

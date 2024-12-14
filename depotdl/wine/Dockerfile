@@ -2,11 +2,10 @@ FROM            debian:bookworm-slim
 
 LABEL           author="Torsten Widmann" maintainer="info@goover.de"
 LABEL           org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL           org.opencontainers.image.licenses=MIT
+LABEL           org.opencontainers.image.licenses=AGPL
 
 ## install required packages
 ARG             DEBIAN_FRONTEND=noninteractive
-COPY            sources.list /etc/apt/sources.list
 RUN             dpkg --add-architecture i386
 RUN             apt update
 RUN             apt -y upgrade
@@ -67,7 +66,7 @@ RUN             apt install -y --no-install-recommends \
                     libunwind8 \
                     libz-dev \
                     libzip4
-            
+
 RUN             rm -rf /var/lib/apt/lists/*
 
 # Install wine and with recommends
@@ -104,8 +103,8 @@ ENV             DISPLAY_DEPTH=16
 # Set the locale
 RUN             sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
                 locale-gen
-ENV             LANG en_US.UTF-8  
-ENV             LANGUAGE en_US:en  
+ENV             LANG en_US.UTF-8
+ENV             LANGUAGE en_US:en
 ENV             LC_ALL en_US.UTF-8
 
 ## Setup user and working directory
