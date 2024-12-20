@@ -20,6 +20,7 @@ export INTERNAL_IP
 
 echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
     echo -e "${RED}SteamCMD Proton-GE Image by gOOvER${NC}"
+	echo -e "${RED}THIS IMAGE IS LICENCEND UNDER AGPLv3${NC}"
     echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
     echo -e "${YELLOW}Kernel: ${RED} $(uname -r)${NC}"
@@ -87,7 +88,7 @@ echo -e "${BLUE}----------------------------------------------------------------
         echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         echo -e "${YELLOW}Installing: ${NC} ${GREEN} $trick ${NC}"
         echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-        flatpak run com.github.Matoking.protontricks ${STEAM_APPID} $trick
+        protontricks ${STEAM_APPID} $trick
 #done
 
 # Replace Startup Variables
