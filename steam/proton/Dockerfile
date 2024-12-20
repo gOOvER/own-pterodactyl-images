@@ -13,13 +13,13 @@ SHELL       [ "/bin/bash", "-c" ]
 
 # setup apt and install needed packages
 ARG         DEBIAN_FRONTEND=noninteractive
-COPY        sources.list /etc/apt/sources.list
 RUN         dpkg --add-architecture i386
-RUN         apt update \ 
+RUN         apt update \
             && apt -y upgrade
 
 RUN         apt install -y --no-install-recommends  \
                 alsa-tools \
+				ca-certificates \
                 cabextract \
                 curl \
                 dbus \
@@ -100,24 +100,18 @@ RUN	        wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Wi
                 && chmod +x /usr/sbin/winetricks
 RUN         wget -q -O /usr/share/bash-completion/completions/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion
 
-# add flatpak repo and Install Protontricks
-#RUN         flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-#RUN         flatpak -y install flathub com.github.Matoking.protontricks
-#RUN         echo "alias protontricks='flatpak run com.github.Matoking.protontricks'" >> ~/.bashrc
-#RUN         echo "alias protontricks-launch='flatpak run --command=protontricks-launch com.github.Matoking.protontricks'" >> ~/.bashrc
-
-# Install Protontricks 
-#RUN         pipx install protontricks
-#RUN         pipx ensurepath
-#RUN         ln -s /root/.local/bin/protontricks /usr/sbin/protontricks
+# Install Protontricks
+RUN         pipx install protontricks
+RUN         pipx ensurepath
+RUN         ln -s /root/.local/bin/protontricks /usr/local/bin/protontricks
 # Debug
 #RUN         find -name "protontricks"
 
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
             locale-gen
-ENV         LANG en_US.UTF-8  
-ENV         LANGUAGE en_US:en  
+ENV         LANG en_US.UTF-8
+ENV         LANGUAGE en_US:en
 ENV         LC_ALL en_US.UTF-8
 
 ## install rcon

@@ -88,6 +88,11 @@ RUN         apt install -y --no-install-recommends \
 
 RUN             rm -rf /var/lib/apt/lists/*
 
+## download DepotDownloader
+RUN         curl -sLOJ $(curl -s https://api.github.com/repos/SteamRE/DepotDownloader/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep linux-x64.zip)
+RUN         unzip DepotDownloader-linux-x64.zip -d /usr/local/bin/
+RUN         chmod +x /usr/local/bin/DepotDownloader
+
 ## install dotnet to support STEAM dotnet games
 RUN         apt update -y \
                 && apt upgrade -y \
@@ -98,10 +103,6 @@ RUN         apt update -y \
                 && apt install -y \
                     aspnetcore-runtime-9.0 \
                     dotnet-sdk-9.0
-
-RUN         curl -sLOJ $(curl -s https://api.github.com/repos/SteamRE/DepotDownloader/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep linux-x64.zip)
-RUN         unzip DepotDownloader-linux-x64.zip -d /usr/local/bin/
-RUN         chmod +x /usr/local/bin/DepotDownloader
 
 ## install rcon
 RUN         cd /tmp/ \
@@ -130,7 +131,7 @@ ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
 
 # Sets the default stop signal as wings can (currently) only send a kill or generic stop
-STOPSIGNAL SIGINT
+STOPSIGNAL 	SIGINT
 
 COPY        --chown=container:container ../entrypoint.sh /entrypoint.sh
 RUN         chmod +x /entrypoint.sh

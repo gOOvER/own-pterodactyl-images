@@ -80,10 +80,10 @@ RUN             apt install --install-recommends winehq-staging cabextract -y
 RUN	            wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
 RUN             chmod +x /usr/sbin/winetricks
 
-# Install DepotDownloader
-RUN             curl -sLOJ $(curl -s https://api.github.com/repos/SteamRE/DepotDownloader/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep linux-x64.zip)
-RUN             unzip DepotDownloader-linux-x64.zip -d /usr/local/bin/
-RUN             chmod +x /usr/local/bin/DepotDownloader
+## download DepotDownloader
+RUN         curl -sLOJ $(curl -s https://api.github.com/repos/SteamRE/DepotDownloader/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep linux-x64.zip)
+RUN         unzip DepotDownloader-linux-x64.zip -d /usr/local/bin/
+RUN         chmod +x /usr/local/bin/DepotDownloader
 
 ## install rcon
 RUN             cd /tmp/ \
@@ -114,7 +114,7 @@ ENV             USER=container HOME=/home/container
 WORKDIR         /home/container
 
 # Sets the default stop signal as wings can (currently) only send a kill or generic stop
-STOPSIGNAL SIGINT
+STOPSIGNAL		SIGINT
 
 COPY            --chown=container:container ../entrypoint.sh /entrypoint.sh
 RUN             chmod +x /entrypoint.sh
