@@ -20,7 +20,6 @@ export INTERNAL_IP
 
 echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
     echo -e "${RED}SteamCMD Proton-GE Image by gOOvER${NC}"
-	echo -e "${RED}THIS IMAGE IS LICENCED UNDER AGPLv3${NC}"
     echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
     echo -e "${YELLOW}Kernel: ${RED} $(uname -r)${NC}"
@@ -69,15 +68,9 @@ else
 fi
 
 ## if auto_update is not set or to 1 update
-	if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
-    	# Update Source Server
-    	./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) $( [[ "${STEAM_SDK}" == "1" ]] && printf %s '+app_update 1007' ) +app_update ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) ${INSTALL_FLAGS} $( [[ "${VALIDATE}" == "1" ]] && printf %s 'validate' ) +quit
-	else
-        echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-        echo -e "${YELLOW}No appid set. Stopping Server${NC}"
-        echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-        exit 0
-	fi
+if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
+    # Update Source Server
+    ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) $( [[ "${STEAM_SDK}" == "1" ]] && printf %s '+app_update 1007' ) +app_update ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) ${INSTALL_FLAGS} $( [[ "${VALIDATE}" == "1" ]] && printf %s 'validate' ) +quit
 
 else
     echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
@@ -94,7 +87,7 @@ echo -e "${BLUE}----------------------------------------------------------------
         echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         echo -e "${YELLOW}Installing: ${NC} ${GREEN} $trick ${NC}"
         echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-        protontricks ${STEAM_APPID} $trick
+        flatpak run com.github.Matoking.protontricks ${STEAM_APPID} $trick
 #done
 
 # Replace Startup Variables
