@@ -1,4 +1,4 @@
-FROM            ubuntu:24.04
+FROM            debian:bookworm-slim
 
 LABEL           author="Torsten Widmann" maintainer="info@goover.de"
 LABEL           org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
@@ -73,7 +73,7 @@ RUN             rm -rf /var/lib/apt/lists/*
 # Install wine and with recommends
 RUN             mkdir -pm755 /etc/apt/keyrings
 RUN             wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
-RUN             wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/noble/winehq-noble.sources
+RUN             wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
 RUN             apt update
 RUN             apt install --install-recommends winehq-staging winbind cabextract -y
 
