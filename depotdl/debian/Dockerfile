@@ -1,4 +1,4 @@
-FROM        --platform=$BUILDPLATFORM debian:bookworm-slim
+FROM        debian:bookworm-slim
 
 LABEL       author="Torsten Widmann" maintainer="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"

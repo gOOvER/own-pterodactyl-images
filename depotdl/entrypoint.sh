@@ -52,8 +52,15 @@ fi
 
 ## if auto_update is not set or to 1 update
 if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
-    DepotDownloader -dir /home/container $( [[ -z ${STEAM_USER} ]] || printf %s "-username ${STEAM_USER} -password ${STEAM_PASS} -remember-password" ) $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) -app ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ "${STEAM_VALIDATE}" == "1" ]] && printf %s '-validate' )
-	DepotDownloader -dir /home/container -app 1007
+    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+	echo -e "${GREEN}Downloading/updating Server.... Please wait...${NC}"
+	echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+		DepotDownloader -dir /home/container $( [[ -z ${STEAM_USER} ]] || printf %s "-username ${STEAM_USER} -password ${STEAM_PASS} -remember-password" ) $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) -app ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ "${STEAM_VALIDATE}" == "1" ]] && printf %s '-validate' )
+	echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+	echo -e "${GREEN}Downloading/updating Steam runtimes.... Please wait...${NC}"
+	echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+		mkdir -p /home/container/.steamsdk
+		DepotDownloader -dir /home/container/.steamsdk -app 1007
 else
     echo -e "${BLUE}---------------------------------------------------------------${NC}"
     echo -e "${YELLOW}Not updating game server as auto update was set to 0. Starting Server${NC}"
@@ -98,7 +105,7 @@ if [[ $WINETRICKS_RUN =~ mono ]]; then
         WINETRICKS_RUN=${WINETRICKS_RUN/mono}
 
         if [ ! -f "$WINEPREFIX/mono.msi" ]; then
-            curl -sLOJ -o $WINEPREFIX/mono.msi $(curl -s https://api.github.com/repos/madewokherd/wine-mono/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep x86.msi)
+                wget -q -O $WINEPREFIX/mono.msi https://dl.winehq.org/wine/wine-mono/9.3.0/wine-mono-9.3.0-x86.msi
         fi
 
         wine msiexec /i $WINEPREFIX/mono.msi /qn /quiet /norestart /log $WINEPREFIX/mono_install.log
