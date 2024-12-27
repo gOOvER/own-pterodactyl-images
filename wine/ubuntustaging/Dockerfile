@@ -1,4 +1,4 @@
-FROM            debian:bookworm-slim
+FROM            ubuntu:24.04
 
 LABEL           author="Torsten Widmann" maintainer="info@goover.de"
 LABEL           org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
