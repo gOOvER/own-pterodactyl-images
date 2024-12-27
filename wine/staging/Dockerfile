@@ -52,7 +52,7 @@ RUN             apt install -y --no-install-recommends \
                     libfluidsynth3 \
                     libfontconfig \
                     libgcc1 \
-                    libicu74 \
+                    libicu72 \
                     liblua5.4-0 \
                     liblzo2-2 \
                     libmariadbclient-dev-compat \
