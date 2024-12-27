@@ -53,7 +53,7 @@ fi
 ## if auto_update is not set or to 1 update
 if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
 	if [ -f /home/container/DepotDownloader ]; then
-		./DepotDownloader -dir /home/container $( [[ -z ${STEAM_USER} ]] || printf %s "-username ${STEAM_USER} -password ${STEAM_PASS} -remember-password" ) $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) -app ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) -validate
+		./DepotDownloader -dir /home/container -username ${STEAM_USER} -password ${STEAM_PASS} -remember-password $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) -app ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" )
 		mkdir -p /home/container/.steam/sdk64
 		./DepotDownloader -dir /home/container/.steam/sdk64 -app 1007
 		chmod +x $HOME/*
