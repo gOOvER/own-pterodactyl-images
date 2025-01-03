@@ -85,10 +85,10 @@ echo -e "${BLUE}----------------------------------------------------------------
 
 # List and install other packages
 #for trick in $PROTONTRICKS_RUN; do
-        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-        echo -e "${YELLOW}Installing: ${NC} ${GREEN} $trick ${NC}"
-        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-        protontricks ${STEAM_APPID} $trick
+#        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+#        echo -e "${YELLOW}Installing: ${NC} ${GREEN} $trick ${NC}"
+#        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+#        protontricks ${STEAM_APPID} $trick
 #done
 
 # Replace Startup Variables
