@@ -53,13 +53,13 @@ periodically to ensure dependencies are always up-to-date.
 
 | Image            | URI                                    | AMD64 | ARM64 |
 | ---------------- | :--------------------------------------: | :------:| :------: |
-| python:3.7ㅤ   | `ghcr.io/goover/images:python_3.7`  | ✅  | ✅  |
-| python:3.8ㅤ   | `ghcr.io/goover/images:python_3.8`  | ✅  | ✅  |
-| python:3.9 ㅤ  | `ghcr.io/goover/images:python_3.9`  | ✅  | ✅  |
-| python:3.10ㅤ  | `ghcr.io/goover/images:python_3.10` | ✅  | ✅  |
-| python:3.11 ㅤ | `ghcr.io/goover/images:python_3.11` | ✅  | ✅  |
-| python:3.12ㅤ  | `ghcr.io/goover/images:python_3.12` | ✅  | ✅  |
-| python:3.13 ㅤ | `ghcr.io/goover/images:python_3.13` | ✅  | ✅  |
+| python:3.7ㅤ   | `ghcr.io/goover/python_3.7`  | ✅  | ✅  |
+| python:3.8ㅤ   | `ghcr.io/goover/python_3.8`  | ✅  | ✅  |
+| python:3.9 ㅤ  | `ghcr.io/goover/python_3.9`  | ✅  | ✅  |
+| python:3.10ㅤ  | `ghcr.io/goover/python_3.10` | ✅  | ✅  |
+| python:3.11 ㅤ | `ghcr.io/goover/python_3.11` | ✅  | ✅  |
+| python:3.12ㅤ  | `ghcr.io/goover/python_3.12` | ✅  | ✅  |
+| python:3.13 ㅤ | `ghcr.io/goover/python_3.13` | ✅  | ✅  |
 ---
 
 ## ➡️ DotNet
@@ -69,11 +69,12 @@ periodically to ensure dependencies are always up-to-date.
 
 | Image            | URI                                    | AMD64 | ARM64 |
 | ---------------- | :--------------------------------------: | :------:| :------: |
-| python:3.7ㅤ   | `ghcr.io/goover/images:python_3.7`  | ✅  | ✅  |
-| python:3.8ㅤ   | `ghcr.io/goover/images:python_3.8`  | ✅  | ✅  |
-| python:3.9 ㅤ  | `ghcr.io/goover/images:python_3.9`  | ✅  | ✅  |
-| python:3.10ㅤ  | `ghcr.io/goover/images:python_3.10` | ✅  | ✅  |
-| python:3.11 ㅤ | `ghcr.io/goover/images:python_3.11` | ✅  | ✅  |
-| python:3.12ㅤ  | `ghcr.io/goover/images:python_3.12` | ✅  | ✅  |
-| python:3.13 ㅤ | `ghcr.io/goover/images:python_3.13` | ✅  | ✅  |
+| dotnet:6ㅤ   	  | `ghcr.io/goover/dotnet:6` 		| ✅  | ❌  |
+| dotnet:6-sdk    | `ghcr.io/goover/dotnet:6-sdk`  	| ✅  | ❌  |
+| dotnet:7 ㅤ  	  | `ghcr.io/goover/dotnet:7` 	    | ✅  | ❌  |
+| dotnet:7-sdkㅤ  | `ghcr.io/goover/dotnet:7-sdk`   | ✅  | ❌  |
+| dotnet:8 ㅤ	  | `ghcr.io/goover/dotnet:8`       | ✅  | ❌  |
+| dotnet:8-sdkㅤ  | `ghcr.io/goover/dotnet:8-sdk`   | ✅  | ❌  |
+| dotnet:9 ㅤ 	  | `ghcr.io/goover/dotnet:9`       | ✅  | ❌  |
+| dotnet:9-sdk ㅤ | `ghcr.io/goover/dotnet:9-sdk`   | ✅  | ❌  |
 ---
