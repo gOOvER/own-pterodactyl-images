@@ -6,9 +6,6 @@ periodically to ensure dependencies are always up-to-date.
 
 ---
 
-> [!NOTE]
-> You can view all images available here: https://github.com/goover/own-pterodactyl-images/pkgs/container/images
-
 ## ➡️ Image usage uris
 
 ## ➡️ NodeJS
