@@ -1,8 +1,9 @@
-FROM        --platform=$TARGETOS/$TARGETARCH mongo:6-jammy
+FROM        mongo:7-jammy
 
-LABEL           author="Torsten Widmann" maintainer="info@goover.de"
-LABEL           org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL           org.opencontainers.image.licenses=MIT
+LABEL       org.opencontainers.image.authors="info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
+LABEL       org.opencontainers.image.description "Docker image for Pelican Hosting Panel and Pterodactyl"
 
 RUN         apt update \
              && apt -y upgrade
@@ -28,7 +29,7 @@ RUN         echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.n
 RUN         apt update
 
 RUN         apt install -y nodejs
-RUN         npm install npm@latest -g
+#RUN         npm install npm@latest -g
 
 ## install redis
 RUN         curl -fsSL https://packages.redis.io/gpg | gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
