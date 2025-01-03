@@ -1,12 +1,12 @@
 FROM        debian:bookworm-slim
 
-LABEL       author="Torsten Widmann" maintainer="info@goover.de"
+LABEL       org.opencontainers.image.authors="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL       org.opencontainers.image.licenses=AGPL
-LABEL       org.opencontainers.image.description Dockerimage for Pelican Hosting Panel and Pterodactyl
+LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
+LABEL       org.opencontainers.image.description "Docker image for Pelican Hosting Panel and Pterodactyl"
+
 # Update the repository and install needed packages
 ARG         DEBIAN_FRONTEND=noninteractive
-#COPY        sources.list /etc/apt/sources.list
 RUN         dpkg --add-architecture i386
 RUN         apt update \
             && apt -y upgrade
@@ -118,18 +118,18 @@ RUN         cd /tmp/ \
             && mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/
 
 # Set the locale
-RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
-            locale-gen
-ENV         LANG en_US.UTF-8
-ENV         LANGUAGE en_US:en
-ENV         LC_ALL en_US.UTF-8
+RUN        	sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+           	locale-gen
+ENV      	LANG=en_US.UTF-8
+ENV       	LANGUAGE=en_US:en
+ENV        	LC_ALL=en_US.UTF-8
 
 ## Prepare NSS Wrapper for the entrypoint as a workaround for games requiring a valid UID
-ENV         NSS_WRAPPER_PASSWD=/tmp/passwd NSS_WRAPPER_GROUP=/tmp/group
-RUN         touch ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
-            && chgrp 0 ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
-            && chmod g+rw ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP}
-ADD         passwd.template /passwd.template
+#ENV         NSS_WRAPPER_PASSWD=/tmp/passwd NSS_WRAPPER_GROUP=/tmp/group
+#RUN         touch ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
+#            && chgrp 0 ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
+#            && chmod g+rw ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP}
+#ADD         passwd.template /passwd.template
 
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container

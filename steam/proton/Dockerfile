@@ -3,10 +3,10 @@
 # ---------------------------------------------
 FROM        debian:bookworm-slim
 
-LABEL       author="Torsten Widmann" maintainer="info@goover.de"
-LABEL       org.opencontainers.image.description "STEAM Proton-GE Image to use with Pterodactyl Gamepanel"
+LABEL       org.opencontainers.image.description "STEAM Proton-GE Image to use with Pelican/Pterodactyl Gamepanel"
+LABEL       org.opencontainers.image.authors="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL       org.opencontainers.image.licenses=AGPL
+LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
 
 # Env Setup
 SHELL       [ "/bin/bash", "-c" ]
@@ -111,9 +111,9 @@ RUN         wget -q -O /usr/share/bash-completion/completions/winetricks https:/
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
             locale-gen
-ENV         LANG en_US.UTF-8
-ENV         LANGUAGE en_US:en
-ENV         LC_ALL en_US.UTF-8
+ENV         LANG=en_US.UTF-8
+ENV         LANGUAGE=en_US:en
+ENV         LC_ALL=en_US.UTF-8
 
 ## install rcon
 RUN         cd /tmp/ \

@@ -1,14 +1,14 @@
 FROM        --platform=$BUILDPLATFORM debian:bookworm-slim
 
-LABEL       author="Torsten Widmann" maintainer="info@goover.de"
+LABEL       org.opencontainers.image.authors="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL       org.opencontainers.image.licenses=AGPL
-LABEL       org.opencontainers.image.description Dockerimage for Pelican Hosting Panel and Pterodactyl
+LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
+LABEL       org.opencontainers.image.description "Docker image for Pelican Hosting Panel and Pterodactyl"
 
 ARG         DEBIAN_FRONTEND=noninteractive
 
 RUN         dpkg --add-architecture i386
-RUN         apt update \ 
+RUN         apt update \
             && apt -y upgrade
 
 RUN         apt install -y \
@@ -106,6 +106,6 @@ RUN             chmod +x /usr/local/bin/DepotDownloader
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
             locale-gen
-ENV         LANG en_US.UTF-8  
-ENV         LANGUAGE en_US:en  
+ENV         LANG en_US.UTF-8
+ENV         LANGUAGE en_US:en
 ENV         LC_ALL en_US.UTF-8

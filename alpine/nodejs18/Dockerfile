@@ -1,9 +1,9 @@
 FROM        --platform=$TARGETOS/$TARGETARCH node:18-alpine
 
-LABEL       author="Torsten Widmann" maintainer="info@goover.de"
+LABEL       org.opencontainers.image.authors="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL       org.opencontainers.image.licenses=AGPL
-LABEL       org.opencontainers.image.description Dockerimage for Pelican Hosting Panel and Pterodactyl
+LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
+LABEL       org.opencontainers.image.description "Docker image for Pelican Hosting Panel and Pterodactyl"
 
 RUN         apk update \
             && apk upgrade
@@ -30,7 +30,7 @@ RUN         apk add --no-cache \
                 zip \
                 libc6-compat
 
-# updating npm 
+# updating npm
 RUN         npm install npm@latest -g
 RUN         npm install -g typescript ts-node
 

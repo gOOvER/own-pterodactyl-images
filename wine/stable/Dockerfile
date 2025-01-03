@@ -1,8 +1,9 @@
 FROM            debian:bookworm-slim
 
-LABEL           author="Torsten Widmann" maintainer="info@goover.de"
-LABEL           org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL           org.opencontainers.image.licenses=MIT
+LABEL       org.opencontainers.image.authors="info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
+LABEL       org.opencontainers.image.description "Docker image for Pelican Hosting Panel and Pterodactyl"
 
 ## install required packages
 ARG             DEBIAN_FRONTEND=noninteractive
@@ -99,11 +100,11 @@ ENV             AUTO_UPDATE=1
 ENV             XVFB=1
 
 # Set the locale
-RUN             sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
-                locale-gen
-ENV             LANG en_US.UTF-8  
-ENV             LANGUAGE en_US:en  
-ENV             LC_ALL en_US.UTF-8
+RUN         	sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+            	locale-gen
+ENV        		LANG=en_US.UTF-8
+ENV         	LANGUAGE=en_US:en
+ENV         	LC_ALL=en_US.UTF-8
 
 RUN             bash -c 'echo "vm.max_map_count = 16777216" > /etc/sysctl.d/20-max_map_count.conf'
 

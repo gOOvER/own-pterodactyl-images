@@ -1,9 +1,9 @@
 FROM        --platform=$TARGETOS/$TARGETARCH ubuntu:noble
 
-LABEL       author="Torsten Widmann" maintainer="info@goover.de"
+LABEL       org.opencontainers.image.authors="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL       org.opencontainers.image.licenses=AGPL
-LABEL       org.opencontainers.image.description Dockerimage for Pelican Hosting Panel and Pterodactyl
+LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
+LABEL       org.opencontainers.image.description "Docker image for Pelican Hosting Panel and Pterodactyl"
 ARG         DEBIAN_FRONTEND=noninteractive
 
 RUN 		apt update -y
@@ -36,9 +36,9 @@ RUN         apt install -y java-1.8.0-amazon-corretto-jdk
 ## configure locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
             locale-gen
-ENV         LANG en_US.UTF-8  
-ENV         LANGUAGE en_US:en  
-ENV         LC_ALL en_US.UTF-8 
+ENV         LANG en_US.UTF-8
+ENV         LANGUAGE en_US:en
+ENV         LC_ALL en_US.UTF-8
 
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container
