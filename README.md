@@ -1,5 +1,5 @@
 # Docker-Images (Yolks) for Pelican Gamepanel and Pterodactyl
-Docker Images for the Hosting Panel Pelican and Pterodactyl created by gOOvER
+Docker Images for the Hosting Panel Pelican, Jexactyl & Pterodactyl created by gOOvER
 
 A curated collection of core images that can be used with Pterodactyl's Egg system. Each image is rebuilt
 periodically to ensure dependencies are always up-to-date.
@@ -24,6 +24,8 @@ periodically to ensure dependencies are always up-to-date.
 | nodejs:18    | `ghcr.io/goover/nodejs:18` | ✅ | ✅ |
 | nodejs:20    | `ghcr.io/goover/nodejs:20` | ✅ | ✅ |
 | nodejs:21    | `ghcr.io/goover/nodejs:21` | ✅ | ✅ |
+| nodejs:22    | `ghcr.io/goover/nodejs:22` | ✅ | ✅ |
+| nodejs:23    | `ghcr.io/goover/nodejs:23` | ✅ | ✅ |
 ---
 
 ## ➡️ GO
@@ -47,13 +49,31 @@ periodically to ensure dependencies are always up-to-date.
 ## ➡️ Python
 | Image              | Status                                                                                                                                                          | Description                                            |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `goover/python` | [![build python ](https://github.com/goover/own-pterodactyl-images/actions/workflows/dev-python.yml/badge.svg)](https://github.com/goover/own-pterodactyl-images/actions/workflows/dev-python.yml) | Python versions from `3.7` to `3.11`. |
+| `goover/python` | [![build python ](https://github.com/goover/own-pterodactyl-images/actions/workflows/dev-python.yml/badge.svg)](https://github.com/goover/own-pterodactyl-images/actions/workflows/dev-python.yml) | Python versions from `3.7` to `3.13`. |
 
 | Image            | URI                                    | AMD64 | ARM64 |
 | ---------------- | :--------------------------------------: | :------:| :------: |
-| python:3.7ㅤ   | `ghcr.io/goover/images:python_3.7`  |  |  |
-| python:3.8ㅤ   | `ghcr.io/goover/images:python_3.8`  |  |  |
-| python:3.9 ㅤ  | `ghcr.io/goover/images:python_3.9`  |  |  |
-| python:3.10ㅤ  | `ghcr.io/goover/images:python_3.10` |  |  |
-| python:3.11 ㅤ | `ghcr.io/goover/images:python_3.11` |  |  |
+| python:3.7ㅤ   | `ghcr.io/goover/images:python_3.7`  | ✅  | ✅  |
+| python:3.8ㅤ   | `ghcr.io/goover/images:python_3.8`  | ✅  | ✅  |
+| python:3.9 ㅤ  | `ghcr.io/goover/images:python_3.9`  | ✅  | ✅  |
+| python:3.10ㅤ  | `ghcr.io/goover/images:python_3.10` | ✅  | ✅  |
+| python:3.11 ㅤ | `ghcr.io/goover/images:python_3.11` | ✅  | ✅  |
+| python:3.12ㅤ  | `ghcr.io/goover/images:python_3.12` | ✅  | ✅  |
+| python:3.13 ㅤ | `ghcr.io/goover/images:python_3.13` | ✅  | ✅  |
+---
+
+## ➡️ DotNet
+| Image              | Status                                                                                                                                                          | Description                                            |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `goover/dotnet` | [![build dotnet ](https://github.com/goover/own-pterodactyl-images/actions/workflows/dev-dotnet.yml/badge.svg)](https://github.com/goover/own-pterodactyl-images/actions/workflows/dev-dotnet.yml) | Dotnet versions from `6` to `9`. |
+
+| Image            | URI                                    | AMD64 | ARM64 |
+| ---------------- | :--------------------------------------: | :------:| :------: |
+| python:3.7ㅤ   | `ghcr.io/goover/images:python_3.7`  | ✅  | ✅  |
+| python:3.8ㅤ   | `ghcr.io/goover/images:python_3.8`  | ✅  | ✅  |
+| python:3.9 ㅤ  | `ghcr.io/goover/images:python_3.9`  | ✅  | ✅  |
+| python:3.10ㅤ  | `ghcr.io/goover/images:python_3.10` | ✅  | ✅  |
+| python:3.11 ㅤ | `ghcr.io/goover/images:python_3.11` | ✅  | ✅  |
+| python:3.12ㅤ  | `ghcr.io/goover/images:python_3.12` | ✅  | ✅  |
+| python:3.13 ㅤ | `ghcr.io/goover/images:python_3.13` | ✅  | ✅  |
 ---
