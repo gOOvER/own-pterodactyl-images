@@ -56,6 +56,7 @@ RUN         apt install -y --no-install-recommends  \
                 libao-common \
                 libasound2 \
                 libfreetype6 \
+				libfreetype6:i386 \
                 libsdl1.2debian \
                 libsdl1.2debian:i386 \
                 libsdl2-2.0-0 \
@@ -66,6 +67,8 @@ RUN         apt install -y --no-install-recommends  \
                 libncurses5-dev:i386 \
                 libncurses6 \
                 libntlm0 \
+				libnss-wrapper \
+                libnss3 \
                 libpulse-dev \
                 libpulse0 \
                 libgstreamer1.0-dev \
@@ -80,8 +83,6 @@ RUN         apt install -y --no-install-recommends  \
                 gstreamer1.0-x \
                 gstreamer1.0-alsa \
                 gstreamer1.0-gl \
-                #gstreamer1.0-gtk3 \
-                #gstreamer1.0-qt5 \
                 gstreamer1.0-pulseaudio
 
 # Download Proton GE
@@ -101,9 +102,9 @@ RUN	        wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Wi
 RUN         wget -q -O /usr/share/bash-completion/completions/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion
 
 # Install Protontricks
-RUN         pipx install protontricks
-RUN         pipx ensurepath
-RUN         ln -s /root/.local/bin/protontricks /usr/local/bin/protontricks
+#RUN         pipx install protontricks
+#RUN         pipx ensurepath
+#RUN         ln -s /root/.local/bin/protontricks /usr/local/bin/protontricks
 # Debug
 #RUN         find -name "protontricks"
 
