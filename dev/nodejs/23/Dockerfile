@@ -1,28 +1,53 @@
-FROM    debian:bookworm-slim
+FROM        --platform=$TARGETOS/$TARGETARCH node:23-bookworm-slim
 
 LABEL       org.opencontainers.image.authors="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
 LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
 LABEL       org.opencontainers.image.description "Docker image for Pelican Hosting Panel and Pterodactyl"
-ARG         DEBIAN_FRONTEND=noninteractive
 
+ARG         DEBIAN_FRONTEND=noninteractive
 RUN         apt update \
              && apt -y upgrade
 
-RUN         apt install -y \
-                apt-transport-https \
+RUN         apt -y install \
+                autoconf \
+                automake \
+                build-essential \
+                ca-certificates\
+                curl \
+                dnsutils \
+				ffmpeg \
+                g++ \
+                git \
+                gnupg \
+                gnupg2 \
                 iproute2 \
+                iputils-ping \
+                libtool \
                 locales \
+                python3 \
+                python3-dev \
                 sqlite3 \
+                tzdata \
                 tini \
-                wget
+                zip \
+				libnss3 \
+                libsqlite3-dev
 
-## add dotnet repos
-RUN         wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
-            && dpkg -i packages-microsoft-prod.deb \
-            && rm packages-microsoft-prod.deb \
-            && apt update -y \
-            && apt install -y dotnet-sdk-6.0 libgdiplus
+# updating npm
+RUN         npm install npm@latest -g
+RUN         npm install -g typescript ts-node
+
+# install pnpm
+RUN         npm install -g corepack
+RUN         corepack enable
+RUN         corepack prepare pnpm@latest --activate
+
+# add Yarn
+RUN         curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+            && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
+            && apt update \
+            && apt -y install yarn
 
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
