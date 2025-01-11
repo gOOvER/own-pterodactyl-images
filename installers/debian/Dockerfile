@@ -29,11 +29,8 @@ RUN		 	apt install -y --no-install-recommends \
 				zstd \
 				lib32gcc-s1 \
 				libcurl4 \
-				libcurl4:i386 \
 				libcurl4-gnutls-dev \
-				libcurl4-gnutls-dev:i386 \
 				libsdl2-2.0-0 \
-				libsdl2-2.0-0:i386
 
 ## download lastest 7zip for archives
 RUN 	wget https://www.7-zip.org/a/7z2409-linux-x64.tar.xz \
