@@ -1,17 +1,18 @@
-FROM    --platform=$TARGETOS/$TARGETARCH debian:buster-slim
+FROM    	debian:buster-slim
 
-LABEL   author="Torsten Widmann" maintainer="info@goover.de"
-LABEL   org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL   org.opencontainers.image.licenses=MIT
+LABEL       org.opencontainers.image.authors="Torsten Widmann - gOOvER - info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.description="Docker image for Pelican, Jexactyl & Pterodactyl"
+LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
 
-ENV     DEBIAN_FRONTEND noninteractive
+ARG 		DEBIAN_FRONTEND noninteractive
 
 ## update base packages
-RUN     apt update \
-        && apt -y upgrade
+RUN     	apt update \
+        		&& apt -y upgrade
 
 ## install dependencies
-RUN     apt install -y \
+RUN     	apt install -y \
                 apt-transport-https \
                 binutils \
                 ca-certificates \
@@ -20,13 +21,13 @@ RUN     apt install -y \
                 ffmpeg \
                 g++ \
                 gcc \
-		gdb \
+				gdb \
                 git \
                 git-lfs \
                 gnupg2 \
                 icu-devtools \
                 iproute2 \
-		locales \
+				locales \
                 net-tools \
                 netcat \
                 rapidjson-dev \
@@ -58,8 +59,8 @@ RUN     apt install -y \
                 libz-dev
 
 ## configure locale
-RUN     update-locale lang=en_US.UTF-8 \
-         && dpkg-reconfigure --frontend noninteractive locales
+RUN     	update-locale lang=en_US.UTF-8 \
+         		&& dpkg-reconfigure --frontend noninteractive locales
 
 ## Setup user and working directory
 RUN     useradd -m -d /home/container -s /bin/bash container

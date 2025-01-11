@@ -1,10 +1,11 @@
 FROM            --platform=$TARGETOS/$TARGETARCH ubuntu:18.04
 
-LABEL           author="Torsten Widmann" maintainer="info@goover.de"
-LABEL           org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL           org.opencontainers.image.licenses=MIT
+LABEL       org.opencontainers.image.authors="Torsten Widmann - gOOvER - info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.description="Docker image for Pelican, Jexactyl & Pterodactyl"
+LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
 
-ENV             DEBIAN_FRONTEND noninteractive
+ARG             DEBIAN_FRONTEND noninteractive
 
 ## update base packages
 RUN             apt update \
@@ -12,54 +13,54 @@ RUN             apt update \
 
 ## install dependencies
 RUN             apt install -y \
-                        apt-transport-https \
-                        binutils \
-                        bzip2 \
-                        cabextract \
-                        curl \
-                        ffmpeg \
-                        g++ \
-                        gcc \
-                        gdb \
-                        git \
-                        icu-devtools \
-                        init-system-helpers \
-                        iproute2 \
-			locales \
-                        net-tools \
-                        netcat \
-                        sqlite3 \
-                        tar \
-                        telnet \
-                        unzip \
-                        wget \
-                        xz-utils \
-                        zip \
-                        zlib1g \
-                        libatomic1 \
-                        libc++-dev \
-                        libc6 \
-                        libcurl3-gnutls \
-                        libduktape202 \
-                        libfluidsynth1 \
-                        libfontconfig \
-                        libgcc1 \
-                        libicu60 \
-                        libiculx60 \
-                        libjsoncpp1 \
-                        libleveldb1v5 \
-                        liblua5.1-0 \
-                        libluajit-5.1-2 \
-                        liblzo2-2 \
-                        libmariadbclient-dev \
-                        libsdl1.2debian \
-                        libsdl2-2.0-0 \
-                        libsqlite3-0 \
-                        libsqlite3-dev \
-                        libssl1.0-dev \
-                        libssl1.0.0 \
-                        libunwind8 \
-                        libzip4
+                    apt-transport-https \
+                    binutils \
+                    bzip2 \
+                    cabextract \
+                    curl \
+                    ffmpeg \
+                    g++ \
+                    gcc \
+                    gdb \
+                    git \
+                    icu-devtools \
+                    init-system-helpers \
+                    iproute2 \
+					locales \
+                    net-tools \
+                    netcat \
+                    sqlite3 \
+                    tar \
+                    telnet \
+                    unzip \
+                    wget \
+                    xz-utils \
+                    zip \
+                    zlib1g \
+                    libatomic1 \
+                    libc++-dev \
+                    libc6 \
+                    libcurl3-gnutls \
+                    libduktape202 \
+                    libfluidsynth1 \
+                    libfontconfig \
+                    libgcc1 \
+                    libicu60 \
+                    libiculx60 \
+                    libjsoncpp1 \
+                    libleveldb1v5 \
+                    liblua5.1-0 \
+                    libluajit-5.1-2 \
+                    liblzo2-2 \
+                    libmariadbclient-dev \
+                    libsdl1.2debian \
+                    libsdl2-2.0-0 \
+                    libsqlite3-0 \
+                    libsqlite3-dev \
+                    libssl1.0-dev \
+                    libssl1.0.0 \
+                    libunwind8 \
+                    libzip4
 
 ## configure locale
 RUN             update-locale lang=en_US.UTF-8 \

@@ -1,8 +1,9 @@
 FROM        --platform=$BUILDPLATFORM alpine:latest
 
-LABEL   	author="Torsten Widmann" maintainer="info@goover.de"
-LABEL   	org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL   	org.opencontainers.image.licenses=MIT
+LABEL       org.opencontainers.image.authors="Torsten Widmann - gOOvER - info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.description="Docker image for Pelican, Jexactyl & Pterodactyl"
+LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
 
 RUN         apk add --update --no-cache \
 				ca-certificates \
@@ -48,7 +49,7 @@ RUN         apk add --update --no-cache \
 				git-lfs --repository=https://dl-cdn.alpinelinux.org/alpine/latest-stable/community \
 				duktape --repository=https://dl-cdn.alpinelinux.org/alpine/latest-stable/community \
 				fluidsynth --repository=https://dl-cdn.alpinelinux.org/alpine/latest-stable/community \
-				sdl2 --repository=https://dl-cdn.alpinelinux.org/alpine/latest-stable/community 
+				sdl2 --repository=https://dl-cdn.alpinelinux.org/alpine/latest-stable/community
 
 ## Setup user and working directory
 RUN         adduser -D -h /home/container container -s /bin/bash container
