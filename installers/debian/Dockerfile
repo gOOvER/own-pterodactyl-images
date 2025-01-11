@@ -5,7 +5,6 @@ LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-ptero
 LABEL       org.opencontainers.image.description="Docker image for Pelican, Jexactyl & Pterodactyl"
 LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
 
-
 ## update base packages
 ARG         DEBIAN_FRONTEND noninteractive
 RUN        	dpkg --add-architecture i386
@@ -37,7 +36,7 @@ RUN		 	apt install -y --no-install-recommends \
 				libsdl2-2.0-0:i386
 
 ## download lastest 7zip for archives
-RUN 	wget https://www.7-zip.org/a/7z2408-linux-x64.tar.xz \
-			&& tar xf 7z2408-linux-x64.tar.xz \
+RUN 	wget https://www.7-zip.org/a/7z2409-linux-x64.tar.xz \
+			&& tar xf 7z2409-linux-x64.tar.xz \
 			&& mv 7zz /usr/local/bin \
-			&& rm -f 7z2408-linux-x64.tar.xz
+			&& rm -f 7z2409-linux-x64.tar.xz
