@@ -84,12 +84,12 @@ echo -e "${GREEN}Starting Server.... Please wait...${NC}"
 echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
 
 # List and install other packages
-#for trick in $PROTONTRICKS_RUN; do
-#        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-#        echo -e "${YELLOW}Installing: ${NC} ${GREEN} $trick ${NC}"
-#        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-#        protontricks ${STEAM_APPID} $trick
-#done
+for trick in $PROTONTRICKS_RUN; do
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+        echo -e "${YELLOW}Installing: ${NC} ${GREEN} $trick ${NC}"
+        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+        protontricks ${STEAM_APPID} $trick
+done
 
 # Replace Startup Variables
 MODIFIED_STARTUP=$(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')

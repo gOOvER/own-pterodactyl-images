@@ -37,6 +37,7 @@ RUN         apt install -y --no-install-recommends  \
                 net-tools \
                 netcat-openbsd \
                 openssl \
+                protontricks \
                 pulseaudio \
                 python3 \
                 python3-pip \
@@ -100,13 +101,6 @@ RUN         dbus-uuidgen --ensure
 RUN	        wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
                 && chmod +x /usr/sbin/winetricks
 RUN         wget -q -O /usr/share/bash-completion/completions/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion
-
-# Install Protontricks
-#RUN         pipx install protontricks
-#RUN         pipx ensurepath
-#RUN         ln -s /root/.local/bin/protontricks /usr/local/bin/protontricks
-# Debug
-#RUN         find -name "protontricks"
 
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
