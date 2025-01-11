@@ -6,11 +6,14 @@ LABEL       org.opencontainers.image.description="Docker image for Pelican, Jexa
 LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
 
 ## install required packages
+ARG         DEBIAN_FRONTEND=noninteractive
+
 RUN     	dpkg --add-architecture i386
 RUN     	apt update
 RUN     	apt -y upgrade
 RUN     	apt install -y \
             	gnupg2 \
+				locales \
             	software-properties-common \
             	libntlm0 \
             	winbind \
