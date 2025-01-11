@@ -1,9 +1,9 @@
-FROM        --platform=$BUILDPLATFORM debian:bookworm-slim
+FROM        debian:bookworm-slim
 
-LABEL       org.opencontainers.image.authors="info@goover.de"
+LABEL       org.opencontainers.image.authors="Torsten Widmann - gOOvER - info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.description="Docker image for Pelican, Jexactyl & Pterodactyl"
 LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
-LABEL       org.opencontainers.image.description "Docker image for Pelican Hosting Panel and Pterodactyl"
 
 # Update the repository and install needed packages
 ARG         DEBIAN_FRONTEND=noninteractive
@@ -103,8 +103,8 @@ RUN         apt update -y \
                 && rm packages-microsoft-prod.deb \
                 && apt update -y \
                 && apt install -y \
-                    aspnetcore-runtime-8.0 \
-                    dotnet-sdk-8.0
+                    aspnetcore-runtime-9.0 \
+                    dotnet-sdk-9.0
 
 RUN         wget --no-check-certificate https://aka.ms/dotnet-counters/linux-x64 -O /usr/bin/dotnet-counters
 RUN         wget --no-check-certificate https://aka.ms/dotnet-dump/linux-x64 -O /usr/bin/dotnet-dump
@@ -113,12 +113,12 @@ RUN         chmod +x /usr/bin/dotnet-counters
 RUN         chmod +x /usr/bin/dotnet-trace
 RUN         chmod +x /usr/bin/dotnet-dump
 RUN         mkdir /opt/profiling
-RUN         wget --no-check-certificate https://download.jetbrains.com/resharper/dotUltimate.2022.3.2/JetBrains.dotTrace.CommandLineTools.linux-x64.2022.3.2.tar.gz -O JetBrains.dotTrace.CommandLineTools.linux-x64.2022.3.2.tar.gz
-RUN         tar -zxvf JetBrains.dotTrace.CommandLineTools.linux-x64.2022.3.2.tar.gz -C /opt/profiling
-RUN         rm JetBrains.dotTrace.CommandLineTools.linux-x64.2022.3.2.tar.gz
-RUN         wget --no-check-certificate https://download.jetbrains.com/resharper/dotUltimate.2022.3.2/JetBrains.dotMemory.Console.linux-x64.2022.3.2.tar.gz -O JetBrains.dotMemory.Console.linux-x64.2022.3.2.tar.gz
-RUN         tar -zxvf JetBrains.dotMemory.Console.linux-x64.2022.3.2.tar.gz -C /opt/profiling
-RUN         rm JetBrains.dotMemory.Console.linux-x64.2022.3.2.tar.gz
+RUN         wget --no-check-certificate https://download.jetbrains.com/resharper/dotUltimate.2024.3.3/JetBrains.dotTrace.CommandLineTools.linux-x64.2024.3.3.tar.gz -O JetBrains.dotTrace.CommandLineTools.linux-x64.2024.3.3.tar.gz
+RUN         tar -zxvf JetBrains.dotTrace.CommandLineTools.linux-x64.2024.3.3.tar.gz -C /opt/profiling
+RUN         rm JetBrains.dotTrace.CommandLineTools.linux-x64.2024.3.3.tar.gz
+RUN         wget --no-check-certificate https://download.jetbrains.com/resharper/dotUltimate.2024.3.3/JetBrains.dotMemory.Console.linux-x64.2024.3.3.tar.gz -O JetBrains.dotMemory.Console.linux-x64.2024.3.3.tar.gz
+RUN         tar -zxvf JetBrains.dotMemory.Console.linux-x64.2024.3.3.tar.gz -C /opt/profiling
+RUN         rm JetBrains.dotMemory.Console.linux-x64.2024.3.3.tar.gz
 
 
 ## install rcon

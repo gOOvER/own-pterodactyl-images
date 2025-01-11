@@ -1,6 +1,9 @@
-FROM        --platform=$BUILDPLATFORM debian:bullseye-slim
+FROM        debian:bullseye-slim
 
-LABEL       author="Torsten Widmann" maintainer="info@goover.de"
+LLABEL      org.opencontainers.image.authors="Torsten Widmann - gOOvER - info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.description="Docker image for Pelican, Jexactyl & Pterodactyl"
+LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
 
 ARG         DEBIAN_FRONTEND=noninteractive
 
@@ -76,7 +79,7 @@ RUN         apt install temurin-8-jdk -y
 ENV         DISPLAY=:0
 ENV         DISPLAY_WIDTH=1024
 ENV         DISPLAY_HEIGHT=768
-ENV         DISPLAY_DEPTH=16         
+ENV         DISPLAY_DEPTH=16
 
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container

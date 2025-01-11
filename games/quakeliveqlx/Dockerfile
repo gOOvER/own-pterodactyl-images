@@ -1,9 +1,9 @@
 FROM        --platform=$BUILDPLATFORM python:3.9-slim-bookworm
 
-LABEL       org.opencontainers.image.authors="info@goover.de"
+LABEL       org.opencontainers.image.authors="Torsten Widmann - gOOvER - info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.description="Docker image for Pelican, Jexactyl & Pterodactyl"
 LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
-LABEL       org.opencontainers.image.description "Docker image for Pelican Hosting Panel and Pterodactyl"
 
 # Update the repository and install needed packages
 ARG         DEBIAN_FRONTEND=noninteractive
@@ -12,86 +12,86 @@ RUN         apt update \
             && apt -y upgrade
 
 RUN         apt install -y \
-                    ca-certificates \
-                    curl \
-                    dbus \
-                    dirmngr \
-                    g++ \
-                    gcc \
-                    gcc-12-base \
-                    gdb \
-                    gettext \
-                    git \
-                    gnupg \
-                    iproute2 \
-                    jq \
-                    lsb-release \
-                    locales \
-                    mesa-utils \
-                    net-tools \
-                    netcat-openbsd \
-                    numactl \
-                    psmisc \
-                    sed \
-                    software-properties-common \
-                    speex:i386 \
-                    tar \
-                    telnet \
-                    tini \
-                    tzdata \
-                    wget \
-                    lib32gcc-s1 \
-                    lib32stdc++6 \
-                    lib32tinfo6 \
-                    libtinfo6:i386 \
-                    lib32z1 \
-                    libasound2 \
-                    libatk1.0-0 \
-                    libatomic1 \
-                    libc++-dev \
-                    libc++1 \
-                    libc6 \
-                    libc6:i386 \
-                    libcurl3-gnutls \
-                    libcurl3-gnutls:i386 \
-                    libcurl4 \
-                    libcurl4-gnutls-dev \
-                    libcurl4-gnutls-dev:i386 \
-                    libcurl4:i386 \
-                    libfontconfig \
-                    libgcc-s1 \
-                    libgcc1 \
-                    libgconf-2-4 \
-                    libgdiplus \
-                    libgtk2.0-0:i386 \
-                    libjemalloc2 \
-                    libjemalloc2:i386 \
-                    libnss-wrapper \
-                    libnss3 \
-                    libpangocairo-1.0-0 \
-                    libpulse-dev \
-                    libpulse0 \
-                    libsdl1.2-compat \
-                    libsdl1.2-compat:i386 \
-                    libsdl1.2debian \
-                    libsdl1.2debian:i386 \
-                    libsdl2-2.0-0 \
-                    libsdl2-2.0-0:i386 \
-                    libsystemd0:i386 \
-                    libssl3 \
-                    libssl3:i386 \
-                    libstdc++6 \
-                    libstdc++6:i386 \
-                    libtcmalloc-minimal4 \
-                    libtcmalloc-minimal4:i386 \
-                    libtinfo6:i386 \
-                    libxcomposite1 \
-                    libxcursor1 \
-                    libxdamage1 \
-                    libxi6 \
-                    libxrandr2 \
-                    libxss1 \
-                    libxtst6
+               	ca-certificates \
+                curl \
+                dbus \
+                dirmngr \
+                g++ \
+                gcc \
+                gcc-12-base \
+                gdb \
+                gettext \
+                git \
+                gnupg \
+                iproute2 \
+                jq \
+                lsb-release \
+                locales \
+                mesa-utils \
+                net-tools \
+                netcat-openbsd \
+                numactl \
+                psmisc \
+                sed \
+                software-properties-common \
+                speex:i386 \
+                tar \
+                telnet \
+                tini \
+                tzdata \
+                wget \
+                lib32gcc-s1 \
+                lib32stdc++6 \
+                lib32tinfo6 \
+                libtinfo6:i386 \
+                lib32z1 \
+                libasound2 \
+                libatk1.0-0 \
+                libatomic1 \
+                libc++-dev \
+                libc++1 \
+                libc6 \
+                libc6:i386 \
+                libcurl3-gnutls \
+                libcurl3-gnutls:i386 \
+                libcurl4 \
+                libcurl4-gnutls-dev \
+                libcurl4-gnutls-dev:i386 \
+                libcurl4:i386 \
+                libfontconfig \
+                libgcc-s1 \
+                libgcc1 \
+                libgconf-2-4 \
+                libgdiplus \
+                libgtk2.0-0:i386 \
+                libjemalloc2 \
+                libjemalloc2:i386 \
+                libnss-wrapper \
+                libnss3 \
+                libpangocairo-1.0-0 \
+                libpulse-dev \
+                libpulse0 \
+                libsdl1.2-compat \
+                libsdl1.2-compat:i386 \
+                libsdl1.2debian \
+                libsdl1.2debian:i386 \
+                libsdl2-2.0-0 \
+                libsdl2-2.0-0:i386 \
+                libsystemd0:i386 \
+                libssl3 \
+                libssl3:i386 \
+                libstdc++6 \
+                libstdc++6:i386 \
+                libtcmalloc-minimal4 \
+                libtcmalloc-minimal4:i386 \
+                libtinfo6:i386 \
+                libxcomposite1 \
+                libxcursor1 \
+                libxdamage1 \
+                libxi6 \
+                libxrandr2 \
+                libxss1 \
+                libxtst6
 
 ##install redis
 RUN         curl -fsSL https://packages.redis.io/gpg | gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg

@@ -1,25 +1,25 @@
 FROM        mongo:7-jammy
 
-LABEL       org.opencontainers.image.authors="info@goover.de"
+LABEL       org.opencontainers.image.authors="Torsten Widmann - gOOvER - info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.description="Docker image for Pelican, Jexactyl & Pterodactyl"
 LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
-LABEL       org.opencontainers.image.description "Docker image for Pelican Hosting Panel and Pterodactyl"
 
 RUN         apt update \
              && apt -y upgrade
 
 RUN         apt install -y \
-                    build-essential \
-                    curl \
-                    ffmpeg \
-                    git \
-                    gnupg \
-                    iproute2 \
-                    libtool \
-                    lsb-release \
-                    netcat \
-                    software-properties-common \
-                    tcl
+                build-essential \
+                curl \
+                ffmpeg \
+                git \
+                gnupg \
+                iproute2 \
+                libtool \
+                lsb-release \
+                netcat \
+                software-properties-common \
+                tcl
 
 ## install nodejs
 RUN         mkdir -p /etc/apt/keyrings \
@@ -35,7 +35,7 @@ RUN         apt install -y nodejs
 RUN         curl -fsSL https://packages.redis.io/gpg | gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
 RUN         echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/redis.list
 RUN         apt update
-RUN         apt install -y redis                
+RUN         apt install -y redis
 
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container
