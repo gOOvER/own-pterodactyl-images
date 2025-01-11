@@ -1,7 +1,7 @@
 # ---------------------------------------------
 # Steam Proton image
 # ---------------------------------------------
-FROM        debian:bookworm-slim
+FROM        ubuntu:24.04
 
 LABEL       org.opencontainers.image.description="STEAM Proton-GE Image to use with Pelican/Pterodactyl Gamepanel"
 LABEL       org.opencontainers.image.authors="info@goover.de"
