@@ -52,10 +52,8 @@ RUN         apt install -y --no-install-recommends  \
                 winbind \
                 xauth \
                 xvfb \
-                yad \
                 lib32gcc-s1 \
                 libao-common \
-                liboss4-salsa-asound2 \
                 libfreetype6 \
 				libfreetype6:i386 \
                 libsdl1.2debian \
