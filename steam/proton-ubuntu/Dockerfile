@@ -37,6 +37,7 @@ RUN         apt install -y --no-install-recommends  \
                 net-tools \
                 netcat-openbsd \
                 openssl \
+				protontricks \
                 pulseaudio \
                 python3 \
                 python3-pip \
@@ -54,7 +55,7 @@ RUN         apt install -y --no-install-recommends  \
                 yad \
                 lib32gcc-s1 \
                 libao-common \
-                libasound2 \
+                liboss4-salsa-asound2 \
                 libfreetype6 \
 				libfreetype6:i386 \
                 libsdl1.2debian \
