@@ -1,8 +1,9 @@
 FROM        --platform=$TARGETOS/$TARGETARCH node:16-bullseye-slim
 
-LABEL           author="Torsten Widmann" maintainer="info@goover.de"
-LABEL           org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL           org.opencontainers.image.licenses=MIT
+LABEL       org.opencontainers.image.authors="Torsten Widmann - gOOvER - info@goover.de"
+LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.description="Docker image for Pelican, Jexactyl & Pterodactyl"
+LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
 
 ARG         DEBIAN_FRONTEND=noninteractive
 
@@ -38,5 +39,5 @@ RUN         apt -y install \
 				libnss3 \
                 libsqlite3-dev
 
-# updating npm 
+# updating npm
 RUN         npm install npm@latest -g

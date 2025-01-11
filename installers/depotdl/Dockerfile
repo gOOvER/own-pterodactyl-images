@@ -1,9 +1,9 @@
-FROM        --platform=$BUILDPLATFORM debian:bookworm-slim
+FROM        debian:bookworm-slim
 
-LABEL       org.opencontainers.image.authors="info@goover.de"
+LABEL       org.opencontainers.image.authors="Torsten Widmann - gOOvER - info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.description="Docker image for Pelican, Jexactyl & Pterodactyl"
 LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
-LABEL       org.opencontainers.image.description "Docker image for Pelican Hosting Panel and Pterodactyl"
 
 ARG         DEBIAN_FRONTEND=noninteractive
 
@@ -90,18 +90,18 @@ RUN         apt install -y \
 
 ## add dotnet repos
 RUN         wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
-            && dpkg -i packages-microsoft-prod.deb \
-            && rm packages-microsoft-prod.deb \
-            && apt update -y \
-            && apt install -y \
-                    aspnetcore-runtime-8.0 \
-                    libgdiplus \
-                    dotnet-sdk-8.0
+            	&& dpkg -i packages-microsoft-prod.deb \
+            	&& rm packages-microsoft-prod.deb \
+            	&& apt update -y
+RUN 		apt install -y \
+              	aspnetcore-runtime-9.0 \
+                libgdiplus \
+                dotnet-sdk-9.0
 
 # Install DepotDownloader
-RUN             curl -sLOJ $(curl -s https://api.github.com/repos/SteamRE/DepotDownloader/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep linux-x64.zip)
-RUN             unzip DepotDownloader-linux-x64.zip -d /usr/local/bin/
-RUN             chmod +x /usr/local/bin/DepotDownloader
+RUN			curl -sLOJ $(curl -s https://api.github.com/repos/SteamRE/DepotDownloader/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep linux-x64.zip)
+RUN         unzip DepotDownloader-linux-x64.zip -d /usr/local/bin/
+RUN         chmod +x /usr/local/bin/DepotDownloader
 
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
