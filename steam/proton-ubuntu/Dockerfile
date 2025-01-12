@@ -25,7 +25,6 @@ RUN         apt install -y --no-install-recommends  \
                 dbus \
                 ffmpeg \
                 file \
-                flatpak \
                 git \
                 gnupg \
                 gnupg2 \
@@ -45,6 +44,7 @@ RUN         apt install -y --no-install-recommends  \
                 python3-venv \
                 pipx \
                 software-properties-common \
+				steam \
                 tar \
                 tini \
                 virt-what \
