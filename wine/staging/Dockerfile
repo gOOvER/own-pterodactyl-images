@@ -20,6 +20,7 @@ RUN             apt install -y --no-install-recommends \
                     ffmpeg \
                     g++ \
                     gcc \
+					gcc-11-base \
                     gdb \
                     git \
                     gnupg2 \

@@ -25,7 +25,7 @@ TZ=${TZ:-UTC}
 export TZ
 
 # Default the IMAGE_PROMPT environment variable to something nice
-IMAGE_PROMPT=${IMAGE_PROMPT:-$'\033[1m\033[33mcontainer@pterodactyl~ \033[0m'}
+IMAGE_PROMPT=${IMAGE_PROMPT:-$'\033[1m\033[33mcontainer@gameservertech~ \033[0m'}
 export IMAGE_PROMPT
 
 # Information output
@@ -33,7 +33,7 @@ echo -e "${BLUE}----------------------------------------------------------------
 echo -e "${YELLOW}Foundry Docker Image with Mod Support${NC}"
 echo -e "${YELLOW}Copyright 2024 by gOOvER - All rights reserved${NC}"
 echo -e "${RED}Please note; the egg & image are NOT licensed under the MIT license!!! Redistribution is not permitted${NC}"
-echo -e "${BLUE}---------------------------------------------------------------------${NC}" 
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}Running on Debian $(cat /etc/debian_version)${NC}"
 echo -e "${YELLOW}Current timezone: $(cat /etc/timezone)${NC}"
 echo -e "${YELLOW}Wine Version:${NC} ${RED} $(wine --version)${NC}"
@@ -62,7 +62,7 @@ else
 fi
 
 ## if auto_update is not set or to 1 update
-if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then 
+if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
     # Update Server
     if [ ! -z ${STEAM_APPID} ]; then
 	    ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +app_update ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ "${VALIDATE}" == "1" ]] && printf %s 'validate' ) +quit

@@ -16,7 +16,7 @@ TZ=${TZ:-UTC}
 export TZ
 
 # Default the IMAGE_PROMPT environment variable to something nice
-IMAGE_PROMPT=${IMAGE_PROMPT:-$'\033[1m\033[33mcontainer@pterodactyl~ \033[0m'}
+IMAGE_PROMPT=${IMAGE_PROMPT:-$'\033[1m\033[33mcontainer@gameservertech~ \033[0m'}
 export IMAGE_PROMPT
 
 # Information output
@@ -49,7 +49,7 @@ else
 fi
 
 ## if auto_update is not set or to 1 update
-if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then 
+if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
     # Update Source Server
     if [ ! -z ${STEAM_APPID} ]; then
 	    if [ "${STEAM_USER}" == "anonymous" ]; then
