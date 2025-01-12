@@ -23,7 +23,7 @@ export IMAGE_PROMPT
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}Wine Image from gOOvER${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${YELLOW}Running on Debian $(cat /etc/debian_version)${NC}"
+echo -e "${YELLOW}echo -e "${YELLOW}Linux Distribution: ${RED} $(. /etc/os-release ; echo $PRETTY_NAME)${NC}" $(cat /etc/debian_version)${NC}"
 echo -e "${YELLOW}Current timezone: $(cat /etc/timezone)${NC}"
 echo -e "${YELLOW}Wine Version:${NC} ${RED} $(wine --version)${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"

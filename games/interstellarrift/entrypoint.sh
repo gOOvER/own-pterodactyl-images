@@ -2,7 +2,7 @@
 cd /home/container
 
 # Information output
-echo "Running on Debian $(cat /etc/debian_version)"
+echo "echo -e "${YELLOW}Linux Distribution: ${RED} $(. /etc/os-release ; echo $PRETTY_NAME)${NC}" $(cat /etc/debian_version)"
 echo "Current timezone: $(cat /etc/timezone)"
 wine --version
 

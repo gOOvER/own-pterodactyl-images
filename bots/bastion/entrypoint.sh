@@ -12,7 +12,7 @@ clear
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}BastionBot Installation${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
+echo -e "${YELLOW}Linux Distribution: ${RED} $(. /etc/os-release ; echo $PRETTY_NAME)${NC}"
 echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}Python Version: ${RED}$(python3 --version)${NC}"

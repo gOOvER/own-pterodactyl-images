@@ -22,7 +22,7 @@ echo -e "${BLUE}----------------------------------------------------------------
     echo -e "${RED}SteamCMD Proton-GE Image by gOOvER${NC}"
 	echo -e "${RED}THIS IMAGE IS LICENCEND UNDER AGPLv3${NC}"
     echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-    echo -e "${YELLOW}Running on Debian: ${RED} $(cat /etc/debian_version)${NC}"
+    echo -e "${YELLOW}Linux Distribution: ${RED} $(. /etc/os-release ; echo $PRETTY_NAME)${NC}"
     echo -e "${YELLOW}Kernel: ${RED} $(uname -r)${NC}"
     echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
     echo -e "${YELLOW}Proton Version: ${RED} $(cat /usr/local/bin/version)${NC}"

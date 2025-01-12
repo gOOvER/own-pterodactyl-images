@@ -21,7 +21,7 @@ export IMAGE_PROMPT
 
 # Information output
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${YELLOW}Running on Debian $(cat /etc/debian_version)${NC}"
+echo -e "${YELLOW}echo -e "${YELLOW}Linux Distribution: ${RED} $(. /etc/os-release ; echo $PRETTY_NAME)${NC}" $(cat /etc/debian_version)${NC}"
 echo -e "${YELLOW}Current timezone: $(cat /etc/timezone)${NC}"
 echo -e "${YELLOW}Java Version:${NC} ${RED} $(java -version)${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"

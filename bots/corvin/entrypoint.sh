@@ -16,7 +16,7 @@ echo -e "${YELLOW}MongoDB Version:${NC} " && mongod --version
 echo -e "${YELLOW}NodeJS Version:${NC} " && node -v
 echo -e "${YELLOW}NPM Version:${NC} " && npm -v
 echo -e "${YELLOW}Java Version:${NC} " && java -version
-echo -e "${YELLOW}Running on Debian:${NC} " && cat /etc/debian_version
+echo -e "${YELLOW}echo -e "${YELLOW}Linux Distribution: ${RED} $(. /etc/os-release ; echo $PRETTY_NAME)${NC}":${NC} " && cat /etc/debian_version
 echo -e "${YELLOW}Current timezone:${NC} " && cat /etc/timezone
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
