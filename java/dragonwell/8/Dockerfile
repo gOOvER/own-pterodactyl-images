@@ -28,14 +28,14 @@ RUN  		apt install -y \
 				libstdc++6
 
 RUN 		apt-get clean \
-			&& rm -rf /var/lib/apt/lists/* \
+			&& rm -rf /var/lib/apt/lists/*
 
 # Set the locale
-RUN       	sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
-           	locale-gen
-ENV      	LANG=en_US.UTF-8
-ENV        	LANGUAGE=en_US:en
-ENV        	LC_ALL=en_US.UTF-8
+RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+            locale-gen
+ENV        	LANG=en_US.UTF-8
+ENV         LANGUAGE=en_US:en
+ENV         LC_ALL=en_US.UTF-8
 
 ## Setup user and working directory
 RUN     	useradd -m -d /home/container -s /bin/bash container
