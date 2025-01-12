@@ -24,6 +24,7 @@ export INTERNAL_IP
 # system informations
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${RED}Postgres Image by gOOvER${NC}"
+echo -e "${RED}THIS IMAGE IS LICENSED UNDER AGPLv3${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}Linux Distribution: ${RED} $(. /etc/os-release ; echo $PRETTY_NAME)${NC}"
 echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
@@ -31,7 +32,7 @@ echo -e "${YELLOW}Postgres Version: ${RED} $(postgres --version) ${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
 # Replace Startup Variables
-MODIFIED_STARTUP=`eval echo $(echo ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')`
+MODIFIED_STARTUP="eval echo $(echo ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')"
 echo ":/home/container$ ${MODIFIED_STARTUP}"
 
 # Run the Server

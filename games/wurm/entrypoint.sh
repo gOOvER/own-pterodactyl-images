@@ -15,10 +15,6 @@ sleep 1
 TZ=${TZ:-UTC}
 export TZ
 
-# Default the IMAGE_PROMPT environment variable to something nice
-IMAGE_PROMPT=${IMAGE_PROMPT:-$'\033[1m\033[33mcontainer@gameservertech~ \033[0m'}
-export IMAGE_PROMPT
-
 # Information output
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}echo -e "${YELLOW}Linux Distribution: ${RED} $(. /etc/os-release ; echo $PRETTY_NAME)${NC}" $(cat /etc/debian_version)${NC}"

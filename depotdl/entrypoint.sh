@@ -22,6 +22,7 @@ export INTERNAL_IP
 # Information output
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${RED}DepotDownloader Image by gOOvER${NC}"
+echo -e "${RED}THIS IMAGE IS LICENSED UNDER AGPLv3${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}Linux Distribution: ${RED} $(. /etc/os-release ; echo $PRETTY_NAME)${NC}"
 echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
