@@ -35,7 +35,7 @@ RUN         apt -y install \
                 libsqlite3-dev
 
 # updating npm
-RUN         npm install npm@latest -g
+RUN         npm install npm@next-10 -g
 RUN         npm install -g typescript ts-node
 
 # install pnpm

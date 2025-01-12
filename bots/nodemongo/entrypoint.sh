@@ -23,7 +23,7 @@ export INTERNAL_IP
 
 # system informations
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${RED}NodeJS & MongoDB Image by gOOvER${NC}"
+echo -e "${RED}NodeJS & MongoDB Image by gOOvER - https://discord.goover.dev${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}Running on: ${RED} $(. /etc/os-release ; echo $NAME $VERSION)${NC}"
 echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"

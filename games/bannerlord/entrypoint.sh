@@ -21,14 +21,14 @@ export INTERNAL_IP
 # Information output
 if [ -f "/usr/local/bin/proton" ]; then
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-    echo -e "${RED}SteamCMD Proton  Image by gOOvER${NC}"
+    echo -e "${RED}SteamCMD Proton  Image by gOOvER - https://discord.goover.dev${NC}"
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}Linux Distribution: ${RED} $(. /etc/os-release ; echo $PRETTY_NAME)${NC}"
     echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 else
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-    echo -e "${RED}SteamCMD Image by gOOvER${NC}"
+    echo -e "${RED}SteamCMD Image by gOOvER - https://discord.goover.dev${NC}"
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}Linux Distribution: ${RED} $(. /etc/os-release ; echo $PRETTY_NAME)${NC}"
     echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"

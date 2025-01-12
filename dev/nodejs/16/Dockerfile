@@ -34,7 +34,7 @@ RUN         apt -y install --no-install-recommends \
 				libnss3 \
                 libsqlite3-dev
 
-RUN         npm install npm@9.8.1 typescript ts-node @types/node --location=global
+RUN         npm install npm@next-9 typescript ts-node @types/node --location=global
 
 # add Yarn
 RUN         curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
