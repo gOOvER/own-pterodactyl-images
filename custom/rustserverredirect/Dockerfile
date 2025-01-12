@@ -1,9 +1,10 @@
-FROM        --platform=$BUILDPLATFORM ubuntu:latest
+FROM        ubuntu:24.04
 
 LABEL       org.opencontainers.image.authors="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
+LABEL       org.opencontainers.image.description="Docker image for Pelican Hosting Panel and Pterodactyl"
 LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
-LABEL       org.opencontainers.image.description "Docker image for Pelican Hosting Panel and Pterodactyl"
+
 # Update the repository and install needed packages
 ARG         DEBIAN_FRONTEND=noninteractive
 #COPY        sources.list /etc/apt/sources.list
@@ -45,6 +46,7 @@ RUN         apt install -y --install-recommends \
                     lib32gcc-s1 \
                     lib32stdc++6 \
                     lib32tinfo6 \
+					libasound2 \
                     libtinfo6:i386 \
                     lib32z1 \
                     liboss4-salsa-asound2 \

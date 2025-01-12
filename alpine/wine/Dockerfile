@@ -9,8 +9,8 @@ LABEL       org.opencontainers.image.description "Docker image for Pelican Hosti
 RUN         apk update
 RUN         apk upgrade
 RUN         apk add --no-cache tzdata xvfb wget curl git
-RUN         apk add wine --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community --allow-untrusted
-RUN         apk add winetricks --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ --allow-untrusted
+RUN         apk add wine --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community --allow-untrusted
+RUN         apk add winetricks --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ --allow-untrusted
 
 # ENV
 ENV         HOME=/home/container

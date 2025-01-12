@@ -4,6 +4,7 @@ LABEL       org.opencontainers.image.authors="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
 LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
 LABEL       org.opencontainers.image.description "Docker image for Pelican Hosting Panel and Pterodactyl"
+
 ARG         DEBIAN_FRONTEND=noninteractive
 
 RUN 		apt update -y
@@ -31,7 +32,7 @@ RUN         apt install -y \
 RUN         wget -O- -q https://apt.corretto.aws/corretto.key | apt-key add -
 RUN         add-apt-repository 'deb https://apt.corretto.aws stable main'
 RUN         apt update
-RUN         apt install -y java-20-amazon-corretto-jdk
+RUN         apt install -y java-23-amazon-corretto-jdk
 
 ## configure locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \

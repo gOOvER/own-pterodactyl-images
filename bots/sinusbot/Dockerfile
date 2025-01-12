@@ -9,7 +9,7 @@ LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
 ARG         DEBIAN_FRONTEND=noninteractive
 RUN         apt update \
             && apt -y upgrade
-	
+
 RUN			apt -y install \
                 ca-certificates \
                 less \
@@ -35,7 +35,7 @@ RUN			apt -y install \
                 libxkbcommon0 \
                 tini
 
-RUN         curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp \
+RUN         curl -sSL https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp \
                 && chmod a+rx /usr/local/bin/youtube-dl
 
 # Set the locale
@@ -58,6 +58,3 @@ COPY        --chown=container:container ../entrypoint.sh /entrypoint.sh
 RUN         chmod +x /entrypoint.sh
 ENTRYPOINT  ["/usr/bin/tini", "-g", "--"]
 CMD         ["/entrypoint.sh"]
-
-COPY        ./entrypoint.sh /entrypoint.sh
-CMD         ["/bin/bash", "/entrypoint.sh"]

@@ -26,7 +26,6 @@ jobs:
           - 11
           - 17
           - 21
-          - 22
     steps:
       - uses: actions/checkout@v4
 
@@ -42,7 +41,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          
+
       - uses: docker/build-push-action@v6
         with:
           context: ./java/shenandoah
