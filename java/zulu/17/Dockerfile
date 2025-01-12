@@ -28,7 +28,7 @@ RUN  		apt install -y \
 				libstdc++6
 
 RUN 		apt-get clean \
-			&& rm -rf /var/lib/apt/lists/* \
+			&& rm -rf /var/lib/apt/lists/*
 
 # Set the locale
 RUN       	sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
