@@ -36,5 +36,6 @@ WORKDIR 	/home/container
 
 COPY 		./entrypoint.sh /entrypoint.sh
 COPY 		./wrapper.js /wrapper/wrapper.js
+RUN			chmod +x /wrapper/wrapper.js
 
 CMD			[ "/bin/bash", "/entrypoint.sh" ]
