@@ -25,6 +25,7 @@ jobs:
           #- foundry
           - interstellarrift
           - quakeliveqlx
+          - rust
           - screeps
           - staxel
           - thefront
