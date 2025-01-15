@@ -4,7 +4,8 @@ ARG         DEBIAN_FRONTEND=noninteractive
 
 RUN			dpkg --add-architecture i386 \
 			&& apt update \
-			&& apt upgrade -y \
+			&& apt upgrade -y
+
 RUN			apt install -y \
 				lib32gcc-s1 \
 				lib32stdc++6 \
