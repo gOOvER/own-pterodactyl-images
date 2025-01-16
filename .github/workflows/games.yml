@@ -23,6 +23,7 @@ jobs:
       matrix:
         game:
           - aloft
+          - aloft-proton
           #- foundry
           - interstellarrift
           - quakeliveqlx
