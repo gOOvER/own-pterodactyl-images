@@ -22,6 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         game:
+          - aloft
           #- foundry
           - interstellarrift
           - quakeliveqlx
