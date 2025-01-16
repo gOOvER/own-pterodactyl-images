@@ -47,6 +47,7 @@ RUN         apt install -y --no-install-recommends  \
 				steam \
                 tar \
                 tini \
+				unzip \
                 virt-what \
                 wget \
                 winbind \
