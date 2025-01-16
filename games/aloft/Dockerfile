@@ -20,7 +20,6 @@ RUN             apt install -y --no-install-recommends \
                     ffmpeg \
                     g++ \
                     gcc \
-					gcc-11-base \
                     gdb \
                     git \
                     gnupg2 \
@@ -30,7 +29,6 @@ RUN             apt install -y --no-install-recommends \
                     locales \
                     net-tools \
                     netcat-openbsd \
-                    numactl \
                     procps \
                     python3 \
                     rapidjson-dev \
@@ -55,7 +53,7 @@ RUN             apt install -y --no-install-recommends \
                     libfluidsynth3 \
                     libfontconfig \
                     libgcc1 \
-                    libicu72 \
+                    libicu74 \
                     liblua5.4-0 \
                     liblzo2-2 \
                     libmariadbclient-dev-compat \
@@ -71,7 +69,8 @@ RUN             apt install -y --no-install-recommends \
                     libz-dev \
                     libzip4
 
-RUN             rm -rf /var/lib/apt/lists/*
+RUN 			apt-get clean \
+				&& rm -rf /var/lib/apt/lists/*
 
 # Install wine and with recommends
 RUN             mkdir -pm755 /etc/apt/keyrings
