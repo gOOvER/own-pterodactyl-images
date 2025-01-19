@@ -6,7 +6,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
-
+LINUX=$(. /etc/os-release ; echo $PRETTY_NAME)
 
 # Wait for the container to fully initialize
 sleep 1
@@ -20,7 +20,7 @@ echo -e "${BLUE}----------------------------------------------------------------
 echo -e "${YELLOW}Wine Image from gOOvER${NC}"
 echo -e "${RED}THIS IMAGE IS LICENSED UNDER AGPLv3${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${YELLOW}Docker Linux Distribution: ${RED} $(. /etc/os-release ; echo $(PRETTY_NAME))${NC}"
+echo -e "${YELLOW}Docker Linux Distribution: ${RED} $(echo $LINUX)${NC}"
 echo -e "${YELLOW}Current timezone: $(cat /etc/timezone)${NC}"
 echo -e "${YELLOW}Wine Version:${NC} ${RED} $(wine --version)${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
