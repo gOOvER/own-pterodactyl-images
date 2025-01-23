@@ -30,6 +30,7 @@ jobs:
           - python
           - python39
           - ubuntu
+          - wine
 
     steps:
       - uses: actions/checkout@v4

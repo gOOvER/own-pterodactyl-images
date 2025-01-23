@@ -78,7 +78,10 @@ RUN             mkdir -pm755 /etc/apt/keyrings
 RUN             wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
 RUN             wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
 RUN             apt update
-RUN             apt install --install-recommends winehq-staging winbind cabextract -y
+RUN             apt install -y --install-recommends \
+					winehq-staging \
+					winbind \
+					cabextract
 
 # Set up Winetricks
 RUN	            wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
@@ -93,6 +96,7 @@ RUN             cd /tmp/ \
 # Setup ENVs
 ENV             HOME=/home/container
 ENV             WINEPREFIX=/home/container/.wine
+ENV 			WINEARCH=win64
 ENV             WINEDLLOVERRIDES="mscoree,mshtml="
 ENV             DISPLAY=:0
 ENV             DISPLAY_WIDTH=1024
