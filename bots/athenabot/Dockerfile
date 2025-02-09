@@ -56,8 +56,8 @@ RUN         npm install npm@latest -g
 RUN         npm install json5 tsc typescript ts-node @types/node --location=global
 
 # install pnpm
-RUN         corepack enable
-RUN         corepack prepare pnpm@latest --activate
+RUN         npm install --global corepack@latest
+RUN         corepack enable pnpm
 
 # Set the locale
 RUN         	sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
