@@ -24,7 +24,7 @@ echo -e "${RED}SteamCMD Image by gOOvER - https://discord.goover.dev${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 echo -e "${YELLOW}Linux Distribution: ${RED} $(. /etc/os-release ; echo $PRETTY_NAME)${NC}"
 echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
-echo -e "${YELLOW}DotNet Version: ${RED} $(dotnet --version) ${NC}"
+echo -e "${YELLOW}Python Version: ${RED} $(python3 --version) ${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
 # Switch to the container's working directory
@@ -73,13 +73,6 @@ else
     echo -e "${YELLOW}Not updating game server as auto update was set to 0. Starting Server${NC}"
     echo -e "${BLUE}---------------------------------------------------------------${NC}"
 fi
-
-# Setup NSS Wrapper for use ($NSS_WRAPPER_PASSWD and $NSS_WRAPPER_GROUP have been set by the Dockerfile)
-export USER_ID=$(id -u)
-export GROUP_ID=$(id -g)
-envsubst < /passwd.template > ${NSS_WRAPPER_PASSWD}
-
-export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnss_wrapper.so
 
 # Replace Startup Variables
 MODIFIED_STARTUP=$(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
