@@ -3,7 +3,7 @@ FROM        --platform=$TARGETOS/$TARGETARCH mongo:7-jammy
 LABEL       org.opencontainers.image.authors="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
 LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
-LABEL       org.opencontainers.image.description "Docker image for Pelican Hosting Panel and Pterodactyl"
+LABEL       org.opencontainers.image.description="Docker image for Pelican Hosting Panel and Pterodactyl"
 
 # Update the repository and install needed packages
 ARG         DEBIAN_FRONTEND=noninteractive
@@ -55,8 +55,8 @@ RUN         npm install npm@10.9.2 -g
 RUN         npm install json5 tsc typescript ts-node @types/node --location=global
 
 # install pnpm
-RUN         corepack enable
-RUN         corepack prepare pnpm@latest --activate
+#RUN         corepack enable
+#RUN         corepack prepare pnpm@latest --activate
 
 # Set the locale
 RUN         	sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
