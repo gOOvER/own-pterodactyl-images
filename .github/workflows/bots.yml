@@ -25,13 +25,13 @@ jobs:
           - athenabot
           - bastion
           - championbots
-          - corvin
+          #- corvin
           - multibot
           - nodemongo
           - nodemongo18
           - parkertron
-          - red
-          - sinusbot
+          #- red
+          #- sinusbot
           - sogebot
 
     steps:
