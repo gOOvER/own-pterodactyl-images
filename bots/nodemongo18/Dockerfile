@@ -51,7 +51,7 @@ RUN         apt update \
                 && apt install -y nodejs yarn
 
 # updating npm
-RUN         npm install npm@latest -g
+RUN         npm install npm@10.9.2 -g
 RUN         npm install json5 tsc typescript ts-node @types/node --location=global
 
 # install pnpm
