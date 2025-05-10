@@ -26,6 +26,7 @@ jobs:
           - aloft-proton
           #- foundry
           - interstellarrift
+          . mtsa
           - quakeliveqlx
           - rust
           - screeps
