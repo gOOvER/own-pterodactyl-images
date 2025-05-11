@@ -3,12 +3,12 @@ FROM        --platform=$TARGETOS/$TARGETARCH mongo:7-jammy
 LABEL       org.opencontainers.image.authors="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
 LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
-LABEL       org.opencontainers.image.description "Docker image for Pelican Hosting Panel and Pterodactyl"
+LABEL       org.opencontainers.image.description="Docker image for Pelican Hosting Panel and Pterodactyl"
 
 
 # Update the repository and install needed packages
 ARG         DEBIAN_FRONTEND=noninteractive
-RUN         apt update \ 
+RUN         apt update \
             && apt -y upgrade
 RUN         apt -y install --no-install-recommends \
                   autoconf \
@@ -33,7 +33,7 @@ RUN         apt -y install --no-install-recommends \
                   tini \
                   tzdata \
                   zip \
-                  libcairo2-dev \ 
+                  libcairo2-dev \
                   libgif-dev \
                   libnss3 \
                   libpango1.0-dev \
@@ -51,7 +51,7 @@ RUN         mkdir -p /etc/apt/keyrings \
 RUN         apt update \
                 && apt install -y nodejs yarn
 
-# updating npm 
+# updating npm
 RUN         npm install npm@latest -g
 RUN         npm install json5 tsc typescript ts-node @types/node --location=global
 

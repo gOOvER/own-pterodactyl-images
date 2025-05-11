@@ -3,7 +3,7 @@ FROM        --platform=$TARGETOS/$TARGETARCH mongo:7.0
 LABEL       org.opencontainers.image.authors="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
 LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
-LABEL       org.opencontainers.image.description "Docker image for Pelican Hosting Panel and Pterodactyl"
+LABEL       org.opencontainers.image.description="Docker image for Pelican Hosting Panel and Pterodactyl"
 ENV         DEBIAN_FRONTEND noninteractive
 RUN         apt update \
              && apt -y upgrade

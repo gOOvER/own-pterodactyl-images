@@ -3,7 +3,7 @@ FROM        --platform=$BUILDPLATFORM node:22-bookworm-slim
 LABEL       org.opencontainers.image.authors="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
 LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
-LABEL       org.opencontainers.image.description "Docker image for Pelican Hosting Panel and Pterodactyl"
+LABEL       org.opencontainers.image.description="Docker image for Pelican Hosting Panel and Pterodactyl"
 
 RUN         apt update \
             && apt -y upgrade
@@ -26,7 +26,7 @@ RUN			apt -y install \
                 automake \
                 g++ libtool \
                 build-essential
-            
+
 # update npm
 RUN         npm install npm@latest -g
 
