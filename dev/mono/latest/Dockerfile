@@ -1,3 +1,5 @@
+FROM        	debian:bookworm-slim
+
 LABEL       	org.opencontainers.image.authors="info@goover.de"
 LABEL       	org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
 LABEL       	org.opencontainers.image.licenses=AGPL-3.0-or-later
@@ -99,7 +101,7 @@ RUN        		sh -c 'echo "deb https://download.mono-project.com/repo/debian stab
 RUN         	apt update
 RUN         	apt install -y \
                 	mono-complete
-				
+
 # Set the locale
 RUN        		sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
            		locale-gen
