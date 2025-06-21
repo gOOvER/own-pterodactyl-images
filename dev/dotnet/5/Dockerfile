@@ -23,7 +23,7 @@ RUN         apt install -y \
 
 ## install dotnet
 RUN          wget https://dot.net/v1/dotnet-install.sh \
-            	&& D_V="$(curl -sSL https://dotnet.microsoft.com/en-us/download/dotnet/7.0 | grep -i  '<h3 id="sdk-7.*">SDK 7.*.*</h3>'  | head -1 | awk -F\" '{print $3}' | awk '{print $2;}' | sed 's/<\/h3>//g')" \
+            	&& D_V="$(curl -sSL https://dotnet.microsoft.com/en-us/download/dotnet/5.0 | grep -i  '<h3 id="sdk-5.*">SDK 5.*.*</h3>'  | head -1 | awk -F\" '{print $3}' | awk '{print $2;}' | sed 's/<\/h3>//g')" \
             	&& chmod +x dotnet-install.sh \
 				&& ./dotnet-install.sh -i /usr/share -v $D_V \
             	&& ln -s /usr/share/dotnet /usr/bin/dotnet
