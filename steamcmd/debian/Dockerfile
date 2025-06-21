@@ -11,7 +11,7 @@ RUN         dpkg --add-architecture i386
 RUN         apt update \
             && apt -y upgrade
 
-RUN         apt install -y --install-recommends \
+RUN         apt install -y --no-install-recommends \
                     ca-certificates \
                     curl \
                     dbus \
@@ -92,18 +92,15 @@ RUN         apt install -y --install-recommends \
                     libxi6 \
                     libxrandr2 \
                     libxss1 \
-                    libxtst6
+                    libxtst6 && \
+			rm -rf /var/lib/apt/lists/*
 
 ## install dotnet to support STEAM dotnet games
-RUN         apt update -y \
-                && apt upgrade -y \
-                && wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
-                && dpkg -i packages-microsoft-prod.deb \
-                && rm packages-microsoft-prod.deb \
-                && apt update -y \
-                && apt install -y \
-                    aspnetcore-runtime-9.0 \
-                    dotnet-sdk-9.0
+RUN          wget https://dot.net/v1/dotnet-install.sh \
+            	&& D_V="$(curl -sSL https://dotnet.microsoft.com/en-us/download/dotnet/9.0 | grep -i  '<h3 id="sdk-9.*">SDK 9.*.*</h3>'  | head -1 | awk -F\" '{print $3}' | awk '{print $2;}' | sed 's/<\/h3>//g')" \
+            	&& chmod +x dotnet-install.sh \
+				&& ./dotnet-install.sh -i /usr/share -v $D_V \
+            	&& ln -s /usr/share/dotnet /usr/bin/dotnet
 
 ## install rcon
 RUN         cd /tmp/ \
@@ -114,9 +111,10 @@ RUN         cd /tmp/ \
 # Set the locale
 RUN        	sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
            	locale-gen
-ENV      	LANG=en_US.UTF-8
-ENV       	LANGUAGE=en_US:en
-ENV        	LC_ALL=en_US.UTF-8
+
+ENV      	LANG=en_US.UTF-8 \
+	       	LANGUAGE=en_US:en \
+        	LC_ALL=en_US.UTF-8
 
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container
