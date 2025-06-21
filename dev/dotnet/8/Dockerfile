@@ -16,16 +16,16 @@ RUN         apt install -y \
                 locales \
                 sqlite3 \
                 tini \
-                wget
+                wget \
+				libgdiplus
 
-ENV 		DOTNET_ROOT=/usr/share/dotnet
 
 ## add dotnet repos
-RUN         wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
-            && dpkg -i packages-microsoft-prod.deb \
-            && rm packages-microsoft-prod.deb \
-            && apt update -y \
-            && apt install -y aspnetcore-runtime-8.0 libgdiplus
+            wget https://dot.net/v1/dotnet-install.sh \
+            	&& D_V="$(curl -sSL https://dotnet.microsoft.com/en-us/download/dotnet/8.0 | grep -i  '<h3 id="sdk-8.*">SDK 8.*.*</h3>'  | head -1 | awk -F\" '{print $3}' | awk '{print $2;}' | sed 's/<\/h3>//g')" \
+            	&& chmod +x dotnet-install.sh \
+				&& ./dotnet-install.sh -i /usr/share -v $D_V \
+            	&& ln -s /usr/share/dotnet /usr/bin/dotnet
 
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
