@@ -12,6 +12,8 @@ RUN         apt update \
 RUN         apt install -y \
                 apt-transport-https \
 				acl \
+				curl \
+				gnupg \
                 iproute2 \
                 locales \
                 sqlite3 \
