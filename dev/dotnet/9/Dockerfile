@@ -9,17 +9,20 @@ ARG         DEBIAN_FRONTEND=noninteractive
 RUN         apt update \
              && apt -y upgrade
 
-RUN         apt install -y \
+RUN         apt install -y --no-install-recommends \
                 apt-transport-https \
 				acl \
+				ca-certificates \
 				curl \
 				gnupg \
                 iproute2 \
+				libc6 \
                 locales \
                 sqlite3 \
                 tini \
                 wget \
-				libgdiplus
+				libgdiplus \
+			&& rm -rf /var/lib/apt/lists/*
 
 ## install dotnet
 RUN          wget https://dot.net/v1/dotnet-install.sh \
