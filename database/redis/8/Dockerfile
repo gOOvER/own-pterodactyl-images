@@ -1,4 +1,4 @@
-FROM    	--platform=$TARGETOS/$TARGETARCH redis:7-bookworm
+FROM    	--platform=$TARGETOS/$TARGETARCH redis:8-bookworm
 
 LABEL       org.opencontainers.image.authors="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
@@ -8,10 +8,11 @@ LABEL       org.opencontainers.image.description="Docker image for Pelican Hosti
 # Update the repository and install needed packages
 ARG         DEBIAN_FRONTEND=noninteractive
 RUN         dpkg --add-architecture i386
-RUN     	apt update \
-        		&& apt -y upgrade
 
-RUN     	apt -y install \
+RUN     	apt update \
+        	&& apt -y upgrade
+
+RUN     apt -y install \
                 git \
                 iproute2 \
                 locales \
