@@ -15,6 +15,7 @@ RUN         apt -y install --no-install-recommends \
                 automake \
                 build-essential \
                 ca-certificates\
+				chromium \
                 curl \
                 dnsutils \
 				ffmpeg \
