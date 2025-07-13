@@ -114,9 +114,12 @@ if [[ $WINETRICKS_RUN =~ mono ]]; then
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     WINETRICKS_RUN=${WINETRICKS_RUN/mono/}
 
-    # Download latest 32-bit Wine Mono MSI from GitHub if not already present
+    # Define the download URL
     MONO_URL="https://github.com/wine-mono/wine-mono/releases/latest/download/wine-mono-x86.msi"
-    [ ! -f "$WINEPREFIX/mono.msi" ] && wget -q -O "$WINEPREFIX/mono.msi" "$MONO_URL"
+
+    # Remove existing MSI if it exists, then download the latest
+    [ -f "$WINEPREFIX/mono.msi" ] && rm -f "$WINEPREFIX/mono.msi"
+    wget -q -O "$WINEPREFIX/mono.msi" "$MONO_URL"
 
     # Install 32-bit Wine Mono
     if [ -f "$WINEPREFIX/mono.msi" ]; then
