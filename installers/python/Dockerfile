@@ -46,5 +46,5 @@ RUN         apt -y install --no-install-recommends \
 RUN         rm -rf /var/lib/apt/lists/*
 
 RUN         python -m pip install --upgrade pip
-RUN 	    pipx ensurepath
-RUN         pipx itch-dl
+RUN 	    pip install itch-dl
+
