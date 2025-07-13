@@ -10,7 +10,7 @@ ARG 		DEBIAN_FRONTEND=noninteractive
 RUN         apt update \
 		        && apt -y upgrade
 
-RUN         apt -y install \
+RUN         apt -y install --no-install-recommends \
                 build-essential \
                 ca-certificates \
                 curl \
@@ -43,6 +43,8 @@ RUN         apt -y install \
                 libxml2-dev \
                 libxmlsec1-dev
 
+RUN         rm -rf /var/lib/apt/lists/*
+
 RUN         python -m pip install --upgrade pip
-RUN 	    pipx ensurepath --global
+RUN 	    pipx ensurepath
 RUN         pipx itch-dl
