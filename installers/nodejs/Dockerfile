@@ -36,6 +36,7 @@ RUN         apt -y install \
                 tzdata \
                 zip \
                 unzip \
+				libatk1.0-0 \
 				libnss3 \
                 libsqlite3-dev
 
