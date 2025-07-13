@@ -83,4 +83,3 @@ RUN         npm install tsc typescript ts-node @types/node --location=global
 RUN 	    npm install -g pnpm
 RUN 	    corepack enable \
 			&& corepack prepare pnpm@latest --activate
-RUN 	    yarn add itchio-downloader
