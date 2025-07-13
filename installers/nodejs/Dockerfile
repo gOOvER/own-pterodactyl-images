@@ -41,6 +41,8 @@ RUN         apt -y install --no-install-recommends \
 				libnss3 \
                 libsqlite3-dev
 
+RUN         rm -rf /var/lib/apt/lists/*
+
 # updating npm
 RUN         npm install npm@latest -g
 RUN         npm install tsc typescript ts-node @types/node --location=global
