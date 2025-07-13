@@ -29,6 +29,7 @@ RUN         apt -y install --no-install-recommends \
                 procps \
                 tk-dev \
                 uuid-dev \
+				unzip \
                 wget \
                 xz-utils \
                 zlib1g-dev \
