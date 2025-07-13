@@ -25,6 +25,7 @@ RUN         apt -y install \
                 locales \
                 make \
                 openjdk-17-jre-headless \
+				pipx \
                 procps \
                 tk-dev \
                 uuid-dev \
@@ -43,4 +44,5 @@ RUN         apt -y install \
                 libxmlsec1-dev
 
 RUN         python -m pip install --upgrade pip
-
+RUN 	    pipx ensurepath --global
+RUN         pipx itch-dl
