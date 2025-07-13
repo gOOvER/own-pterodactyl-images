@@ -42,3 +42,7 @@ RUN         apt -y install \
 # updating npm
 RUN         npm install npm@latest -g
 RUN         npm install tsc typescript ts-node @types/node --location=global
+RUN 	    npm install -g itchio-downloader
+RUN		 	npm install -g pnpm
+RUN 	    corepack enable \
+			&& corepack prepare pnpm@latest --activate
