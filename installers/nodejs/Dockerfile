@@ -80,9 +80,7 @@ RUN         rm -rf /var/lib/apt/lists/*
 # updating npm
 RUN         npm install npm@latest -g
 RUN         npm install tsc typescript ts-node @types/node --location=global
-RUN 	    npm install -g pnpm
+RUN 	    npm install -g pnpm yarn
 RUN 	    corepack enable \
 			&& corepack prepare pnpm@latest --activate
-ENV 		SHELL=/bin/bash
-RUN 	    pnpm setup
-RUN 	    pnpm add -g itchio-downloader
+RUN 	    yarn add itchio-downloader
