@@ -80,4 +80,3 @@ RUN         rm -rf /var/lib/apt/lists/*
 # updating npm
 RUN         npm install npm@latest -g
 RUN         npm install tsc typescript ts-node @types/node --location=global
-RUN 	    npm install -g yarn
