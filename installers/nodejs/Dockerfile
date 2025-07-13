@@ -44,5 +44,6 @@ RUN         npm install npm@latest -g
 RUN         npm install tsc typescript ts-node @types/node --location=global
 RUN 	    npm install -g itchio-downloader
 RUN		 	npm install -g pnpm
+RUN 	    npx puppeteer browsers install chrome
 RUN 	    corepack enable \
 			&& corepack prepare pnpm@latest --activate
