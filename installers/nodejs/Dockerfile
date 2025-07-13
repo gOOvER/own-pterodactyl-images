@@ -37,6 +37,7 @@ RUN         apt -y install \
                 zip \
                 unzip \
 				libatk1.0-0 \
+				libatk-bridge2.0-0 \
 				libnss3 \
                 libsqlite3-dev
 
