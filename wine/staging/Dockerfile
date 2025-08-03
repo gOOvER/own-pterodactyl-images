@@ -17,6 +17,8 @@ RUN             apt install -y --no-install-recommends \
                     ca-certificates \
                     cabextract \
                     curl \
+					dos2unix \
+					file \
                     ffmpeg \
                     g++ \
                     gcc \
@@ -69,59 +71,66 @@ RUN             apt install -y --no-install-recommends \
                     libstdc++6 \
                     libunwind8 \
                     libz-dev \
-                    libzip4
+                    libzip4 \
+				apt clean && \
+            	rm -rf /var/lib/apt/lists/*
 
-RUN             rm -rf /var/lib/apt/lists/*
+# Install Wine (choose branch via WINE_BRANCH env)
+ENV             WINE_BRANCH=staging
+RUN             mkdir -pm755 /etc/apt/keyrings && \
+                wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key && \
+                wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources && \
+                apt update && \
+                apt install -y --no-install-recommends winehq-${WINE_BRANCH} cabextract && \
+                apt clean && \
+                rm -rf /var/lib/apt/lists/*
 
-# Install wine and with recommends
-RUN             mkdir -pm755 /etc/apt/keyrings
-RUN             wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
-RUN             wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
-RUN             apt update
-RUN             apt install -y --install-recommends \
-					winehq-staging \
-					winbind \
-					cabextract
+# Install Winetricks
+RUN	            wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks && \
+                chmod +x /usr/sbin/winetricks
 
-# Set up Winetricks
-RUN	            wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
-RUN             chmod +x /usr/sbin/winetricks
+# Install rcon-cli
+RUN             cd /tmp/ && \
+                curl -sSL https://github.com/gorcon/rcon-cli/releases/download/v0.10.3/rcon-0.10.3-amd64_linux.tar.gz | tar xz && \
+                mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/ && \
+                rm -rf /tmp/rcon*
 
-## install rcon
-RUN             cd /tmp/ \
-                && curl -sSL https://github.com/gorcon/rcon-cli/releases/download/v0.10.3/rcon-0.10.3-amd64_linux.tar.gz > rcon.tar.gz \
-                && tar xvf rcon.tar.gz \
-                && mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/
+# Set environment variables for Wine, locale, and Xvfb
+ENV             HOME=/home/container \
+                WINEPREFIX=/home/container/.wine \
+                WINEARCH=win64 \
+                WINEDLLOVERRIDES="mscoree,mshtml=" \
+                DISPLAY=:0 \
+                DISPLAY_WIDTH=1024 \
+                DISPLAY_HEIGHT=768 \
+                DISPLAY_DEPTH=16 \
+                LANG=en_US.UTF-8 \
+                LANGUAGE=en_US:en \
+                LC_ALL=en_US.UTF-8
 
-# Setup ENVs
-ENV             HOME=/home/container
-ENV             WINEPREFIX=/home/container/.wine
-ENV 			WINEARCH=win64
-ENV             WINEDLLOVERRIDES="mscoree,mshtml="
-ENV             DISPLAY=:0
-ENV             DISPLAY_WIDTH=1024
-ENV             DISPLAY_HEIGHT=768
-ENV             DISPLAY_DEPTH=16
+# Generate locale
+RUN             sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+                locale-gen
 
-# Set the locale
-RUN         	sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
-            	locale-gen
-ENV        		LANG=en_US.UTF-8
-ENV         	LANGUAGE=en_US:en
-ENV         	LC_ALL=en_US.UTF-8
+# Increase vm.max_map_count for Conan Exiles
+RUN             echo "vm.max_map_count = 16777216" > /etc/sysctl.d/20-max_map_count.conf
 
-RUN             bash -c 'echo "vm.max_map_count = 16777216" > /etc/sysctl.d/20-max_map_count.conf'
+# Create user and set working directory
+RUN             useradd -m -d /home/container -s /bin/bash container && \
+                mkdir -p /home/container && \
+                chown container:container /home/container
 
-## Setup user and working directory
-RUN             useradd -m -d /home/container -s /bin/bash container
+# Set the default stop signal (SIGINT) for graceful shutdown
+STOPSIGNAL      SIGINT
+
+# Copy entrypoint script and set permissions (as root)
+COPY            --chown=container:container ./entrypoint.sh /entrypoint.sh
+RUN             dos2unix /entrypoint.sh && chmod +x /entrypoint.sh
+
 USER            container
-ENV             USER=container HOME=/home/container
 WORKDIR         /home/container
 
-# Sets the default stop signal as wings can (currently) only send a kill or generic stop
-STOPSIGNAL SIGINT
-
-COPY            --chown=container:container ../entrypoint.sh /entrypoint.sh
-RUN             chmod +x /entrypoint.sh
+# Use tini as entrypoint for proper signal handling
+STOPSIGNAL      SIGINT
 ENTRYPOINT      ["/usr/bin/tini", "-g", "--"]
 CMD             ["/entrypoint.sh"]
