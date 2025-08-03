@@ -72,7 +72,7 @@ RUN             apt install -y --no-install-recommends \
                     libunwind8 \
                     libz-dev \
                     libzip4 \
-				apt clean && \
+				apt clean \
             	rm -rf /var/lib/apt/lists/*
 
 # Install Wine (choose branch via WINE_BRANCH env)
