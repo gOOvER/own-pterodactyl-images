@@ -129,7 +129,7 @@ for trick in $WINETRICKS_RUN; do
     printf "${BLUE}---------------------------------------------------------------------${NC}\n"
     printf "${YELLOW}Installing: ${GREEN}%s${NC}\n" "$trick"
     printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-    winetricks -q --force "$trick"
+    winetricks -q "$trick"
 done
 
 # Prepare and execute startup command
