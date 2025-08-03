@@ -1,54 +1,50 @@
 #!/bin/bash
+set -e
 
-clear
+# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
+
+# Get Linux distribution name
 LINUX=$(. /etc/os-release ; echo $PRETTY_NAME)
-
-# Wait a moment for container initialization
-sleep 1
-
-# Set default timezone to UTC if not specified
 TZ=${TZ:-UTC}
 export TZ
 
-# Output basic container and environment info
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${YELLOW}Wine Image from gOOvER${NC}"
-echo -e "${RED}THIS IMAGE IS LICENSED UNDER AGPLv3${NC}"
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${YELLOW}Docker Linux Distribution: ${RED} $(echo $LINUX)${NC}"
-echo -e "${YELLOW}Current timezone: $(cat /etc/timezone)${NC}"
-echo -e "${YELLOW}Wine Version:${NC} ${RED} $(wine --version)${NC}"
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+# Welcome and system info
+clear
+printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+printf "${YELLOW}Wine Image from gOOvER${NC}\n"
+printf "${RED}THIS IMAGE IS LICENSED UNDER AGPLv3${NC}\n"
+printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+printf "${YELLOW}Docker Linux Distribution: ${RED}%s${NC}\n" "$LINUX"
+printf "${YELLOW}Current timezone: %s${NC}\n" "$(cat /etc/timezone)"
+printf "${YELLOW}Wine Version: ${RED}%s${NC}\n" "$(wine --version)"
+printf "${BLUE}---------------------------------------------------------------------${NC}\n"
 
-# Get internal container IP
+# Get internal IP address
 INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 export INTERNAL_IP
 
-# Change to working directory
 cd /home/container || exit 1
 
-# Only run auto-update logic if /steamcmd directory exists
-if [ -d /home/container/steamcmd ]; then
-    # Check if STEAM_USER is set
+# SteamCMD/DepotDownloader update logic
+if [ -d steamcmd ]; then
     if [ -z "$STEAM_USER" ]; then
-        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-        echo -e "${YELLOW}Steam user is not set. Using anonymous user.${NC}"
-        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+        printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+        printf "${YELLOW}Steam user is not set. Using anonymous user.${NC}\n"
+        printf "${BLUE}---------------------------------------------------------------------${NC}\n"
         STEAM_USER="anonymous"
         STEAM_PASS=""
         STEAM_AUTH=""
     else
-        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-        echo -e "${YELLOW}Steam user set to: ${STEAM_USER}${NC}"
-        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+        printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+        printf "${YELLOW}Steam user set to: %s${NC}\n" "$STEAM_USER"
+        printf "${BLUE}---------------------------------------------------------------------${NC}\n"
     fi
 
-    # Check if AUTO_UPDATE is enabled or not set
     if [ -z "$AUTO_UPDATE" ] || [ "$AUTO_UPDATE" = "1" ]; then
         if [ -f ./DepotDownloader ]; then
             ./DepotDownloader -dir . \
@@ -59,12 +55,10 @@ if [ -d /home/container/steamcmd ]; then
                 -app "$STEAM_APPID" \
                 $( [ -n "$STEAM_BETAID" ] && echo "-branch $STEAM_BETAID" ) \
                 $( [ -n "$STEAM_BETAPASS" ] && echo "-branchpassword $STEAM_BETAPASS" )
-
             mkdir -p .steam/sdk64
             ./DepotDownloader -dir .steam/sdk64 \
                 $( [ "$WINDOWS_INSTALL" = "1" ] && echo "-os windows" ) \
                 -app 1007
-
             chmod +x "$HOME"/*
         else
             ./steamcmd/steamcmd.sh +force_install_dir /home/container \
@@ -78,66 +72,67 @@ if [ -d /home/container/steamcmd ]; then
                 $( [ "$VALIDATE" = "1" ] && echo "validate" ) +quit
         fi
     else
-        echo -e "${BLUE}---------------------------------------------------------------${NC}"
-        echo -e "${YELLOW}Auto-update disabled. Starting server without updating.${NC}"
-        echo -e "${BLUE}---------------------------------------------------------------${NC}"
+        printf "${BLUE}---------------------------------------------------------------${NC}\n"
+        printf "${YELLOW}Auto-update disabled. Starting server without updating.${NC}\n"
+        printf "${BLUE}---------------------------------------------------------------${NC}\n"
     fi
 fi
 
-# Start virtual framebuffer if enabled
+# Start Xvfb if needed
 if [[ $XVFB == 1 ]]; then
     Xvfb :0 -screen 0 ${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_DEPTH} &
 fi
 
-# Create WINEPREFIX directory if it doesn't exist
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${RED}First launch will throw some errors. Ignore them${NC}"
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-mkdir -p $WINEPREFIX
+# Create WINEPREFIX directory
+printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+printf "${RED}First launch will throw some errors. Ignore them${NC}\n"
+printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+mkdir -p "$WINEPREFIX"
 
 # Install Wine Gecko if requested
 if [[ $WINETRICKS_RUN =~ gecko ]]; then
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-    echo -e "${YELLOW}Installing Wine Gecko${NC}"
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    printf "${YELLOW}Installing Wine Gecko${NC}\n"
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
     WINETRICKS_RUN=${WINETRICKS_RUN/gecko}
-    [ ! -f "$WINEPREFIX/gecko_x86.msi" ] && wget -q -O $WINEPREFIX/gecko_x86.msi http://dl.winehq.org/wine/wine-gecko/2.47.4/wine_gecko-2.47.4-x86.msi
-    [ ! -f "$WINEPREFIX/gecko_x86_64.msi" ] && wget -q -O $WINEPREFIX/gecko_x86_64.msi http://dl.winehq.org/wine/wine-gecko/2.47.4/wine_gecko-2.47.4-x86_64.msi
-    wine msiexec /i $WINEPREFIX/gecko_x86.msi /qn /quiet /norestart /log $WINEPREFIX/gecko_x86_install.log
-    wine msiexec /i $WINEPREFIX/gecko_x86_64.msi /qn /quiet /norestart /log $WINEPREFIX/gecko_x86_64_install.log
+    [ ! -f "$WINEPREFIX/gecko_x86.msi" ] && wget -q -O "$WINEPREFIX/gecko_x86.msi" http://dl.winehq.org/wine/wine-gecko/2.47.4/wine_gecko-2.47.4-x86.msi
+    [ ! -f "$WINEPREFIX/gecko_x86_64.msi" ] && wget -q -O "$WINEPREFIX/gecko_x86_64.msi" http://dl.winehq.org/wine/wine-gecko/2.47.4/wine_gecko-2.47.4-x86_64.msi
+    wine msiexec /i "$WINEPREFIX/gecko_x86.msi" /qn /quiet /norestart /log "$WINEPREFIX/gecko_x86_install.log"
+    wine msiexec /i "$WINEPREFIX/gecko_x86_64.msi" /qn /quiet /norestart /log "$WINEPREFIX/gecko_x86_64_install.log"
 fi
 
 # Install Wine Mono if requested
-if [[ $WINETRICKS_RUN =~ mono ]]; then
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-    echo -e "${YELLOW}Installing Wine Mono (32-bit only)${NC}"
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-    WINETRICKS_RUN=${WINETRICKS_RUN/mono/}
-
-    # Define the download URL
-    MONO_URL="https://github.com/wine-mono/wine-mono/releases/latest/download/wine-mono-x86.msi"
-
-    # Remove existing MSI if it exists, then download the latest
-    [ -f "$WINEPREFIX/mono.msi" ] && rm -f "$WINEPREFIX/mono.msi"
-    wget -q -O "$WINEPREFIX/mono.msi" "$MONO_URL"
-
-    # Install 32-bit Wine Mono
-    if [ -f "$WINEPREFIX/mono.msi" ]; then
-        wine msiexec /i "$WINEPREFIX/mono.msi" /qn /quiet /norestart /log "$WINEPREFIX/mono_install.log"
+if [[ "$WINETRICKS_RUN" =~ mono ]]; then
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    printf "${YELLOW}Installing latest Wine Mono${NC}\n"
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    MONO_VERSION=$(curl -s https://api.github.com/repos/wine-mono/wine-mono/releases/latest | grep -Po '"tag_name": "\K.*?(?=")')
+    if [ -z "$MONO_VERSION" ]; then
+        printf "${RED}Failed to fetch latest Wine Mono version.${NC}\n"
     else
-        echo -e "${RED}Failed to download Wine Mono MSI.${NC}"
+        MONO_URL="https://github.com/wine-mono/wine-mono/releases/download/${MONO_VERSION}/wine-mono-${MONO_VERSION#wine-mono-}-x86.msi"
+        rm -f "$WINEPREFIX/mono.msi"
+        wget -q -O "$WINEPREFIX/mono.msi" "$MONO_URL"
+        if [ -f "$WINEPREFIX/mono.msi" ]; then
+            wine msiexec /i "$WINEPREFIX/mono.msi" /qn /quiet /norestart /log "$WINEPREFIX/mono_install.log" && \
+                printf "${GREEN}Wine Mono was installed successfully!${NC}\n" || \
+                printf "${RED}Wine Mono installation failed!${NC}\n"
+        else
+            printf "${RED}Failed to download Wine Mono MSI.${NC}\n"
+        fi
     fi
+    WINETRICKS_RUN=$(echo $WINETRICKS_RUN | sed 's/\bmono\b//g')
 fi
 
-# Run additional winetricks packages
+# Install additional Winetricks packages
 for trick in $WINETRICKS_RUN; do
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-    echo -e "${YELLOW}Installing: ${NC} ${GREEN} $trick ${NC}"
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-    winetricks -q $trick
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    printf "${YELLOW}Installing: ${GREEN}%s${NC}\n" "$trick"
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    winetricks -q "$trick"
 done
 
-# Replace {{VARIABLE}} in startup with actual environment values and run it
-MODIFIED_STARTUP=$(echo ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
-echo ":/home/container$ ${MODIFIED_STARTUP}"
-eval ${MODIFIED_STARTUP}
+# Prepare and execute startup command
+MODIFIED_STARTUP=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')
+printf ":/home/container$ %s\n" "$MODIFIED_STARTUP"
+eval "$MODIFIED_STARTUP"
