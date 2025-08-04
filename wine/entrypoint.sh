@@ -109,25 +109,13 @@ if [[ "$WINETRICKS_RUN" =~ vcrun2022 ]]; then
     VCRUN_URL="https://aka.ms/vs/17/release/vc_redist.x86.exe"
     VCRUN_FILE="$WINEPREFIX/vc_redist.x86.exe"
 
-    # Get the latest SHA256 from the manifest (no jq required)
-    VCRUN_SHA256=$(curl -s https://aka.ms/vs/17/release/channel | \
-        awk '/"fileName":"vc_redist.x86.exe"/{f=1} f && /"sha256":/ {gsub(/[",]/,""); print $2; exit}')
-
     rm -f "$VCRUN_FILE"
     wget -q -O "$VCRUN_FILE" "$VCRUN_URL"
 
     if [ -f "$VCRUN_FILE" ]; then
-        FILE_SHA256=$(sha256sum "$VCRUN_FILE" | awk '{print $1}')
-        if [ "$FILE_SHA256" = "$VCRUN_SHA256" ]; then
-            wine "$VCRUN_FILE" /quiet /norestart /log "$WINEPREFIX/vcrun2022_install.log" && \
-                printf "${GREEN}vcrun2022 was installed successfully!${NC}\n" || \
-                printf "${RED}vcrun2022 installation failed!${NC}\n"
-        else
-            printf "${RED}SHA256 mismatch for vcrun2022!${NC}\n"
-            printf "${YELLOW}Expected: %s${NC}\n" "$VCRUN_SHA256"
-            printf "${YELLOW}Got:      %s${NC}\n" "$FILE_SHA256"
-            rm -f "$VCRUN_FILE"
-        fi
+        wine "$VCRUN_FILE" /quiet /norestart /log "$WINEPREFIX/vcrun2022_install.log" && \
+            printf "${GREEN}vcrun2022 was installed successfully!${NC}\n" || \
+            printf "${RED}vcrun2022 installation failed!${NC}\n"
     else
         printf "${RED}Failed to download vcrun2022.${NC}\n"
     fi
