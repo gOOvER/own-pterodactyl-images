@@ -101,27 +101,6 @@ if [[ $WINETRICKS_RUN =~ gecko ]]; then
     wine msiexec /i "$WINEPREFIX/gecko_x86_64.msi" /qn /quiet /norestart /log "$WINEPREFIX/gecko_x86_64_install.log"
 fi
 
-# Install vcrun2022 if requested
-if [[ "$WINETRICKS_RUN" =~ vcrun2022 ]]; then
-    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-    printf "${YELLOW}Installing latest vcrun2022 (Visual C++ Redistributable 2022)${NC}\n"
-    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-    VCRUN_URL="https://aka.ms/vs/17/release/vc_redist.x86.exe"
-    VCRUN_FILE="$WINEPREFIX/vc_redist.x86.exe"
-
-    rm -f "$VCRUN_FILE"
-    wget -q -O "$VCRUN_FILE" "$VCRUN_URL"
-
-    if [ -f "$VCRUN_FILE" ]; then
-        wine msiexec /i "$VCRUN_FILE" /quiet /norestart /log "$WINEPREFIX/vcrun2022_install.log" && \
-            printf "${GREEN}vcrun2022 was installed successfully!${NC}\n" || \
-            printf "${RED}vcrun2022 installation failed!${NC}\n"
-    else
-        printf "${RED}Failed to download vcrun2022.${NC}\n"
-    fi
-    WINETRICKS_RUN=$(echo $WINETRICKS_RUN | sed 's/\bvcrun2022\b//g')
-fi
-
 # Install Wine Mono if requested
 if [[ "$WINETRICKS_RUN" =~ mono ]]; then
     printf "${BLUE}---------------------------------------------------------------------${NC}\n"
