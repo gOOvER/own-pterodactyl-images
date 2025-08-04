@@ -113,7 +113,7 @@ if [[ "$WINETRICKS_RUN" =~ vcrun2022 ]]; then
     wget -q -O "$VCRUN_FILE" "$VCRUN_URL"
 
     if [ -f "$VCRUN_FILE" ]; then
-        wine "$VCRUN_FILE" /quiet /norestart /log "$WINEPREFIX/vcrun2022_install.log" && \
+        wine msiexec /i "$VCRUN_FILE" /quiet /norestart /log "$WINEPREFIX/vcrun2022_install.log" && \
             printf "${GREEN}vcrun2022 was installed successfully!${NC}\n" || \
             printf "${RED}vcrun2022 installation failed!${NC}\n"
     else
