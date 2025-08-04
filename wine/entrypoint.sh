@@ -101,6 +101,38 @@ if [[ $WINETRICKS_RUN =~ gecko ]]; then
     wine msiexec /i "$WINEPREFIX/gecko_x86_64.msi" /qn /quiet /norestart /log "$WINEPREFIX/gecko_x86_64_install.log"
 fi
 
+# Install vcrun2022 if requested
+if [[ "$WINETRICKS_RUN" =~ vcrun2022 ]]; then
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    printf "${YELLOW}Installing latest vcrun2022 (Visual C++ Redistributable 2022)${NC}\n"
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    VCRUN_URL="https://aka.ms/vs/17/release/vc_redist.x86.exe"
+    VCRUN_FILE="$WINEPREFIX/vc_redist.x86.exe"
+
+    # Try to get the latest SHA256 from Microsoft (official manifest)
+    VCRUN_SHA256=$(curl -s https://aka.ms/vs/17/release/channel | grep -A5 'vc_redist.x86.exe' | grep -i sha256 | head -n1 | cut -d '"' -f4)
+
+    rm -f "$VCRUN_FILE"
+    wget -q -O "$VCRUN_FILE" "$VCRUN_URL"
+
+    if [ -f "$VCRUN_FILE" ]; then
+        FILE_SHA256=$(sha256sum "$VCRUN_FILE" | awk '{print $1}')
+        if [ "$FILE_SHA256" = "$VCRUN_SHA256" ]; then
+            wine "$VCRUN_FILE" /quiet /norestart /log "$WINEPREFIX/vcrun2022_install.log" && \
+                printf "${GREEN}vcrun2022 was installed successfully!${NC}\n" || \
+                printf "${RED}vcrun2022 installation failed!${NC}\n"
+        else
+            printf "${RED}SHA256 mismatch for vcrun2022!${NC}\n"
+            printf "${YELLOW}Expected: %s${NC}\n" "$VCRUN_SHA256"
+            printf "${YELLOW}Got:      %s${NC}\n" "$FILE_SHA256"
+            rm -f "$VCRUN_FILE"
+        fi
+    else
+        printf "${RED}Failed to download vcrun2022.${NC}\n"
+    fi
+    WINETRICKS_RUN=$(echo $WINETRICKS_RUN | sed 's/\bvcrun2022\b//g')
+fi
+
 # Install Wine Mono if requested
 if [[ "$WINETRICKS_RUN" =~ mono ]]; then
     printf "${BLUE}---------------------------------------------------------------------${NC}\n"
