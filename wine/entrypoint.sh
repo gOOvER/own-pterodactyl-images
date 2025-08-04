@@ -110,7 +110,7 @@ if [[ "$WINETRICKS_RUN" =~ vcrun2022 ]]; then
     VCRUN_FILE="$WINEPREFIX/vc_redist.x86.exe"
 
     # Try to get the latest SHA256 from Microsoft (official manifest)
-    VCRUN_SHA256=$(curl -s https://aka.ms/vs/17/release/channel | grep -A5 'vc_redist.x86.exe' | grep -i sha256 | head -n1 | cut -d '"' -f4)
+    VCRUN_SHA256=$(curl -s https://aka.ms/vs/17/release/channel | jq -r '.packages[] | select(.fileName=="vc_redist.x86.exe") | .sha256')
 
     rm -f "$VCRUN_FILE"
     wget -q -O "$VCRUN_FILE" "$VCRUN_URL"

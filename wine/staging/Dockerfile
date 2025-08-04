@@ -29,6 +29,7 @@ RUN dpkg --add-architecture i386 && \
         gnutls-bin \
         icu-devtools \
         iproute2 \
+		jq \
         locales \
         net-tools \
         netcat-openbsd \
