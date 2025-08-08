@@ -7,6 +7,15 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
+
+# Failsafe: Check for required tools
+for tool in wget wine cabextract; do
+    if ! command -v $tool &>/dev/null; then
+        printf "${RED}Error: Required tool '$tool' is not installed.${NC}\n"
+        exit 1
+    fi
+done
+
 export XDG_RUNTIME_DIR="/home/container/.config/xdg"
 mkdir -p "$XDG_RUNTIME_DIR"
 
@@ -15,7 +24,6 @@ LINUX=$(. /etc/os-release ; echo $PRETTY_NAME)
 TZ=${TZ:-UTC}
 export TZ
 
-# Welcome and system info
 clear
 printf "${BLUE}---------------------------------------------------------------------${NC}\n"
 printf "${YELLOW}Wine Image from gOOvER${NC}\n"
@@ -23,28 +31,30 @@ printf "${RED}THIS IMAGE IS LICENSED UNDER AGPLv3${NC}\n"
 printf "${BLUE}---------------------------------------------------------------------${NC}\n"
 printf "${YELLOW}Docker Linux Distribution: ${RED}%s${NC}\n" "$LINUX"
 printf "${YELLOW}Current timezone: %s${NC}\n" "$(cat /etc/timezone)"
-printf "${YELLOW}Wine Version: ${RED}%s${NC}\n" "$(wine --version)"
+printf "${YELLOW}Wine Version: ${RED}%s${NC}\n" "$(wine --version 2>/dev/null || echo 'Wine not found!')"
 printf "${BLUE}---------------------------------------------------------------------${NC}\n"
 
-# Get internal IP address
 INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 export INTERNAL_IP
 
-cd /home/container || exit 1
+cd /home/container || { printf "${RED}Failed to change directory to /home/container.${NC}\n"; exit 1; }
 
 # Start Xvfb if needed
 if [[ $XVFB == 1 ]]; then
-    Xvfb :0 -screen 0 ${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_DEPTH} &
+    Xvfb :0 -screen 0 ${DISPLAY_WIDTH:-1024}x${DISPLAY_HEIGHT:-768}x${DISPLAY_DEPTH:-24} &
+    sleep 2
 fi
 
-# Create WINEPREFIX directory
+# Create WINEPREFIX directory and initialize
 printf "${BLUE}---------------------------------------------------------------------${NC}\n"
 printf "${RED}Setting up Wine... Please wait...${NC}\n"
 printf "${BLUE}---------------------------------------------------------------------${NC}\n"
 mkdir -p "$WINEPREFIX"
-#wineboot --init
+if [ ! -d "$WINEPREFIX/drive_c" ]; then
+    wineboot --init || { printf "${RED}wineboot failed!${NC}\n"; exit 1; }
+fi
 
-# Install Wine Gecko if requested
+# Gecko Installation
 if [[ $WINETRICKS_RUN =~ gecko ]]; then
     printf "${BLUE}---------------------------------------------------------------------${NC}\n"
     printf "${YELLOW}Installing Wine Gecko${NC}\n"
@@ -52,11 +62,11 @@ if [[ $WINETRICKS_RUN =~ gecko ]]; then
     WINETRICKS_RUN=${WINETRICKS_RUN/gecko}
     [ ! -f "$WINEPREFIX/gecko_x86.msi" ] && wget -q -O "$WINEPREFIX/gecko_x86.msi" http://dl.winehq.org/wine/wine-gecko/2.47.4/wine_gecko-2.47.4-x86.msi
     [ ! -f "$WINEPREFIX/gecko_x86_64.msi" ] && wget -q -O "$WINEPREFIX/gecko_x86_64.msi" http://dl.winehq.org/wine/wine-gecko/2.47.4/wine_gecko-2.47.4-x86_64.msi
-    wine msiexec /i "$WINEPREFIX/gecko_x86.msi" /qn /quiet /norestart /log "$WINEPREFIX/gecko_x86_install.log"
-    wine msiexec /i "$WINEPREFIX/gecko_x86_64.msi" /qn /quiet /norestart /log "$WINEPREFIX/gecko_x86_64_install.log"
+    wine msiexec /i "$WINEPREFIX/gecko_x86.msi" /qn /quiet /norestart /log "$WINEPREFIX/gecko_x86_install.log" || printf "${RED}Wine Gecko x86 installation failed!${NC}\n"
+    wine msiexec /i "$WINEPREFIX/gecko_x86_64.msi" /qn /quiet /norestart /log "$WINEPREFIX/gecko_x86_64_install.log" || printf "${RED}Wine Gecko x64 installation failed!${NC}\n"
 fi
 
-# Install Wine Mono if requested
+# Mono Installation
 if [[ "$WINETRICKS_RUN" =~ mono ]]; then
     printf "${BLUE}---------------------------------------------------------------------${NC}\n"
     printf "${YELLOW}Installing latest Wine Mono${NC}\n"
@@ -79,7 +89,7 @@ if [[ "$WINETRICKS_RUN" =~ mono ]]; then
     WINETRICKS_RUN=$(echo $WINETRICKS_RUN | sed 's/\bmono\b//g')
 fi
 
-# Install vcrun2022 64bit if requested (extract DLLs from installer)
+# vcrun2022 64bit DLL extraction
 if [[ "$WINETRICKS_RUN" =~ vcrun2022 ]]; then
     printf "${BLUE}---------------------------------------------------------------------${NC}\n"
     printf "${YELLOW}Downloading vcrun2022 (Visual C++ Redistributable 2022, 64bit)${NC}\n"
@@ -90,12 +100,10 @@ if [[ "$WINETRICKS_RUN" =~ vcrun2022 ]]; then
 
     rm -f "$VCRUN_FILE"
     wget -q -O "$VCRUN_FILE" "$VCRUN_URL"
-
     if [ -f "$VCRUN_FILE" ]; then
         printf "${YELLOW}Extracting DLLs from installer...${NC}\n"
         mkdir -p "$DLL_DEST"
-        cabextract -d "$DLL_DEST" "$VCRUN_FILE"
-        # Check for main DLLs
+        cabextract -d "$DLL_DEST" "$VCRUN_FILE" || { printf "${RED}cabextract failed!${NC}\n"; exit 1; }
         DLLS=("msvcp140.dll" "vcruntime140.dll")
         for dll in "${DLLS[@]}"; do
             if [ -f "$DLL_DEST/$dll" ]; then
@@ -115,7 +123,7 @@ for trick in $WINETRICKS_RUN; do
     printf "${BLUE}---------------------------------------------------------------------${NC}\n"
     printf "${YELLOW}Installing: ${GREEN}%s${NC}\n" "$trick"
     printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-    winetricks "$trick"
+    winetricks "$trick" || printf "${RED}Winetricks installation for $trick failed!${NC}\n"
 done
 
 # SteamCMD/DepotDownloader update logic
@@ -142,11 +150,11 @@ if [ -d steamcmd ]; then
                 $( [ "$WINDOWS_INSTALL" = "1" ] && echo "-os windows" ) \
                 -app "$STEAM_APPID" \
                 $( [ -n "$STEAM_BETAID" ] && echo "-branch $STEAM_BETAID" ) \
-                $( [ -n "$STEAM_BETAPASS" ] && echo "-branchpassword $STEAM_BETAPASS" )
+                $( [ -n "$STEAM_BETAPASS" ] && echo "-branchpassword $STEAM_BETAPASS" ) || printf "${RED}DepotDownloader failed!${NC}\n"
             mkdir -p .steam/sdk64
             ./DepotDownloader -dir .steam/sdk64 \
                 $( [ "$WINDOWS_INSTALL" = "1" ] && echo "-os windows" ) \
-                -app 1007
+                -app 1007 || printf "${RED}DepotDownloader SDK download failed!${NC}\n"
             chmod +x "$HOME"/*
         else
             ./steamcmd/steamcmd.sh +force_install_dir /home/container \
@@ -157,7 +165,7 @@ if [ -d steamcmd ]; then
                 $( [ -n "$STEAM_BETAID" ] && echo "-beta $STEAM_BETAID" ) \
                 $( [ -n "$STEAM_BETAPASS" ] && echo "-betapassword $STEAM_BETAPASS" ) \
                 $INSTALL_FLAGS \
-                $( [ "$VALIDATE" = "1" ] && echo "validate" ) +quit
+                $( [ "$VALIDATE" = "1" ] && echo "validate" ) +quit || printf "${RED}SteamCMD failed!${NC}\n"
         fi
     else
         printf "${BLUE}---------------------------------------------------------------${NC}\n"
