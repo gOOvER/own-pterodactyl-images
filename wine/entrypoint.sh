@@ -90,7 +90,7 @@ printf "${BLUE}-----------------------------------------------------------------
 printf "${RED}First launch will throw some errors. Ignore them${NC}\n"
 printf "${BLUE}---------------------------------------------------------------------${NC}\n"
 mkdir -p "$WINEPREFIX"
-wineboot --init
+#wineboot --init
 
 # Install Wine Gecko if requested
 if [[ $WINETRICKS_RUN =~ gecko ]]; then
@@ -134,6 +134,27 @@ for trick in $WINETRICKS_RUN; do
     printf "${BLUE}---------------------------------------------------------------------${NC}\n"
     winetricks "$trick"
 done
+
+# Install vcrun2022 64bit if requested (direkter Download, nicht über winetricks)
+if [[ "$WINETRICKS_RUN" =~ vcrun2022 ]]; then
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    printf "${YELLOW}Installing vcrun2022 (Visual C++ Redistributable 2022, 64bit)${NC}\n"
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    VCRUN_URL="https://aka.ms/vs/17/release/vc_redist.x64.exe"
+    VCRUN_FILE="$WINEPREFIX/vc_redist.x64.exe"
+
+    rm -f "$VCRUN_FILE"
+    wget -q -O "$VCRUN_FILE" "$VCRUN_URL"
+
+    if [ -f "$VCRUN_FILE" ]; then
+        wine "$VCRUN_FILE" /quiet /norestart /log "$WINEPREFIX/vcrun2022_x64_install.log" && \
+            printf "${GREEN}vcrun2022 x64 was installed successfully!${NC}\n" || \
+            printf "${RED}vcrun2022 x64 installation failed!${NC}\n"
+    else
+        printf "${RED}Failed to download vcrun2022 x64.${NC}\n"
+    fi
+    WINETRICKS_RUN=$(echo $WINETRICKS_RUN | sed 's/\bvcrun2022\b//g')
+fi
 
 # Prepare and execute startup command
 MODIFIED_STARTUP=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')
