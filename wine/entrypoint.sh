@@ -32,6 +32,82 @@ export INTERNAL_IP
 
 cd /home/container || exit 1
 
+# Start Xvfb if needed
+if [[ $XVFB == 1 ]]; then
+    Xvfb :0 -screen 0 ${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_DEPTH} &
+fi
+
+# Create WINEPREFIX directory
+printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+printf "${RED}Setting up Wine... Please wait...${NC}\n"
+printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+mkdir -p "$WINEPREFIX"
+#wineboot --init
+
+# Install Wine Gecko if requested
+if [[ $WINETRICKS_RUN =~ gecko ]]; then
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    printf "${YELLOW}Installing Wine Gecko${NC}\n"
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    WINETRICKS_RUN=${WINETRICKS_RUN/gecko}
+    [ ! -f "$WINEPREFIX/gecko_x86.msi" ] && wget -q -O "$WINEPREFIX/gecko_x86.msi" http://dl.winehq.org/wine/wine-gecko/2.47.4/wine_gecko-2.47.4-x86.msi
+    [ ! -f "$WINEPREFIX/gecko_x86_64.msi" ] && wget -q -O "$WINEPREFIX/gecko_x86_64.msi" http://dl.winehq.org/wine/wine-gecko/2.47.4/wine_gecko-2.47.4-x86_64.msi
+    wine msiexec /i "$WINEPREFIX/gecko_x86.msi" /qn /quiet /norestart /log "$WINEPREFIX/gecko_x86_install.log"
+    wine msiexec /i "$WINEPREFIX/gecko_x86_64.msi" /qn /quiet /norestart /log "$WINEPREFIX/gecko_x86_64_install.log"
+fi
+
+# Install Wine Mono if requested
+if [[ "$WINETRICKS_RUN" =~ mono ]]; then
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    printf "${YELLOW}Installing latest Wine Mono${NC}\n"
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    MONO_VERSION=$(curl -s https://api.github.com/repos/wine-mono/wine-mono/releases/latest | grep -Po '"tag_name": "\K.*?(?=")')
+    if [ -z "$MONO_VERSION" ]; then
+        printf "${RED}Failed to fetch latest Wine Mono version.${NC}\n"
+    else
+        MONO_URL="https://github.com/wine-mono/wine-mono/releases/download/${MONO_VERSION}/wine-mono-${MONO_VERSION#wine-mono-}-x86.msi"
+        rm -f "$WINEPREFIX/mono.msi"
+        wget -q -O "$WINEPREFIX/mono.msi" "$MONO_URL"
+        if [ -f "$WINEPREFIX/mono.msi" ]; then
+            wine msiexec /i "$WINEPREFIX/mono.msi" /qn /quiet /norestart /log "$WINEPREFIX/mono_install.log" && \
+                printf "${GREEN}Wine Mono was installed successfully!${NC}\n" || \
+                printf "${RED}Wine Mono installation failed!${NC}\n"
+        else
+            printf "${RED}Failed to download Wine Mono MSI.${NC}\n"
+        fi
+    fi
+    WINETRICKS_RUN=$(echo $WINETRICKS_RUN | sed 's/\bmono\b//g')
+fi
+
+# Install vcrun2022 64bit if requested
+if [[ "$WINETRICKS_RUN" =~ vcrun2022 ]]; then
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    printf "${YELLOW}Installing vcrun2022 (Visual C++ Redistributable 2022, 64bit)${NC}\n"
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    VCRUN_URL="https://aka.ms/vs/17/release/vc_redist.x64.exe"
+    VCRUN_FILE="$WINEPREFIX/vc_redist.x64.exe"
+
+    rm -f "$VCRUN_FILE"
+    wget -q -O "$VCRUN_FILE" "$VCRUN_URL"
+
+    if [ -f "$VCRUN_FILE" ]; then
+        wine "$VCRUN_FILE" /quiet /norestart /log "$WINEPREFIX/vcrun2022_x64_install.log" && \
+            printf "${GREEN}vcrun2022 x64 was installed successfully!${NC}\n" || \
+            printf "${RED}vcrun2022 x64 installation failed!${NC}\n"
+    else
+        printf "${RED}Failed to download vcrun2022 x64.${NC}\n"
+    fi
+    WINETRICKS_RUN=$(echo $WINETRICKS_RUN | sed 's/\bvcrun2022\b//g')
+fi
+
+# Install additional Winetricks packages
+for trick in $WINETRICKS_RUN; do
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    printf "${YELLOW}Installing: ${GREEN}%s${NC}\n" "$trick"
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    winetricks "$trick"
+done
+
 # SteamCMD/DepotDownloader update logic
 if [ -d steamcmd ]; then
     if [ -z "$STEAM_USER" ]; then
@@ -78,82 +154,6 @@ if [ -d steamcmd ]; then
         printf "${YELLOW}Auto-update disabled. Starting server without updating.${NC}\n"
         printf "${BLUE}---------------------------------------------------------------${NC}\n"
     fi
-fi
-
-# Start Xvfb if needed
-if [[ $XVFB == 1 ]]; then
-    Xvfb :0 -screen 0 ${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_DEPTH} &
-fi
-
-# Create WINEPREFIX directory
-printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-printf "${RED}First launch will throw some errors. Ignore them${NC}\n"
-printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-mkdir -p "$WINEPREFIX"
-#wineboot --init
-
-# Install Wine Gecko if requested
-if [[ $WINETRICKS_RUN =~ gecko ]]; then
-    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-    printf "${YELLOW}Installing Wine Gecko${NC}\n"
-    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-    WINETRICKS_RUN=${WINETRICKS_RUN/gecko}
-    [ ! -f "$WINEPREFIX/gecko_x86.msi" ] && wget -q -O "$WINEPREFIX/gecko_x86.msi" http://dl.winehq.org/wine/wine-gecko/2.47.4/wine_gecko-2.47.4-x86.msi
-    [ ! -f "$WINEPREFIX/gecko_x86_64.msi" ] && wget -q -O "$WINEPREFIX/gecko_x86_64.msi" http://dl.winehq.org/wine/wine-gecko/2.47.4/wine_gecko-2.47.4-x86_64.msi
-    wine msiexec /i "$WINEPREFIX/gecko_x86.msi" /qn /quiet /norestart /log "$WINEPREFIX/gecko_x86_install.log"
-    wine msiexec /i "$WINEPREFIX/gecko_x86_64.msi" /qn /quiet /norestart /log "$WINEPREFIX/gecko_x86_64_install.log"
-fi
-
-# Install Wine Mono if requested
-if [[ "$WINETRICKS_RUN" =~ mono ]]; then
-    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-    printf "${YELLOW}Installing latest Wine Mono${NC}\n"
-    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-    MONO_VERSION=$(curl -s https://api.github.com/repos/wine-mono/wine-mono/releases/latest | grep -Po '"tag_name": "\K.*?(?=")')
-    if [ -z "$MONO_VERSION" ]; then
-        printf "${RED}Failed to fetch latest Wine Mono version.${NC}\n"
-    else
-        MONO_URL="https://github.com/wine-mono/wine-mono/releases/download/${MONO_VERSION}/wine-mono-${MONO_VERSION#wine-mono-}-x86.msi"
-        rm -f "$WINEPREFIX/mono.msi"
-        wget -q -O "$WINEPREFIX/mono.msi" "$MONO_URL"
-        if [ -f "$WINEPREFIX/mono.msi" ]; then
-            wine msiexec /i "$WINEPREFIX/mono.msi" /qn /quiet /norestart /log "$WINEPREFIX/mono_install.log" && \
-                printf "${GREEN}Wine Mono was installed successfully!${NC}\n" || \
-                printf "${RED}Wine Mono installation failed!${NC}\n"
-        else
-            printf "${RED}Failed to download Wine Mono MSI.${NC}\n"
-        fi
-    fi
-    WINETRICKS_RUN=$(echo $WINETRICKS_RUN | sed 's/\bmono\b//g')
-fi
-
-# Install additional Winetricks packages
-for trick in $WINETRICKS_RUN; do
-    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-    printf "${YELLOW}Installing: ${GREEN}%s${NC}\n" "$trick"
-    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-    winetricks "$trick"
-done
-
-# Install vcrun2022 64bit if requested (direkter Download, nicht über winetricks)
-if [[ "$WINETRICKS_RUN" =~ vcrun2022 ]]; then
-    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-    printf "${YELLOW}Installing vcrun2022 (Visual C++ Redistributable 2022, 64bit)${NC}\n"
-    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-    VCRUN_URL="https://aka.ms/vs/17/release/vc_redist.x64.exe"
-    VCRUN_FILE="$WINEPREFIX/vc_redist.x64.exe"
-
-    rm -f "$VCRUN_FILE"
-    wget -q -O "$VCRUN_FILE" "$VCRUN_URL"
-
-    if [ -f "$VCRUN_FILE" ]; then
-        wine "$VCRUN_FILE" /quiet /norestart /log "$WINEPREFIX/vcrun2022_x64_install.log" && \
-            printf "${GREEN}vcrun2022 x64 was installed successfully!${NC}\n" || \
-            printf "${RED}vcrun2022 x64 installation failed!${NC}\n"
-    else
-        printf "${RED}Failed to download vcrun2022 x64.${NC}\n"
-    fi
-    WINETRICKS_RUN=$(echo $WINETRICKS_RUN | sed 's/\bvcrun2022\b//g')
 fi
 
 # Prepare and execute startup command
