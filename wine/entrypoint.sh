@@ -150,11 +150,11 @@ if [ -d steamcmd ]; then
                 $( [ "$WINDOWS_INSTALL" = "1" ] && echo "-os windows" ) \
                 -app "$STEAM_APPID" \
                 $( [ -n "$STEAM_BETAID" ] && echo "-branch $STEAM_BETAID" ) \
-                $( [ -n "$STEAM_BETAPASS" ] && echo "-branchpassword $STEAM_BETAPASS" ) || printf "${RED}DepotDownloader failed!${NC}\n"
+                $( [ -n "$STEAM_BETAPASS" ] && echo "-branchpassword $STEAM_BETAPASS" )
             mkdir -p .steam/sdk64
             ./DepotDownloader -dir .steam/sdk64 \
                 $( [ "$WINDOWS_INSTALL" = "1" ] && echo "-os windows" ) \
-                -app 1007 || printf "${RED}DepotDownloader SDK download failed!${NC}\n"
+                -app 1007
             chmod +x "$HOME"/*
         else
             ./steamcmd/steamcmd.sh +force_install_dir /home/container \
