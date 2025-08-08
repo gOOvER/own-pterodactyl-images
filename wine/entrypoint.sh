@@ -7,6 +7,8 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
+export XDG_RUNTIME_DIR="/home/container/xdg"
+mkdir -p "$XDG_RUNTIME_DIR"
 
 # Get Linux distribution name
 LINUX=$(. /etc/os-release ; echo $PRETTY_NAME)
@@ -88,6 +90,7 @@ printf "${BLUE}-----------------------------------------------------------------
 printf "${RED}First launch will throw some errors. Ignore them${NC}\n"
 printf "${BLUE}---------------------------------------------------------------------${NC}\n"
 mkdir -p "$WINEPREFIX"
+wineboot --init
 
 # Install Wine Gecko if requested
 if [[ $WINETRICKS_RUN =~ gecko ]]; then
