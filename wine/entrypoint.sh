@@ -7,7 +7,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
-export XDG_RUNTIME_DIR="/home/container/xdg"
+export XDG_RUNTIME_DIR="/home/container/.config/xdg"
 mkdir -p "$XDG_RUNTIME_DIR"
 
 # Get Linux distribution name
@@ -79,21 +79,31 @@ if [[ "$WINETRICKS_RUN" =~ mono ]]; then
     WINETRICKS_RUN=$(echo $WINETRICKS_RUN | sed 's/\bmono\b//g')
 fi
 
-# Install vcrun2022 64bit if requested
+# Install vcrun2022 64bit if requested (extract DLLs from installer)
 if [[ "$WINETRICKS_RUN" =~ vcrun2022 ]]; then
     printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-    printf "${YELLOW}Installing vcrun2022 (Visual C++ Redistributable 2022, 64bit)${NC}\n"
+    printf "${YELLOW}Downloading vcrun2022 (Visual C++ Redistributable 2022, 64bit)${NC}\n"
     printf "${BLUE}---------------------------------------------------------------------${NC}\n"
     VCRUN_URL="https://aka.ms/vs/17/release/vc_redist.x64.exe"
     VCRUN_FILE="$WINEPREFIX/vc_redist.x64.exe"
+    DLL_DEST="$WINEPREFIX/drive_c/windows/system32"
 
     rm -f "$VCRUN_FILE"
     wget -q -O "$VCRUN_FILE" "$VCRUN_URL"
 
     if [ -f "$VCRUN_FILE" ]; then
-        wine "$VCRUN_FILE" /quiet /norestart /log "$WINEPREFIX/vcrun2022_x64_install.log" && \
-            printf "${GREEN}vcrun2022 x64 was installed successfully!${NC}\n" || \
-            printf "${RED}vcrun2022 x64 installation failed!${NC}\n"
+        printf "${YELLOW}Extracting DLLs from installer...${NC}\n"
+        mkdir -p "$DLL_DEST"
+        cabextract -d "$DLL_DEST" "$VCRUN_FILE"
+        # Check for main DLLs
+        DLLS=("msvcp140.dll" "vcruntime140.dll")
+        for dll in "${DLLS[@]}"; do
+            if [ -f "$DLL_DEST/$dll" ]; then
+                printf "${GREEN}$dll successfully extracted to system32.${NC}\n"
+            else
+                printf "${RED}$dll not found after extraction.${NC}\n"
+            fi
+        done
     else
         printf "${RED}Failed to download vcrun2022 x64.${NC}\n"
     fi
