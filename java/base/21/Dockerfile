@@ -12,6 +12,7 @@ RUN 		apt update -y \
 RUN  		apt install -y \
 				ca-certificates \
 				curl \
+				ffmpeg \
 				font-manager \
 				fontconfig \
 				git \
