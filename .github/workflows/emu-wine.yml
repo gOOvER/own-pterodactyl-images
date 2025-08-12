@@ -26,6 +26,7 @@ jobs:
           - stable
           - staging
           - ubuntustaging
+          - notini
 
     steps:
       - uses: actions/checkout@v4
