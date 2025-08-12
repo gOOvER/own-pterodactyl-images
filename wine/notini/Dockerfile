@@ -129,5 +129,4 @@ WORKDIR /home/container
 
 ## Copy over and execute entrypoint.sh
 COPY ./../entrypoint.sh /entrypoint.sh
-RUN dos2unix /entrypoint.sh && chmod +x /entrypoint.sh
 CMD [ "/bin/bash", "/entrypoint.sh" ]
