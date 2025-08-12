@@ -122,11 +122,12 @@ RUN useradd -m -d /home/container -s /bin/bash container && \
 
 # Copy entrypoint script and set permissions (as root)
 #COPY --chown=container:container ./entrypoint.sh /entrypoint.sh
-RUN dos2unix /entrypoint.sh && chmod +x /entrypoint.sh
+
 
 USER container
 WORKDIR /home/container
 
 ## Copy over and execute entrypoint.sh
-COPY        ./../entrypoint.sh /entrypoint.sh
-CMD         [ "/bin/bash", "/entrypoint.sh" ]
+COPY ./../entrypoint.sh /entrypoint.sh
+RUN dos2unix /entrypoint.sh && chmod +x /entrypoint.sh
+CMD [ "/bin/bash", "/entrypoint.sh" ]
