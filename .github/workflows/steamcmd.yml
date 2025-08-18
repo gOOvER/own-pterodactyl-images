@@ -24,7 +24,6 @@ jobs:
         distro:
           - debian
           - ubuntu
-          - parker
           - notini
     
     steps:
