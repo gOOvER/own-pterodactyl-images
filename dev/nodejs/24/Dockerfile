@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH node:24-bookworm-slim
+FROM        --platform=$TARGETOS/$TARGETARCH node:24-trixie-slim
 
 LABEL       org.opencontainers.image.authors="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
