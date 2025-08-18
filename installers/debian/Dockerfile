@@ -1,4 +1,4 @@
-FROM        debian:bookworm-slim
+FROM        debian:trixie-slim
 
 LABEL       org.opencontainers.image.authors="Torsten Widmann - gOOvER - info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"

@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 LABEL org.opencontainers.image.authors="Torsten Widmann - gOOvER - info@goover.de"
 LABEL org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
@@ -37,7 +37,6 @@ RUN dpkg --add-architecture i386 && \
         procps \
         python3 \
         rapidjson-dev \
-        software-properties-common \
         sqlite3 \
         tar \
         telnet \
@@ -58,13 +57,13 @@ RUN dpkg --add-architecture i386 && \
         libfluidsynth3 \
         libfontconfig \
         libgcc1 \
-        libicu72 \
+        libicu76 \
         liblua5.4-0 \
         liblzo2-2 \
         libmariadbclient-dev-compat \
         libncurses6:i386 \
         libntlm0 \
-        libprotobuf32 \
+        libprotobuf32t64 \
         libsdl1.2debian \
         libsdl2-2.0-0 \
         libsdl2-2.0-0:i386 \
@@ -80,13 +79,14 @@ RUN dpkg --add-architecture i386 && \
 ENV WINE_BRANCH=staging
 RUN mkdir -pm755 /etc/apt/keyrings && \
     wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key && \
-    wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources && \
+    wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/trixie/winehq-trixie.sources && \
     apt update && \
     apt install -y --no-install-recommends winehq-${WINE_BRANCH} cabextract && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* && \
     wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks && \
-    chmod +x /usr/sbin/winetricks
+    chmod +x /usr/sbin/winetricks && \
+	wget -q -O /usr/share/bash-completion/completions/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion
 
 # Install rcon-cli (separate step)
 RUN cd /tmp/ && \
@@ -118,8 +118,6 @@ RUN echo "vm.max_map_count = 16777216" > /etc/sysctl.d/20-max_map_count.conf
 RUN useradd -m -d /home/container -s /bin/bash container && \
     mkdir -p /home/container && \
     chown container:container /home/container
-
-STOPSIGNAL SIGINT
 
 # Copy entrypoint script and set permissions (as root)
 COPY --chown=container:container ./entrypoint.sh /entrypoint.sh
