@@ -42,7 +42,7 @@ RUN         apt -y install --no-install-recommends \
                 libsqlite3-dev \
                 libssl-dev \
                 libxml2-dev \
-                libxmlsec1-dev \
+                libxmlsec1-dev && \
             apt clean && \
             rm -rf /var/lib/apt/lists/*
 
