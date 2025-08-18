@@ -24,7 +24,7 @@ RUN         apt -y install --no-install-recommends \
                 llvm \
                 locales \
                 make \
-                openjdk-17-jre-headless \
+                openjdk-21-jre-headless \
 				pipx \
                 procps \
                 tk-dev \
@@ -42,9 +42,9 @@ RUN         apt -y install --no-install-recommends \
                 libsqlite3-dev \
                 libssl-dev \
                 libxml2-dev \
-                libxmlsec1-dev
-
-RUN         rm -rf /var/lib/apt/lists/*
+                libxmlsec1-dev \
+            apt clean && \
+            rm -rf /var/lib/apt/lists/*
 
 RUN         python -m pip install --upgrade pip
 RUN 	    pip install itch-dl
