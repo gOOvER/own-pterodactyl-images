@@ -32,7 +32,6 @@ RUN         apt install -y \
                 net-tools \
                 netcat-openbsd \
                 rapidjson-dev \
-                software-properties-common \
                 sqlite3 \
                 tar \
                 telnet \
@@ -49,7 +48,7 @@ RUN         apt install -y \
                 libfluidsynth3 \
                 libfontconfig \
                 libgcc1 \
-                libicu72 \
+                libicu76 \
                 liblua5.4-0 \
                 liblzo2-2 \
                 libmariadbclient-dev-compat \
