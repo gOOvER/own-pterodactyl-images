@@ -245,6 +245,7 @@ else
         printf "${RED}SteamCMD failed!${NC}\n"
 fi
 
+STOPSIGNAL SIGINT
 
 # ----------------------------
 # Startup command
