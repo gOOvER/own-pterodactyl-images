@@ -44,5 +44,6 @@ jobs:
           file: ./custom/${{ matrix.oses }}/Dockerfile
           platforms: linux/amd64
           push: true
-          tags: |
-            ghcr.io/goover/custom:${{ matrix.oses }}
+          tags: ghcr.io/goover/custom:${{ matrix.oses }}
+          cache-from: type=registry,ref=ghcr.io/goover/custom:${{ matrix.distro }}
+          cache-to: type=registry,mode=max,ref=ghcr.io/goover/custom:${{ matrix.distro }}

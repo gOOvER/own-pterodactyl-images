@@ -55,5 +55,6 @@ jobs:
           file: ./bots/${{ matrix.tag }}/Dockerfile
           platforms: linux/amd64
           push: true
-          tags: |
-            ghcr.io/goover/bot:${{ matrix.tag }}
+          tags: ghcr.io/goover/bot:${{ matrix.tag }}
+          cache-from: type=registry,ref=ghcr.io/goover/bot:${{ matrix.distro }}
+          cache-to: type=registry,mode=max,ref=ghcr.io/goover/bot:${{ matrix.distro }}
