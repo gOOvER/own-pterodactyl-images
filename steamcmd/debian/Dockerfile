@@ -1,4 +1,4 @@
-FROM        debian:bookworm-slim
+FROM        debian:trixie-slim
 
 LABEL       org.opencontainers.image.authors="info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
@@ -35,7 +35,6 @@ RUN         apt install -y --no-install-recommends \
                     python3-dev \
                     python3-pip \
                     sed \
-                    software-properties-common \
                     speex:i386 \
                     tar \
                     telnet \
@@ -93,7 +92,8 @@ RUN         apt install -y --no-install-recommends \
                     libxrandr2 \
                     libxss1 \
                     libxtst6 && \
-			rm -rf /var/lib/apt/lists/*
+                apt clean && \
+                rm -rf /var/lib/apt/lists/*
 
 ## install dotnet to support STEAM dotnet games
 RUN          wget https://dot.net/v1/dotnet-install.sh \
@@ -116,16 +116,20 @@ ENV      	LANG=en_US.UTF-8 \
 	       	LANGUAGE=en_US:en \
         	LC_ALL=en_US.UTF-8
 
-## Setup user and working directory
+# Create non-root user and set working directory
 RUN         useradd -m -d /home/container -s /bin/bash container
 USER        container
 ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
 
-# Sets the default stop signal as wings can (currently) only send a kill or generic stop
+# Default stop signal
 STOPSIGNAL SIGINT
 
-COPY        --chown=container:container ../entrypoint.sh /entrypoint.sh
+# Copy entrypoint (adjust path if needed)
+ARG         ENTRYPOINT_PATH=../entrypoint.sh
+COPY        --chown=container:container ${ENTRYPOINT_PATH} /entrypoint.sh
 RUN         chmod +x /entrypoint.sh
+
+# Use tini init and entrypoint script
 ENTRYPOINT  ["/usr/bin/tini", "-g", "--"]
 CMD         ["/entrypoint.sh"]
