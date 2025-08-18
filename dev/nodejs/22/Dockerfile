@@ -1,71 +1,65 @@
-FROM        --platform=$TARGETOS/$TARGETARCH node:22-trixie-slim
+FROM --platform=$TARGETOS/$TARGETARCH node:22-trixie-slim
 
-LABEL       org.opencontainers.image.authors="info@goover.de"
-LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
-LABEL       org.opencontainers.image.description="Docker image for Pelican Hosting Panel and Pterodactyl"
+LABEL org.opencontainers.image.authors="info@goover.de" \
+      org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images" \
+      org.opencontainers.image.licenses="AGPL-3.0-or-later" \
+      org.opencontainers.image.description="Docker image for Pelican Hosting Panel and Pterodactyl"
 
-ARG         DEBIAN_FRONTEND=noninteractive
-RUN         apt update \
-             && apt -y upgrade
+ARG DEBIAN_FRONTEND=noninteractive
 
-RUN         apt -y install \
-                autoconf \
-                automake \
-                build-essential \
-                ca-certificates\
-                curl \
-                dnsutils \
-				ffmpeg \
-                g++ \
-                git \
-                gnupg \
-                gnupg2 \
-                iproute2 \
-                iputils-ping \
-                libtool \
-                locales \
-                python3 \
-                python3-dev \
-                sqlite3 \
-                tzdata \
-                tini \
-                zip \
-				libnss3 \
-                libsqlite3-dev
+# Install required system packages and clean up afterwards to reduce image size
+RUN apt-get update && apt-get -y upgrade && \
+    apt-get install -y --no-install-recommends \
+        autoconf \
+        automake \
+        build-essential \
+        ca-certificates \
+        curl \
+        dnsutils \
+        ffmpeg \
+        g++ \
+        git \
+        gnupg \
+        iproute2 \
+        iputils-ping \
+        libtool \
+        locales \
+        python3 \
+        python3-dev \
+        sqlite3 \
+        tzdata \
+        tini \
+        zip \
+        libnss3 \
+        libsqlite3-dev && \
+    rm -rf /var/lib/apt/lists/*
 
-# updating npm
-RUN         npm install npm@next-11 -g
-RUN         npm install -g typescript ts-node
+# Update npm, install TypeScript, ts-node, and enable Corepack (for pnpm and Yarn)
+RUN npm install -g npm@next-11 typescript ts-node corepack && \
+    corepack enable && \
+    corepack prepare pnpm@latest --activate && \
+    corepack prepare yarn@stable --activate
 
-# install pnpm
-RUN         npm install -g corepack
-RUN         corepack enable
-RUN         corepack prepare pnpm@latest --activate
+# Generate and set en_US.UTF-8 locale
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
+ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
 
-# add Yarn
-RUN         curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-            && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
-            && apt update \
-            && apt -y install yarn
+# Create non-root user and working directory
+RUN useradd -m -d /home/container -s /bin/bash container
+USER container
+ENV USER=container HOME=/home/container
+WORKDIR /home/container
 
-# Set the locale
-RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
-            locale-gen
-ENV         LANG=en_US.UTF-8
-ENV         LANGUAGE=en_US:en
-ENV         LC_ALL=en_US.UTF-8
-
-## Setup user and working directory
-RUN         useradd -m -d /home/container -s /bin/bash container
-USER        container
-ENV         USER=container HOME=/home/container
-WORKDIR     /home/container
-
-# Sets the default stop signal as wings can (currently) only send a kill or generic stop
+# Set stop signal for Docker (important for Pterodactyl)
 STOPSIGNAL SIGINT
 
-COPY        --chown=container:container ../entrypoint.sh /entrypoint.sh
-RUN         chmod +x /entrypoint.sh
-ENTRYPOINT  ["/usr/bin/tini", "-g", "--"]
-CMD         ["/entrypoint.sh"]
+# Build argument to set entrypoint.sh location
+ARG ENTRYPOINT_PATH=../entrypoint.sh
+
+# Copy entrypoint from the specified path
+COPY --chown=container:container ${ENTRYPOINT_PATH} /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Use tini as init and run entrypoint script
+ENTRYPOINT ["/usr/bin/tini", "-g", "--"]
+CMD ["/entrypoint.sh"]
