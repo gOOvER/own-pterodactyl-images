@@ -62,7 +62,6 @@ RUN         apt install -y --no-install-recommends \
                     libfontconfig \
                     libgcc-s1 \
                     libgcc1 \
-                    libgconf-2-4 \
                     libgdiplus \
                     libgtk2.0-0:i386 \
                     libjemalloc2 \
