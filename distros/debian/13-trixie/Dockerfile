@@ -1,4 +1,4 @@
-FROM            --platform=$TARGETOS/$TARGETARCH debian:trixie-slim
+FROM            --platform=$TARGETOS/$TARGETARCH debian:bookworm-slim
 
 LABEL	       org.opencontainers.image.authors="Torsten Widmann - gOOvER - info@goover.de"
 LABEL   	   org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"

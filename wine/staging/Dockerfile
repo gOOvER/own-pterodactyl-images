@@ -111,7 +111,7 @@ ENV HOME=/home/container \
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
     locale-gen
 
-# Increase vm.max_map_count for Conan Exiles
+# Increase vm.max_map_count
 RUN echo "vm.max_map_count = 16777216" > /etc/sysctl.d/20-max_map_count.conf
 
 # Create user and set working directory
