@@ -43,10 +43,10 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./steamcmd
-          file: ./steamcmd/${{ matrix.distro }}/Dockerfile
+          file: "./steamcmd/${{ matrix.distro }}/Dockerfile"
           platforms: linux/amd64
           push: true
           tags: "ghcr.io/goover/steamcmd:${{ matrix.distro }}"
           # Cache only if image exists
-          cache-from: "type=registry,ref=ghcr.io/goover/steamcmd:${{ matrix.distro }} || echo "no cache""
+          cache-from: "type=registry,ref=ghcr.io/goover/steamcmd:${{ matrix.distro }} || echo 'no cache'"
           cache-to: "type=registry,mode=max,ref=ghcr.io/goover/steamcmd:${{ matrix.distro }}-cache"
