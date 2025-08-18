@@ -47,6 +47,3 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/goover/apps:${{ matrix.oses }}
-          # Cache only if image exists
-          cache-from: type=registry,ref=ghcr.io/goover/apps:${{ matrix.distro }} || echo "no cache"
-          cache-to: type=registry,mode=max,ref=ghcr.io/goover/apps:${{ matrix.distro }}-cache
