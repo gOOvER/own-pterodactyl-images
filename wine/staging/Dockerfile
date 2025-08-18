@@ -22,7 +22,7 @@ RUN dpkg --add-architecture i386 && \
         ffmpeg \
         g++ \
         gcc \
-        gcc-11-base \
+        gcc-12-base \
         gdb \
         git \
         gnupg2 \
@@ -71,7 +71,7 @@ RUN dpkg --add-architecture i386 && \
         libstdc++6 \
         libunwind8 \
         libz-dev \
-        libzip4 && \
+        libzip5 && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
