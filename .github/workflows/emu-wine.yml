@@ -45,8 +45,10 @@ jobs:
       - uses: docker/build-push-action@v6
         with:
           context: ./wine
-          file: ./wine/${{ matrix.tag }}/Dockerfile
+          file: "./wine/${{ matrix.tag }}/Dockerfile"
           platforms: linux/amd64
           push: true
-          tags: |
-            ghcr.io/goover/wine:${{ matrix.tag }}
+          tags: "ghcr.io/goover/wine:${{ matrix.tag }}"
+          # Cache only if image exists
+          cache-from: "type=registry,ref=ghcr.io/goover/steamcmd:${{ matrix.distro }} || echo 'no cache'"
+          cache-to: "type=registry,mode=max,ref=ghcr.io/goover/steamcmd:${{ matrix.distro }}-cache"
