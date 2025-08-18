@@ -8,6 +8,33 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+export XDG_RUNTIME_DIR="/home/container/.config/xdg"
+mkdir -p "$XDG_RUNTIME_DIR"
+
+# Separator line
+LINE="${BLUE}---------------------------------------------------------------------${NC}"
+
+# Gather info
+LINUX="$(lsb_release -ds 2>/dev/null || cat /etc/os-release | grep PRETTY_NAME | cut -d= -f2- | tr -d '"')"
+TIMEZONE="$(if [ -f /etc/timezone ]; then cat /etc/timezone; else readlink /etc/localtime | sed 's|.*/zoneinfo/||'; fi)"
+WINE_VERSION="$(wine --version 2>/dev/null || echo 'Wine not found!')"
+TZ=${TZ:-UTC}
+export TZ
+
+# Print info
+clear
+printf "%s\n" "$LINE"
+printf "${YELLOW}Wine Image from gOOvER${NC}\n"
+printf "${RED}THIS IMAGE IS LICENSED UNDER AGPLv3${NC}\n"
+printf "%s\n" "$LINE"
+printf "${YELLOW}Docker Linux Distribution: ${RED}%s${NC}\n" "$LINUX"
+printf "${YELLOW}Current timezone: ${RED}%s${NC}\n" "$TIMEZONE"
+printf "${YELLOW}Wine Version: ${RED}%s${NC}\n" "$WINE_VERSION"
+printf "%s\n" "$LINE"
+
+INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
+export INTERNAL_IP
+
 # Failsafe: Check for required tools
 for tool in wget wine cabextract; do
     if ! command -v $tool &>/dev/null; then
@@ -15,27 +42,6 @@ for tool in wget wine cabextract; do
         exit 1
     fi
 done
-
-export XDG_RUNTIME_DIR="/home/container/.config/xdg"
-mkdir -p "$XDG_RUNTIME_DIR"
-
-# Get Linux distribution name
-LINUX=$(. /etc/os-release ; echo $PRETTY_NAME)
-TZ=${TZ:-UTC}
-export TZ
-
-clear
-printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-printf "${YELLOW}Wine Image from gOOvER${NC}\n"
-printf "${RED}THIS IMAGE IS LICENSED UNDER AGPLv3${NC}\n"
-printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-printf "${YELLOW}Docker Linux Distribution: ${RED}%s${NC}\n" "$LINUX"
-printf "${YELLOW}Current timezone: %s${NC}\n" "$(cat /etc/timezone)"
-printf "${YELLOW}Wine Version: ${RED}%s${NC}\n" "$(wine --version 2>/dev/null || echo 'Wine not found!')"
-printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-
-INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
-export INTERNAL_IP
 
 cd /home/container || { printf "${RED}Failed to change directory to /home/container.${NC}\n"; exit 1; }
 
