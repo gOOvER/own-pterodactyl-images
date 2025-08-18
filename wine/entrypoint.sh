@@ -251,4 +251,6 @@ fi
 # ----------------------------
 MODIFIED_STARTUP=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')
 msg CYAN ":/home/container$ $MODIFIED_STARTUP"
-eval "$MODIFIED_STARTUP"
+
+# exec bash -c für komplexe Shell-Kommandos
+exec bash -c "$MODIFIED_STARTUP"
