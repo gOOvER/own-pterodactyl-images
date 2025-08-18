@@ -1,75 +1,140 @@
 #!/bin/bash
+set -e
 
+ERROR_LOG="install_error.log"
+> "$ERROR_LOG"  # Alte Logdatei leeren
+
+# ----------------------------
+# Colors via tput
+# ----------------------------
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
+CYAN=$(tput setaf 6)
+NC=$(tput sgr0)
+
+# ----------------------------
+# Functions
+# ----------------------------
+msg() {
+    local color="$1"
+    shift
+    # Wenn ROT, zusätzlich in install_error.log schreiben
+    if [ "$color" = "RED" ]; then
+        printf "%b\n" "${RED}$*${NC}" | tee -a "$ERROR_LOG" >&2
+    else
+        printf "%b\n" "${!color}$*${NC}"
+    fi
+}
+
+line() {
+    local color="${1:-BLUE}"
+    local term_width=$(tput cols 2>/dev/null || echo 70)
+    local sep=$(printf '%*s' "$term_width" '' | tr ' ' '-')
+    
+    case "$color" in
+        RED) COLOR="$RED";;
+        GREEN) COLOR="$GREEN";;
+        YELLOW) COLOR="$YELLOW";;
+        BLUE) COLOR="$BLUE";;
+        CYAN) COLOR="$CYAN";;
+        *) COLOR="$NC";;
+    esac
+    printf "%b\n" "${COLOR}${sep}${NC}"
+}
+
+# ----------------------------
+# Error trap for uncaught errors
+# ----------------------------
+trap 'echo "$(date +%Y-%m-%d\ %H:%M:%S) - Unexpected error at line $LINENO" | tee -a "$ERROR_LOG" >&2' ERR
+
+# ----------------------------
+# System Info
+# ----------------------------
+LINUX=$(. /etc/os-release; echo "$PRETTY_NAME")
+TIMEZONE=$(if [ -f /etc/timezone ]; then cat /etc/timezone; else readlink /etc/localtime | sed 's|.*/zoneinfo/||'; fi)
+WINE_VER=$(wine --version 2>/dev/null || echo "Wine not found!")
+
+# ----------------------------
+# Banner
+# ----------------------------
 clear
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+line BLUE
+msg YELLOW "Wine Image from gOOvER"
+msg RED "THIS IMAGE IS LICENSED UNDER AGPLv3"
+line BLUE
+msg YELLOW "Docker Linux Distribution: ${RED}$LINUX"
+msg YELLOW "Current timezone: ${RED}$TIMEZONE"
+msg YELLOW "Wine Version: ${RED}$WINE_VER"
+line BLUE
 
-# Wait for the container to fully initialize
-sleep 1
+# ----------------------------
+# Environment
+# ----------------------------
+export TZ=${TZ:-UTC}
+export INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
+export XDG_RUNTIME_DIR="/home/container/.config/xdg"
+mkdir -p "$XDG_RUNTIME_DIR"
 
-# Default the TZ environment variable to UTC.
-TZ=${TZ:-UTC}
-export TZ
+# ----------------------------
+# SteamCMD / DepotDownloader Update
+# ----------------------------
+if [ -f ./DepotDownloader ]; then
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    printf "${YELLOW}Using DepotDownloader for updates${NC}\n"
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
 
-# Set environment variable that holds the Internal Docker IP
-INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
-export INTERNAL_IP
+    : "${STEAM_USER:=anonymous}"  # Default anonymous user
+    : "${STEAM_PASS:=}"
+    : "${STEAM_AUTH:=}"
 
-# Information output
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${RED}SteamCMD/DepotDownloader Image by gOOvER - https://discord.goover.dev${NC}"
-echo -e "${RED}THIS IMAGE IS LICENSED UNDER AGPLv3${NC}"
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${YELLOW}Linux Distribution: ${RED} $(. /etc/os-release ; echo $PRETTY_NAME)${NC}"
-echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
-echo -e "${YELLOW}DotNet Version: ${RED} $(dotnet --version) ${NC}"
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    printf "${YELLOW}Steam user: ${GREEN}%s${NC}\n" "$STEAM_USER"
 
-# Switch to the container's working directory
-cd /home/container || exit 1
+    ./DepotDownloader -dir . \
+        -username "$STEAM_USER" \
+        -password "$STEAM_PASS" \
+        -remember-password \
+        $( [ "$WINDOWS_INSTALL" = "1" ] && echo "-os windows" ) \
+        -app "$STEAM_APPID" \
+        $( [ -n "$STEAM_BETAID" ] && echo "-branch $STEAM_BETAID" ) \
+        $( [ -n "$STEAM_BETAPASS" ] && echo "-branchpassword $STEAM_BETAPASS" )
 
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${GREEN}Starting Server.... Please wait...${NC}"
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    mkdir -p .steam/sdk64
+    ./DepotDownloader -dir .steam/sdk64 \
+        $( [ "$WINDOWS_INSTALL" = "1" ] && echo "-os windows" ) \
+        -app 1007
 
-## just in case someone removed the defaults.
-if [ "${STEAM_USER}" == "" ]; then
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-    echo -e "${YELLOW}Steam user is not set.\n ${NC}"
-    echo -e "${YELLOW}Using anonymous user.\n ${NC}"
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-    STEAM_USER=anonymous
-    STEAM_PASS=""
-    STEAM_AUTH=""
+    chmod +x "$HOME"/*
 else
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-    echo -e "${YELLOW}user set to ${STEAM_USER} ${NC}"
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    printf "${YELLOW}Using SteamCMD for updates${NC}\n"
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+
+    : "${STEAM_USER:=anonymous}"  # Default anonymous user
+    : "${STEAM_PASS:=}"
+    : "${STEAM_AUTH:=}"
+
+    printf "${YELLOW}Steam user: ${GREEN}%s${NC}\n" "$STEAM_USER"
+
+    ./steamcmd/steamcmd.sh +force_install_dir /home/container \
+        +login "$STEAM_USER" "$STEAM_PASS" "$STEAM_AUTH" \
+        $( [ "$WINDOWS_INSTALL" = "1" ] && echo "+@sSteamCmdForcePlatformType windows" ) \
+        $( [ "$STEAM_SDK" = "1" ] && echo "+app_update 1007" ) \
+        +app_update "$STEAM_APPID" \
+        $( [ -n "$STEAM_BETAID" ] && echo "-beta $STEAM_BETAID" ) \
+        $( [ -n "$STEAM_BETAPASS" ] && echo "-betapassword $STEAM_BETAPASS" ) \
+        $INSTALL_FLAGS \
+        $( [ "$VALIDATE" = "1" ] && echo "validate" ) +quit || \
+        printf "${RED}SteamCMD failed!${NC}\n"
 fi
 
-## if auto_update is not set or to 1 update
-if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
-	if [ -f /home/container/DepotDownloader ]; then
-		./DepotDownloader -dir /home/container -username ${STEAM_USER} -password ${STEAM_PASS} -remember-password $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) -app ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" )
-		mkdir -p /home/container/.steam/sdk64
-		./DepotDownloader -dir /home/container/.steam/sdk64 $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) -app 1007
-		chmod +x $HOME/*
 
-	else
-	   	./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) $( [[ "${STEAM_SDK}" == "1" ]] && printf %s '+app_update 1007' ) +app_update ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) ${INSTALL_FLAGS} $( [[ "${VALIDATE}" == "1" ]] && printf %s 'validate' ) +quit
-	fi
-else
-    echo -e "${BLUE}---------------------------------------------------------------${NC}"
-    echo -e "${YELLOW}Not updating game server as auto update was set to 0. Starting Server${NC}"
-    echo -e "${BLUE}---------------------------------------------------------------${NC}"
-fi
+# ----------------------------
+# Startup command
+# ----------------------------
+MODIFIED_STARTUP=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')
+msg CYAN ":/home/container$ $MODIFIED_STARTUP"
 
-# Replace Startup Variables
-MODIFIED_STARTUP=$(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
-echo -e ":/home/container$ ${MODIFIED_STARTUP}"
-
-# Run the Server
-eval ${MODIFIED_STARTUP}
+# exec bash -c für komplexe Shell-Kommandos
+exec bash -c "$MODIFIED_STARTUP"

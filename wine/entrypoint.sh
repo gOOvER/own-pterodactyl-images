@@ -59,6 +59,7 @@ WINE_VER=$(wine --version 2>/dev/null || echo "Wine not found!")
 # ----------------------------
 # Banner
 # ----------------------------
+clear
 line BLUE
 msg YELLOW "Wine Image from gOOvER"
 msg RED "THIS IMAGE IS LICENSED UNDER AGPLv3"
