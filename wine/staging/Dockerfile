@@ -127,4 +127,5 @@ USER container
 WORKDIR /home/container
 
 ENTRYPOINT ["/usr/bin/tini", "-g", "--"]
+STOPSIGNAL SIGINT
 CMD ["/entrypoint.sh"]
