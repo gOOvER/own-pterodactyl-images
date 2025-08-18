@@ -50,5 +50,5 @@ jobs:
           push: true
           tags: "ghcr.io/goover/wine:${{ matrix.tag }}"
           # Cache only if image exists
-          cache-from: "type=registry,ref=ghcr.io/goover/wine:${{ matrix.distro }} || echo 'no cache'"
-          cache-to: "type=registry,mode=max,ref=ghcr.io/goover/wine:${{ matrix.distro }}-cache"
+          cache-from: "type=registry,ref=ghcr.io/goover/wine:${{ matrix.tag }} || echo 'no cache'"
+          cache-to: "type=registry,mode=max,ref=ghcr.io/goover/wine:${{ matrix.tag }}-cache"
