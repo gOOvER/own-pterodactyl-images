@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH python:3.12-slim
+FROM        --platform=$TARGETOS/$TARGETARCH python:3.13-slim
 
 LABEL       org.opencontainers.image.authors="Torsten Widmann - gOOvER - info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
@@ -17,16 +17,20 @@ RUN         apt -y install --no-install-recommends \
                 default-libmysqlclient-dev \
                 dnsutils \
                 ffmpeg \
+				file \
                 g++ \
                 gcc \
                 git \
                 iproute2 \
+				jq \
+				libtool \
                 llvm \
                 locales \
                 make \
                 openjdk-21-jre-headless \
 				pipx \
                 procps \
+				python3-pip
                 tk-dev \
                 uuid-dev \
 				unzip \
