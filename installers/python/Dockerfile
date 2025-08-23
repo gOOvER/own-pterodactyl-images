@@ -30,7 +30,7 @@ RUN         apt -y install --no-install-recommends \
                 openjdk-21-jre-headless \
 				pipx \
                 procps \
-				python3-pip
+				python3-pip \
                 tk-dev \
                 uuid-dev \
 				unzip \
