@@ -22,7 +22,6 @@ jobs:
       fail-fast: false
       matrix:
         tag:
-          - '2.7'
           - '3.7'
           - '3.8'
           - '3.9'
