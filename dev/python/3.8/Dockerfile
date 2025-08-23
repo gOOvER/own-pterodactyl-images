@@ -1,42 +1,44 @@
-FROM        	--platform=$TARGETOS/$TARGETARCH python:3.8-slim
+FROM --platform=$TARGETOS/$TARGETARCH python:3.8-slim
 
-LABEL       	author="Michael Parker" maintainer="parker@pterodactyl.io"
-LABEL           author="Torsten Widmann" maintainer="info@goover.de"
-LABEL           org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
-LABEL           org.opencontainers.image.licenses=MIT
+LABEL org.opencontainers.image.authors="info@goover.de" \
+      org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images" \
+      org.opencontainers.image.licenses="AGPL-3.0-or-later" \
+      org.opencontainers.image.description="Docker image for Pelican Hosting Panel and Pterodactyl"
 
-ENV             DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=en_US.UTF-8 \
+    USER=container \
+    HOME=/home/container
 
-RUN             apt update \
-                && apt -y upgrade
+# Install system dependencies and upgrade pip
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        default-libmysqlclient-dev \
+        dnsutils \
+        ffmpeg \
+        g++ \
+        gcc \
+        git \
+        iproute2 \
+        locales \
+        procps && \
+    # Locale setup
+    sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen && \
+    # Upgrade pip
+    python -m pip install --no-cache-dir --upgrade pip && \
+    # Cleanup
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN             apt -y install \
-                    ca-certificates \
-                    curl \
-                    default-libmysqlclient-dev \
-                    dnsutils \
-                    ffmpeg \
-                    g++ \
-                    gcc \
-                    git \
-                    iproute2 \
-                    locales \
-                    procps
+# Setup non-root user
+RUN useradd -m -d /home/container -s /bin/bash container
+USER container
+WORKDIR /home/container
 
-RUN         	python -m pip install --upgrade pip
-
-# Set the locale
-RUN         	sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
-            	locale-gen
-ENV         	LANG en_US.UTF-8
-ENV         	LANGUAGE en_US:en
-ENV         	LC_ALL en_US.UTF-8
-
-## Setup user and working directory
-RUN             useradd -m -d /home/container -s /bin/bash container
-USER            container
-ENV             USER=container HOME=/home/container
-WORKDIR         /home/container
-
-COPY        	./../entrypoint.sh /entrypoint.sh
-CMD         	["/bin/bash", "/entrypoint.sh"]
+# Entrypoint
+COPY --chown=container:container ./../entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]

@@ -1,53 +1,112 @@
 #!/bin/bash
-#System variables
-clear
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+set -e
 
-# Switch to the container's working directory
-cd /home/container || exit 1
+ERROR_LOG="entrypoint_error.log"
+> "$ERROR_LOG"  # Alte Logdatei leeren
 
-# Wait for the container to fully initialize
+# ----------------------------
+# Colors via tput
+# ----------------------------
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
+CYAN=$(tput setaf 6)
+NC=$(tput sgr0)
+
+# ----------------------------
+# Functions
+# ----------------------------
+msg() {
+    local color="$1"
+    shift
+    if [ "$color" = "RED" ]; then
+        printf "%b\n" "${RED}$*${NC}" | tee -a "$ERROR_LOG" >&2
+    else
+        printf "%b\n" "${!color}$*${NC}"
+    fi
+}
+
+line() {
+    local color="${1:-BLUE}"
+    local term_width=$(tput cols 2>/dev/null || echo 70)
+    local sep=$(printf '%*s' "$term_width" '' | tr ' ' '-')
+
+    case "$color" in
+        RED) COLOR="$RED";;
+        GREEN) COLOR="$GREEN";;
+        YELLOW) COLOR="$YELLOW";;
+        BLUE) COLOR="$BLUE";;
+        CYAN) COLOR="$CYAN";;
+        *) COLOR="$NC";;
+    esac
+    printf "%b\n" "${COLOR}${sep}${NC}"
+}
+
+# ----------------------------
+# Error trap
+# ----------------------------
+trap 'echo "$(date +%Y-%m-%d %H:%M:%S) - Unexpected error at line $LINENO" | tee -a "$ERROR_LOG" >&2' ERR
+
+# ----------------------------
+# Shutdown handler
+# ----------------------------
+shutdown_mongo() {
+    msg YELLOW "Shutting down MongoDB..."
+    mongod --dbpath /home/container/mongodb/ --shutdown || msg RED "MongoDB shutdown failed (may not be running)."
+}
+trap shutdown_mongo SIGTERM SIGINT EXIT
+
+# ----------------------------
+# Environment
+# ----------------------------
+cd /home/container || { msg RED "Failed to change directory to /home/container."; exit 1; }
+
 sleep 1
 
-# Default the TZ environment variable to UTC.
-TZ=${TZ:-UTC}
-export TZ
+export TZ=${TZ:-UTC}
+export INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 
-# Set environment variable that holds the Internal Docker IP
-INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
-export INTERNAL_IP
+# ----------------------------
+# System Info
+# ----------------------------
+clear
+line BLUE
+msg RED "NodeJS & MongoDB Image by gOOvER - https://discord.goover.dev"
+msg RED "This Image is licencend under AGPLv3"
+line BLUE
+msg YELLOW "Running on: ${RED}$(. /etc/os-release ; echo $NAME $VERSION)"
+msg YELLOW "Current timezone: ${RED}$(cat /etc/timezone)"
+line BLUE
+msg YELLOW "NodeJS Version: ${RED}$(node -v)"
+msg YELLOW "npm Version: ${RED}$(npm -v)"
+msg YELLOW "MongoDB Version: ${RED}$(mongod --version | head -n 1)"
+line BLUE
 
-# system informations
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${RED}NodeJS & MongoDB Image by gOOvER - https://discord.goover.dev${NC}"
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${YELLOW}Running on: ${RED} $(. /etc/os-release ; echo $NAME $VERSION)${NC}"
-echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${YELLOW}NodeJS Version: ${RED} $(node -v) ${NC}"
-echo -e "${YELLOW}npm Version: ${RED} $(npm -v) ${NC}"
-echo -e "${YELLOW}MongoDB Version: ${RED}$(mongod --version)${NC}"
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+# ----------------------------
+# Startup Command
+# ----------------------------
+MODIFIED_STARTUP=$(echo -e "$(echo -e "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')")
+msg YELLOW ":/home/container ${RED}${MODIFIED_STARTUP}"
 
-# Replace Startup Variables
-MODIFIED_STARTUP=$(echo -e $(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g'))
-echo -e "${YELLOW}:/home/container${NC} ${MODIFIED_STARTUP}"
+# ----------------------------
+# Start MongoDB
+# ----------------------------
+line BLUE
+msg YELLOW "Starting MongoDB..."
+line BLUE
+mongod --fork --dbpath /home/container/mongodb/ --port 27017 \
+       --logpath /home/container/mongod.log --logRotate reopen --logappend
 
-# start mongo
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${YELLOW}starting MongoDB...${NC}"
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-mongod --fork --dbpath /home/container/mongodb/ --port 27017 --logpath /home/container/mongod.log --logRotate reopen --logappend && until nc -z -v -w5 127.0.0.1 27017; do echo 'Waiting for mongodb connection...'; sleep 5; done
+until nc -z -v -w5 127.0.0.1 27017; do
+    msg YELLOW "Waiting for MongoDB connection..."
+    sleep 5
+done
 
-# Run the Server
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${YELLOW}starting Bot...${NC}"
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+# ----------------------------
+# Start Bot
+# ----------------------------
+line BLUE
+msg YELLOW "Starting Bot..."
+line BLUE
 eval ${MODIFIED_STARTUP}
-
-# stop mongo
-mongod --shutdown
