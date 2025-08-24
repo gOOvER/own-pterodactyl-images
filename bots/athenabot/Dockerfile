@@ -19,7 +19,7 @@ RUN apt-get update && apt-get -y upgrade && \
         iproute2 \
         iputils-ping \
         locales \
-        netcat \
+        netcat-openbsd \
         python3 \
         python3-dev \
         sqlite3 \
