@@ -12,13 +12,12 @@ SHELL ["/bin/bash", "-c"]
 ARG DEBIAN_FRONTEND=noninteractive
 
 # ----------------------------
-# System update & 32-bit support
+# Enable 32-bit architecture and update system
 # ----------------------------
-RUN dpkg --add-architecture i386 \
-    && apt update && apt -y upgrade
+RUN dpkg --add-architecture i386 && apt update && apt -y upgrade
 
 # ----------------------------
-# Install required packages
+# Install required packages (one per line)
 # ----------------------------
 RUN apt install -y --no-install-recommends \
     alsa-tools \
@@ -85,21 +84,16 @@ RUN apt install -y --no-install-recommends \
     gstreamer1.0-x \
     gstreamer1.0-alsa \
     gstreamer1.0-gl \
-    gstreamer1.0-pulseaudio \
-    && apt clean && rm -rf /var/lib/apt/lists/*
+    gstreamer1.0-pulseaudio && \
+    apt clean && rm -rf /var/lib/apt/lists/*
 
 # ----------------------------
-# Proton-GE installation (Root)
+# Set locale as root
 # ----------------------------
-RUN mkdir -p /opt/ProtonGE \
-    && cd /tmp \
-    && PROTON_URL=$(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest \
-        | grep browser_download_url | cut -d\" -f4 | grep .tar.gz) \
-    && curl -sLOJ "$PROTON_URL" \
-    && tar -xzf GE-Proton*.tar.gz -C /opt/ProtonGE --strip-components=1 \
-    && rm GE-Proton*.* \
-    && ln -sf /opt/ProtonGE/proton /usr/local/bin/proton-ge \
-    && ln -sf /opt/ProtonGE/proton /usr/local/bin/proton
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
 
 # ----------------------------
 # Proton machine-id fix
@@ -115,29 +109,37 @@ RUN useradd -m -d /home/container -s /bin/bash container
 USER container
 ENV USER=container HOME=/home/container
 WORKDIR /home/container
+ENV PATH="$HOME/.local/bin:$PATH"
 
 # ----------------------------
-# Setup pipx + Winetricks + Protontricks for container user
+# Proton-GE + Winetricks + Protontricks installation
 # ----------------------------
-ENV PATH="$HOME/.local/bin:$PATH"
-RUN mkdir -p $HOME/.local/bin $HOME/.local/share/bash-completion/completions \
+RUN mkdir -p $HOME/.local/bin \
+    && mkdir -p $HOME/.local/share/bash-completion/completions \
     && wget -q -O $HOME/.local/bin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
     && chmod +x $HOME/.local/bin/winetricks \
     && wget -q -O $HOME/.local/share/bash-completion/completions/winetricks \
         https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion \
-    && pipx ensurepath \
-    && pipx install protontricks
+    && python3 -m pip install --user pipx \
+    && python3 -m pipx ensurepath \
+    && python3 -m pipx install protontricks
 
 # ----------------------------
-# Set locale
+# Proton-GE
 # ----------------------------
-RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
-ENV LANG=en_US.UTF-8
-ENV LANGUAGE=en_US:en
-ENV LC_ALL=en_US.UTF-8
+USER root
+RUN mkdir -p /opt/ProtonGE && cd /tmp \
+    && PROTON_URL=$(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest \
+        | grep browser_download_url | cut -d\" -f4 | grep .tar.gz) \
+    && curl -sLOJ "$PROTON_URL" \
+    && tar -xzf GE-Proton*.tar.gz -C /opt/ProtonGE --strip-components=1 \
+    && rm GE-Proton*.* \
+    && ln -sf /opt/ProtonGE/proton /usr/local/bin/proton-ge \
+    && ln -sf /opt/ProtonGE/proton /usr/local/bin/proton
+USER container
 
 # ----------------------------
-# Install rcon-cli
+# rcon-cli
 # ----------------------------
 RUN cd /tmp \
     && curl -sSL https://github.com/gorcon/rcon-cli/releases/download/v0.10.3/rcon-0.10.3-amd64_linux.tar.gz -o rcon.tar.gz \
@@ -146,14 +148,14 @@ RUN cd /tmp \
     && rm -rf rcon*
 
 # ----------------------------
-# Entrypoint
+# Copy entrypoint
 # ----------------------------
 ARG ENTRYPOINT_PATH=../entrypoint.sh
 COPY --chown=container:container ${ENTRYPOINT_PATH} /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # ----------------------------
-# Default stop signal
+# Default stop signal & entrypoint
 # ----------------------------
 STOPSIGNAL SIGINT
 ENTRYPOINT ["/usr/bin/tini", "-g", "--"]
