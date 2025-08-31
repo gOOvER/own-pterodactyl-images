@@ -96,53 +96,61 @@ RUN useradd -m -d /home/container -s /bin/bash container
 USER container
 ENV USER=container HOME=/home/container
 WORKDIR /home/container
-ENV PATH="$HOME/.local/bin:$PATH"
 
 # -----------------------------
-# Proton-GE installation (global)
+# Steam directories
+# -----------------------------
+ENV STEAM_DIR=/home/container/.steam/steam
+ENV STEAM_BIN=$STEAM_DIR/bin
+RUN mkdir -p $STEAM_DIR $STEAM_BIN
+
+ENV PATH="$STEAM_BIN:$PATH"
+
+# -----------------------------
+# Proton-GE installation
 # -----------------------------
 USER root
-RUN mkdir -p /opt/ProtonGE /usr/local/bin && cd /tmp \
+RUN mkdir -p /opt/ProtonGE && cd /tmp \
     && PROTON_URL=$(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest \
         | grep browser_download_url | cut -d\" -f4 | grep .tar.gz) \
     && curl -sLOJ "$PROTON_URL" \
     && tar -xzf GE-Proton*.tar.gz -C /opt/ProtonGE --strip-components=1 \
     && rm GE-Proton*.* \
-    && ln -sf /opt/ProtonGE/proton /usr/local/bin/proton-ge \
-    && ln -sf /opt/ProtonGE/proton /usr/local/bin/proton
+    && ln -sf /opt/ProtonGE/dist/bin/wine $STEAM_BIN/proton \
+    && ln -sf /opt/ProtonGE/dist/bin/wine $STEAM_BIN/proton-ge
 
 # -----------------------------
-# Winetricks installation (global)
+# Winetricks installation
 # -----------------------------
-RUN wget -q -O /usr/local/bin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
-    && chmod +x /usr/local/bin/winetricks \
+RUN wget -q -O $STEAM_BIN/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
+    && chmod +x $STEAM_BIN/winetricks \
     && wget -q -O /usr/share/bash-completion/completions/winetricks \
         https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion
 
 # -----------------------------
-# Pipx + Protontricks installation (global)
+# Pipx + Protontricks installation
 # -----------------------------
 RUN python3 -m pip install --break-system-packages pipx \
     && python3 -m pipx ensurepath \
     && python3 -m pipx install protontricks \
-    && ln -sf $(python3 -m pipx which protontricks) /usr/local/bin/protontricks
+    && ln -sf $(python3 -m site --user-base)/bin/protontricks $STEAM_BIN/protontricks
 
 # -----------------------------
-# RCON CLI installation (latest, dynamisch)
+# RCON CLI (dynamisch latest)
 # -----------------------------
 RUN cd /tmp \
     && RCON_URL=$(curl -s https://api.github.com/repos/gorcon/rcon-cli/releases/latest \
         | grep browser_download_url | cut -d\" -f4 | grep amd64_linux.tar.gz) \
-    && curl -sLOJ "$RCON_URL" \
-    && tar xvf rcon-*-amd64_linux.tar.gz \
-    && mv rcon-*/rcon /usr/local/bin/ \
+    && curl -sSL "$RCON_URL" -o rcon.tar.gz \
+    && tar xvf rcon.tar.gz \
+    && mv rcon-*/rcon $STEAM_BIN/ \
     && rm -rf /tmp/*
 
 # -----------------------------
-# Default stop signal and entrypoint
+# Entrypoint
 # -----------------------------
-STOPSIGNAL SIGINT
 COPY --chown=container:container ../entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+STOPSIGNAL SIGINT
 ENTRYPOINT ["/usr/bin/tini", "-g", "--"]
 CMD ["/entrypoint.sh"]
