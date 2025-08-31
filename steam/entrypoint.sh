@@ -9,22 +9,28 @@ export DEBIAN_FRONTEND=noninteractive
 
 # --- Steam directories ---
 export STEAM_DIR="/home/container/.steam/steam"
+export STEAM_BIN="$STEAM_DIR/bin"
 export STEAM_COMPAT_CLIENT_INSTALL_PATH="$STEAM_DIR"
-export STEAM_COMPAT_DATA_PATH="$STEAM_DIR/steamapps/compatdata/${STEAM_APPID:-}"
+export STEAM_COMPAT_DATA_PATH="$STEAM_DIR/steamapps/compatdata/${STEAM_APPID}"
 export WINEPREFIX="${STEAM_COMPAT_DATA_PATH}/pfx"
 export PROTON_HOME="$STEAM_DIR/.proton"
-mkdir -p "$PROTON_HOME" "$WINEPREFIX"
+mkdir -p "$PROTON_HOME" "$WINEPREFIX" "$STEAM_BIN"
 
 # --- XDG runtime dir in Steam folder ---
 export XDG_RUNTIME_DIR="$STEAM_DIR/.config/xdg"
 mkdir -p "$XDG_RUNTIME_DIR"
 
+# --- Proton / Wine paths ---
+export PATH="$STEAM_BIN:$PATH"
+export WINE="$PROTON_HOME/dist/bin/wine"
+export WINE64="$PROTON_HOME/dist/bin/wine64"
+export WINETRICKS="$STEAM_BIN/winetricks"
+export PROTONTRICKS_BIN="$STEAM_BIN/protontricks"
+export PROTON_DISTLOCK="$PROTON_HOME/dist.lock"
+
 # --- Protonfixes directory ---
 PROTONFIX_DIR="$STEAM_DIR/.config/protonfixes"
 mkdir -p "$PROTONFIX_DIR"
-
-# --- Ensure global binaries are in PATH ---
-export PATH="/opt/ProtonGE/dist/bin:/usr/local/bin:$PATH"
 
 # --- Colors ---
 RED=$(tput setaf 1)
@@ -51,15 +57,6 @@ run_or_fail() {
     fi
 }
 
-# --- Ensure Proton and Protontricks symlinks exist ---
-ln -sf "$PROTON_HOME/dist/bin/wine" /usr/local/bin/proton-ge
-ln -sf "$PROTON_HOME/dist/bin/wine" /usr/local/bin/proton
-
-# Protontricks (installed via pipx)
-if [ -f "$(python3 -m site --user-base)/bin/protontricks" ]; then
-    ln -sf "$(python3 -m site --user-base)/bin/protontricks" /usr/local/bin/protontricks
-fi
-
 # --- Protontricks installation ---
 install_protontricks() {
     if [ -z "${PROTONTRICKS_RUN:-}" ]; then
@@ -71,7 +68,7 @@ install_protontricks() {
     echo -e "$LINE"
     for trick in $PROTONTRICKS_RUN; do
         log_info "Installing Protontrick: ${trick}"
-        if protontricks --unattended "${STEAM_APPID}" "$trick"; then
+        if "$PROTONTRICKS_BIN" --unattended "${STEAM_APPID}" "$trick"; then
             log_success "Protontrick installed: ${trick}"
         else
             log_warn "Protontrick failed: ${trick} (continuing...)"
@@ -89,7 +86,7 @@ run_winecfg() {
             echo -e "$LINE"
             log_info "Initializing new Wineprefix and running winecfg for AppID ${STEAM_APPID}"
             echo -e "$LINE"
-            run_or_fail "winecfg" "$PROTON_HOME/dist/bin/wine"
+            run_or_fail "winecfg" "$WINE"
         else
             log_info "Wineprefix already exists at $WINEPREFIX, skipping winecfg."
         fi
