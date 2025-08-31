@@ -110,7 +110,7 @@ echo -e "$LINE"
 log_info "Linux: $(. /etc/os-release; echo $PRETTY_NAME)"
 log_info "Kernel: $(uname -r)"
 log_info "Timezone: $TZ"
-log_info "Proton Version: $(cat /usr/local/bin/version 2>/dev/null || echo 'Unknown')"
+log_info "Proton Version: $(cat /opt/ProtonGE/version 2>/dev/null || echo 'Unknown')"
 echo -e "$LINE"
 
 # --- Check Steam AppID ---
