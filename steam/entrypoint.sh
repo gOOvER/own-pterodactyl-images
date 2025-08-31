@@ -4,6 +4,9 @@
 
 set -euo pipefail
 
+# --- Ensure HOME is set ---
+export HOME=/home/container
+
 # --- Non-interactive for apt ---
 export DEBIAN_FRONTEND=noninteractive
 
@@ -27,6 +30,7 @@ export WINE="$PROTON_HOME/dist/bin/wine"
 export WINE64="$PROTON_HOME/dist/bin/wine64"
 export WINETRICKS="$HOME/.local/bin/winetricks"
 export PROTONTRICKS_BIN="$HOME/.local/bin/protontricks"
+export PROTON_DISTLOCK="$PROTON_HOME/dist.lock"
 export PROTONFIX_DIR="$STEAM_DIR/.config/protonfixes"
 mkdir -p "$PROTONFIX_DIR"
 

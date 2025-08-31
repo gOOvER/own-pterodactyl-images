@@ -90,52 +90,64 @@ ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
 
 # -----------------------------
-# Create container user
+# Create container user and HOME
 # -----------------------------
-RUN useradd -m -d /home/container -s /bin/bash container
+RUN useradd -m -d /home/container -s /bin/bash container \
+    && mkdir -p /home/container/.local/bin \
+    && chown -R container:container /home/container
+
 USER container
-ENV USER=container HOME=/home/container
+ENV USER=container
+ENV HOME=/home/container
 WORKDIR /home/container
 ENV PATH="$HOME/.local/bin:$PATH"
 
 # -----------------------------
-# Proton-GE installation in HOME (writable)
+# Proton-GE installation (global)
 # -----------------------------
-RUN mkdir -p $HOME/.protonGE /home/container/.local/bin \
+USER root
+RUN mkdir -p /opt/ProtonGE /usr/local/bin \
     && cd /tmp \
     && PROTON_URL=$(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest \
         | grep browser_download_url | cut -d\" -f4 | grep .tar.gz) \
     && curl -sLOJ "$PROTON_URL" \
-    && tar -xzf GE-Proton*.tar.gz -C $HOME/.protonGE --strip-components=1 \
+    && tar -xzf GE-Proton*.tar.gz -C /opt/ProtonGE --strip-components=1 \
     && rm GE-Proton*.* \
-    && ln -sf $HOME/.protonGE/proton $HOME/.local/bin/proton-ge \
-    && ln -sf $HOME/.protonGE/proton $HOME/.local/bin/proton
+    && ln -sf /opt/ProtonGE/proton /usr/local/bin/proton-ge \
+    && ln -sf /opt/ProtonGE/proton /usr/local/bin/proton
 
 # -----------------------------
-# Winetricks installation (user)
+# Winetricks installation (local)
 # -----------------------------
+USER container
 RUN wget -q -O $HOME/.local/bin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
     && chmod +x $HOME/.local/bin/winetricks \
-    && mkdir -p $HOME/.local/share/bash-completion/completions \
-    && wget -q -O $HOME/.local/share/bash-completion/completions/winetricks \
+    && mkdir -p /usr/share/bash-completion/completions \
+    && wget -q -O /usr/share/bash-completion/completions/winetricks \
         https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion
 
 # -----------------------------
-# Pipx + Protontricks installation (user)
+# Pipx + Protontricks installation (local)
 # -----------------------------
-RUN python3 -m pip install --break-system-packages --user pipx \
+RUN python3 -m pip install --break-system-packages pipx \
     && python3 -m pipx ensurepath \
     && python3 -m pipx install protontricks
 
 # -----------------------------
-# RCON CLI installation (dynamic latest)
+# Protonfixes directory
+# -----------------------------
+RUN mkdir -p $HOME/.steam/steam/.config/protonfixes
+
+# -----------------------------
+# RCON CLI installation (latest release)
 # -----------------------------
 RUN cd /tmp \
-    && RCON_URL=$(curl -s https://api.github.com/repos/gorcon/rcon-cli/releases/latest \
-        | grep browser_download_url | cut -d\" -f4 | grep amd64_linux.tar.gz) \
-    && curl -sLOJ "$RCON_URL" \
-    && tar xvf $(basename $RCON_URL) \
-    && mv rcon-*/rcon $HOME/.local/bin/ \
+    && RCON_LATEST=$(curl -s https://api.github.com/repos/gorcon/rcon-cli/releases/latest \
+        | grep browser_download_url | cut -d\" -f4 | grep amd64_linux) \
+    && curl -sSL $RCON_LATEST -o rcon.tar.gz \
+    && tar xvf rcon.tar.gz \
+    && mv rcon-*-amd64_linux/rcon $HOME/.local/bin/ \
+    && chmod +x $HOME/.local/bin/rcon \
     && rm -rf /tmp/*
 
 # -----------------------------
