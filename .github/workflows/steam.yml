@@ -43,5 +43,3 @@ jobs:
           push: true
           tags: ghcr.io/goover/steam:${{ matrix.distro }}
           provenance: false
-          cache-from: type=registry,ref=ghcr.io/goover/steam:${{ matrix.distro }}
-          cache-to: type=registry,ref=ghcr.io/goover/steam:${{ matrix.distro }},mode=max
