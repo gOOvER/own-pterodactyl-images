@@ -10,30 +10,27 @@ export DEBIAN_FRONTEND=noninteractive
 # --- Steam directories ---
 export STEAM_DIR="/home/container/.steam/steam"
 export STEAM_COMPAT_CLIENT_INSTALL_PATH="$STEAM_DIR"
-export STEAM_COMPAT_DATA_PATH="$STEAM_DIR/steamapps/compatdata/${STEAM_APPID}"
+export STEAM_COMPAT_DATA_PATH="$STEAM_DIR/steamapps/compatdata/${STEAM_APPID:-}"
 export WINEPREFIX="${STEAM_COMPAT_DATA_PATH}/pfx"
-export PROTON_HOME="$STEAM_DIR/.proton"
+export PROTON_HOME="/opt/ProtonGE"
 mkdir -p "$PROTON_HOME" "$WINEPREFIX"
 
 # --- XDG runtime dir in Steam folder ---
 export XDG_RUNTIME_DIR="$STEAM_DIR/.config/xdg"
 mkdir -p "$XDG_RUNTIME_DIR"
 
-# --- Proton / Wine paths ---
-export PATH="/opt/ProtonGE/dist/bin:$STEAM_DIR/.local/bin:$PATH"
+# --- Proton / Wine / Winetricks / Protontricks ---
+export PATH="/opt/ProtonGE/dist/bin:/usr/local/bin:$PATH"
+export WINETRICKS="/usr/local/bin/winetricks"
+export PROTONTRICKS_BIN="/usr/local/bin/protontricks"
 export WINE="$PROTON_HOME/dist/bin/wine"
 export WINE64="$PROTON_HOME/dist/bin/wine64"
-export WINETRICKS="$STEAM_DIR/.local/bin/winetricks"
-export PROTONTRICKS_BIN="$STEAM_DIR/.local/bin/protontricks"
 export PROTON_DISTLOCK="$STEAM_DIR/.proton/dist.lock"
 mkdir -p "$(dirname "$PROTON_DISTLOCK")"
 
 # --- Protonfixes directory ---
 PROTONFIX_DIR="$STEAM_DIR/.config/protonfixes"
 mkdir -p "$PROTONFIX_DIR"
-
-# --- Ensure local bin exists ---
-mkdir -p "$STEAM_DIR/.local/bin"
 
 # --- Colors ---
 RED=$(tput setaf 1)
@@ -71,7 +68,7 @@ install_protontricks() {
     echo -e "$LINE"
     for trick in $PROTONTRICKS_RUN; do
         log_info "Installing Protontrick: ${trick}"
-        if "$PROTONTRICKS_BIN" --unattended "${STEAM_APPID}" "$trick"; then
+        if protontricks --unattended "${STEAM_APPID}" "$trick"; then
             log_success "Protontrick installed: ${trick}"
         else
             log_warn "Protontrick failed: ${trick} (continuing...)"

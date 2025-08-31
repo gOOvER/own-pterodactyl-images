@@ -98,41 +98,43 @@ WORKDIR /home/container
 ENV PATH="$HOME/.local/bin:$PATH"
 
 # -----------------------------
-# Proton-GE installation (global in Steam directory)
+# Proton-GE installation (global)
 # -----------------------------
 USER root
-RUN mkdir -p /home/container/.steam/steam/.proton /usr/local/bin /opt/ProtonGE && cd /tmp \
+RUN mkdir -p /opt/ProtonGE /usr/local/bin && cd /tmp \
     && PROTON_URL=$(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest \
         | grep browser_download_url | cut -d\" -f4 | grep .tar.gz) \
     && curl -sLOJ "$PROTON_URL" \
     && tar -xzf GE-Proton*.tar.gz -C /opt/ProtonGE --strip-components=1 \
     && rm GE-Proton*.* \
-    && ln -sf /opt/ProtonGE/proton /home/container/.steam/steam/.proton/proton-ge \
-    && ln -sf /opt/ProtonGE/proton /home/container/.steam/steam/.proton/proton
+    && ln -sf /opt/ProtonGE/proton /usr/local/bin/proton-ge \
+    && ln -sf /opt/ProtonGE/proton /usr/local/bin/proton
 
 # -----------------------------
-# Winetricks installation (global in Steam directory)
+# Winetricks installation (global)
 # -----------------------------
-RUN wget -q -O /home/container/.steam/steam/.proton/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
-    && chmod +x /home/container/.steam/steam/.proton/winetricks \
+RUN wget -q -O /usr/local/bin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
+    && chmod +x /usr/local/bin/winetricks \
     && wget -q -O /usr/share/bash-completion/completions/winetricks \
         https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion
 
 # -----------------------------
-# Pipx + Protontricks installation (global in Steam directory)
+# Pipx + Protontricks installation (global)
 # -----------------------------
 RUN python3 -m pip install --break-system-packages pipx \
     && python3 -m pipx ensurepath \
-    && python3 -m pipx install --force protontricks \
-    && ln -sf $(python3 -m site --user-base)/bin/protontricks /home/container/.steam/steam/.proton/protontricks
+    && python3 -m pipx install protontricks
 
 # -----------------------------
-# RCON CLI installation (global in Steam directory)
+# RCON CLI installation (latest)
 # -----------------------------
 RUN cd /tmp \
-    && curl -sSL https://github.com/gorcon/rcon-cli/releases/download/v0.10.3/rcon-0.10.3-amd64_linux.tar.gz -o rcon.tar.gz \
+    && RCON_LATEST=$(curl -s https://api.github.com/repos/gorcon/rcon-cli/releases/latest \
+                     | grep "browser_download_url.*amd64_linux.tar.gz" \
+                     | cut -d '"' -f 4) \
+    && curl -sSL "$RCON_LATEST" -o rcon.tar.gz \
     && tar xvf rcon.tar.gz \
-    && mv rcon-0.10.3-amd64_linux/rcon /home/container/.steam/steam/.proton/ \
+    && mv rcon-*-amd64_linux/rcon /usr/local/bin/ \
     && rm -rf /tmp/*
 
 # -----------------------------
