@@ -19,18 +19,21 @@ mkdir -p "$PROTON_HOME" "$WINEPREFIX"
 export XDG_RUNTIME_DIR="$STEAM_DIR/.config/xdg"
 mkdir -p "$XDG_RUNTIME_DIR"
 
-# --- Proton / Wine paths (global) ---
-export PATH="/opt/ProtonGE/dist/bin:/usr/local/bin:$PATH"
-export PATH="/usr/local/bin:$PATH"
+# --- Proton / Wine paths ---
+export PATH="/opt/ProtonGE/dist/bin:$STEAM_DIR/.local/bin:$PATH"
 export WINE="$PROTON_HOME/dist/bin/wine"
 export WINE64="$PROTON_HOME/dist/bin/wine64"
-export WINETRICKS="/usr/local/bin/winetricks"
-export PROTONTRICKS_BIN="/usr/local/bin/protontricks"
+export WINETRICKS="$STEAM_DIR/.local/bin/winetricks"
+export PROTONTRICKS_BIN="$STEAM_DIR/.local/bin/protontricks"
 export PROTON_DISTLOCK="$STEAM_DIR/.proton/dist.lock"
+mkdir -p "$(dirname "$PROTON_DISTLOCK")"
 
 # --- Protonfixes directory ---
 PROTONFIX_DIR="$STEAM_DIR/.config/protonfixes"
 mkdir -p "$PROTONFIX_DIR"
+
+# --- Ensure local bin exists ---
+mkdir -p "$STEAM_DIR/.local/bin"
 
 # --- Colors ---
 RED=$(tput setaf 1)
@@ -68,7 +71,7 @@ install_protontricks() {
     echo -e "$LINE"
     for trick in $PROTONTRICKS_RUN; do
         log_info "Installing Protontrick: ${trick}"
-        if protontricks --unattended "${STEAM_APPID}" "$trick"; then
+        if "$PROTONTRICKS_BIN" --unattended "${STEAM_APPID}" "$trick"; then
             log_success "Protontrick installed: ${trick}"
         else
             log_warn "Protontrick failed: ${trick} (continuing...)"
