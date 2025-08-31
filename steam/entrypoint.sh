@@ -51,7 +51,7 @@ install_protontricks() {
 
     for trick in $PROTONTRICKS_RUN; do
         log_info "Installing Protontrick: ${trick}"
-        if protontricks --unattended "${STEAM_APPID}" "$trick"; then
+        if /usr/local/bin/protontricks --unattended "${STEAM_APPID}" "$trick"; then
             log_success "Protontrick installed: ${trick}"
         else
             log_warn "Protontrick failed: ${trick} (continuing...)"
@@ -93,7 +93,7 @@ log_info "Proton-GE Image | goover.dev | Licensed under AGPLv3"
 echo -e "$LINE"
 log_info "Linux: $(. /etc/os-release; echo $PRETTY_NAME)"
 log_info "Kernel: $(uname -r)"
-log_info "Timezone: $(cat /etc/timezone 2>/dev/null || echo $TZ)"
+log_info "Timezone: ${TZ}"
 log_info "Proton Version: $(cat /usr/local/bin/version 2>/dev/null || echo 'Unknown')"
 echo -e "$LINE"
 
@@ -105,12 +105,11 @@ if [ -z "${STEAM_APPID:-}" ]; then
     exit 1
 fi
 
-# --- Setup Proton paths ---
+# --- Setup Steam paths ---
 mkdir -p "/home/container/.steam/steam/steamapps/compatdata/${STEAM_APPID}"
-
 export STEAM_COMPAT_CLIENT_INSTALL_PATH="/home/container/.steam/steam"
 export STEAM_COMPAT_DATA_PATH="/home/container/.steam/steam/steamapps/compatdata/${STEAM_APPID}"
-export WINETRICKS="/usr/sbin/winetricks"
+export WINETRICKS="/usr/local/bin/winetricks"
 export STEAM_DIR="/home/container/.steam/steam"
 
 # Proton paths
@@ -129,7 +128,7 @@ else
     log_info "Steam user set to: $STEAM_USER"
 fi
 
-# --- Update game if enabled ---
+# --- Auto-update game ---
 if [ -z "${AUTO_UPDATE:-}" ] || [ "${AUTO_UPDATE}" == "1" ]; then
     if [ -f /home/container/DepotDownloader ]; then
         run_or_fail "Updating game via DepotDownloader" \
@@ -160,13 +159,17 @@ else
     log_info "Auto update disabled (AUTO_UPDATE=0), skipping update."
 fi
 
-# --- Run Protontricks if requested ---
+# --- Protonfixes directory ---
+PROTONFIX_DIR="/home/container/.steam/steam/.config/protonfixes"
+mkdir -p "$PROTONFIX_DIR"
+
+# --- Run Protontricks ---
 install_protontricks
 
-# --- Run winecfg if requested and prefix not exists ---
+# --- Run winecfg ---
 run_winecfg
 
-# --- Start Xvfb only if XVFB=1 ---
+# --- Start Xvfb if enabled ---
 if [ "${XVFB:-0}" == "1" ]; then
     export DISPLAY=:1
     Xvfb $DISPLAY -screen 0 1024x768x24 +extension RANDR &
