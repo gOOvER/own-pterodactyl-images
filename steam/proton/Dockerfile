@@ -122,8 +122,8 @@ RUN cd /tmp \
         | grep browser_download_url | cut -d\" -f4 | grep amd64_linux) \
     && curl -sSL $RCON_LATEST -o rcon.tar.gz \
     && tar xvf rcon.tar.gz \
-    && mv rcon-*-amd64_linux/rcon $HOME/.local/bin/ \
-    && chmod +x $HOME/.local/bin/rcon \
+    && mv rcon-*-amd64_linux/rcon /usr/local/bin/ \
+    && chmod +x /usr/local/bin/rcon \
     && rm -rf /tmp/*
 
 # Create non-root user and set working directory
