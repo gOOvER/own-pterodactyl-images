@@ -12,25 +12,19 @@ export STEAM_DIR="/home/container/.steam/steam"
 export STEAM_COMPAT_CLIENT_INSTALL_PATH="$STEAM_DIR"
 export STEAM_COMPAT_DATA_PATH="$STEAM_DIR/steamapps/compatdata/${STEAM_APPID:-}"
 export WINEPREFIX="${STEAM_COMPAT_DATA_PATH}/pfx"
-export PROTON_HOME="/opt/ProtonGE"
+export PROTON_HOME="$STEAM_DIR/.proton"
 mkdir -p "$PROTON_HOME" "$WINEPREFIX"
 
 # --- XDG runtime dir in Steam folder ---
 export XDG_RUNTIME_DIR="$STEAM_DIR/.config/xdg"
 mkdir -p "$XDG_RUNTIME_DIR"
 
-# --- Proton / Wine / Winetricks / Protontricks ---
-export PATH="/opt/ProtonGE/dist/bin:/usr/local/bin:$PATH"
-export WINETRICKS="/usr/local/bin/winetricks"
-export PROTONTRICKS_BIN="/usr/local/bin/protontricks"
-export WINE="$PROTON_HOME/dist/bin/wine"
-export WINE64="$PROTON_HOME/dist/bin/wine64"
-export PROTON_DISTLOCK="$STEAM_DIR/.proton/dist.lock"
-mkdir -p "$(dirname "$PROTON_DISTLOCK")"
-
 # --- Protonfixes directory ---
 PROTONFIX_DIR="$STEAM_DIR/.config/protonfixes"
 mkdir -p "$PROTONFIX_DIR"
+
+# --- Ensure global binaries are in PATH ---
+export PATH="/opt/ProtonGE/dist/bin:/usr/local/bin:$PATH"
 
 # --- Colors ---
 RED=$(tput setaf 1)
@@ -56,6 +50,15 @@ run_or_fail() {
         exit 1
     fi
 }
+
+# --- Ensure Proton and Protontricks symlinks exist ---
+ln -sf "$PROTON_HOME/dist/bin/wine" /usr/local/bin/proton-ge
+ln -sf "$PROTON_HOME/dist/bin/wine" /usr/local/bin/proton
+
+# Protontricks (installed via pipx)
+if [ -f "$(python3 -m site --user-base)/bin/protontricks" ]; then
+    ln -sf "$(python3 -m site --user-base)/bin/protontricks" /usr/local/bin/protontricks
+fi
 
 # --- Protontricks installation ---
 install_protontricks() {
@@ -86,7 +89,7 @@ run_winecfg() {
             echo -e "$LINE"
             log_info "Initializing new Wineprefix and running winecfg for AppID ${STEAM_APPID}"
             echo -e "$LINE"
-            run_or_fail "winecfg" "$WINE"
+            run_or_fail "winecfg" "$PROTON_HOME/dist/bin/wine"
         else
             log_info "Wineprefix already exists at $WINEPREFIX, skipping winecfg."
         fi

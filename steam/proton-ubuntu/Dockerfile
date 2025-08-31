@@ -123,18 +123,18 @@ RUN wget -q -O /usr/local/bin/winetricks https://raw.githubusercontent.com/Winet
 # -----------------------------
 RUN python3 -m pip install --break-system-packages pipx \
     && python3 -m pipx ensurepath \
-    && python3 -m pipx install protontricks
+    && python3 -m pipx install protontricks \
+    && ln -sf $(python3 -m pipx which protontricks) /usr/local/bin/protontricks
 
 # -----------------------------
-# RCON CLI installation (latest)
+# RCON CLI installation (latest, dynamisch)
 # -----------------------------
 RUN cd /tmp \
-    && RCON_LATEST=$(curl -s https://api.github.com/repos/gorcon/rcon-cli/releases/latest \
-                     | grep "browser_download_url.*amd64_linux.tar.gz" \
-                     | cut -d '"' -f 4) \
-    && curl -sSL "$RCON_LATEST" -o rcon.tar.gz \
-    && tar xvf rcon.tar.gz \
-    && mv rcon-*-amd64_linux/rcon /usr/local/bin/ \
+    && RCON_URL=$(curl -s https://api.github.com/repos/gorcon/rcon-cli/releases/latest \
+        | grep browser_download_url | cut -d\" -f4 | grep amd64_linux.tar.gz) \
+    && curl -sLOJ "$RCON_URL" \
+    && tar xvf rcon-*-amd64_linux.tar.gz \
+    && mv rcon-*/rcon /usr/local/bin/ \
     && rm -rf /tmp/*
 
 # -----------------------------
