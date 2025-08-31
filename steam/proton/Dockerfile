@@ -1,7 +1,7 @@
 # ---------------------------------------------
-# Steam Proton-GE image
+# Steam Proton-GE image (with Protontricks)
 # ---------------------------------------------
-FROM debian:trixie-slim
+FROM debian:trixie-sli
 
 # Metadata
 LABEL org.opencontainers.image.description="STEAM Proton-GE Image to use with Pelican/Pterodactyl Gamepanel"
@@ -19,7 +19,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN dpkg --add-architecture i386 && \
     apt update && apt -y upgrade
 
-# Install required packages (merge into one layer)
+# Install required packages (single layer)
 RUN apt install -y --no-install-recommends \
     alsa-tools \
     ca-certificates \
@@ -89,24 +89,28 @@ RUN apt install -y --no-install-recommends \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Download and install Proton-GE latest release
-RUN cd /tmp && \
+# Download and install Proton-GE latest release to /opt/ProtonGE and symlink globally
+RUN mkdir -p /opt/ProtonGE && \
+    cd /tmp && \
     PROTON_URL=$(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest \
-    | grep browser_download_url | cut -d\" -f4 | egrep .tar.gz) && \
+    | grep browser_download_url | cut -d\" -f4 | grep .tar.gz) && \
     curl -sLOJ $PROTON_URL && \
-    tar -xzf GE-Proton*.tar.gz -C /usr/local/bin/ --strip-components=1 && \
-    rm GE-Proton*.*
+    tar -xzf GE-Proton*.tar.gz -C /opt/ProtonGE --strip-components=1 && \
+    rm GE-Proton*.* && \
+    ln -sf /opt/ProtonGE/proton /usr/local/bin/proton-ge || true
 
 # Proton machine-id fix
 RUN rm -f /etc/machine-id /var/lib/dbus/machine-id && \
     dbus-uuidgen --ensure=/etc/machine-id && \
     dbus-uuidgen --ensure
 
-# Install Winetricks and bash completion
+# Install Winetricks, Protontricks and bash completion
 RUN wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks && \
     chmod +x /usr/sbin/winetricks && \
     wget -q -O /usr/share/bash-completion/completions/winetricks \
-    https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion
+    https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion && \
+    pipx ensurepath && \
+    pipx install protontricks
 
 # Set locale
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen

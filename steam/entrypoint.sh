@@ -1,101 +1,174 @@
 #!/bin/bash
+# Steam Proton-GE Entrypoint for Pelican/Pterodactyl
+# Licensed under AGPLv3
 
-clear
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+set -euo pipefail
 
-# Wait for the container to fully initialize
+# --- Non-interactive for apt ---
+export DEBIAN_FRONTEND=noninteractive
+
+# --- Colors ---
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
+NC=$(tput sgr0)
+
+# --- Line separator ---
+LINE="${BLUE}----------------------------------------------------------------${NC}"
+
+# --- Logging functions ---
+log_info()    { echo "${BLUE}[INFO]${NC} $*"; }
+log_warn()    { echo "${YELLOW}[WARN]${NC} $*"; }
+log_error()   { echo "${RED}[ERROR]${NC} $*" >&2; }
+log_success() { echo "${GREEN}[ OK ]${NC} $*"; }
+
+# --- Helper for running commands safely ---
+run_or_fail() {
+    local desc="$1"; shift
+    if "$@"; then
+        log_success "$desc"
+    else
+        log_error "$desc failed!"
+        exit 1
+    fi
+}
+
+# --- Protontricks installation ---
+install_protontricks() {
+    if [ -z "${PROTONTRICKS_RUN:-}" ]; then
+        log_info "No Protontricks specified. Skipping."
+        return
+    fi
+
+    echo -e "$LINE"
+    log_info "Starting Protontricks installation for AppID ${STEAM_APPID}"
+    echo -e "$LINE"
+
+    for trick in $PROTONTRICKS_RUN; do
+        log_info "Installing Protontrick: ${trick}"
+        if protontricks --unattended "${STEAM_APPID}" "$trick"; then
+            log_success "Protontrick installed: ${trick}"
+        else
+            log_warn "Protontrick failed: ${trick} (continuing...)"
+        fi
+    done
+
+    echo -e "$LINE"
+    log_info "Finished Protontricks installation"
+    echo -e "$LINE"
+}
+
+# --- Run winecfg if requested and prefix not exists ---
+run_winecfg() {
+    if [ "${WINECFG_RUN:-0}" == "1" ]; then
+        if [ ! -d "${WINEPREFIX}" ]; then
+            echo -e "$LINE"
+            log_info "Initializing new Wineprefix and running winecfg for AppID ${STEAM_APPID}"
+            echo -e "$LINE"
+            run_or_fail "winecfg" "${WINE}"
+        else
+            log_info "Wineprefix already exists at ${WINEPREFIX}, skipping winecfg."
+        fi
+    fi
+}
+
+# --- Wait for container startup ---
 sleep 1
 
-# Default the TZ environment variable to UTC.
-TZ=${TZ:-UTC}
-export TZ
+# --- Set default timezone ---
+export TZ=${TZ:-UTC}
 
-# Set environment variable that holds the Internal Docker IP
+# --- Internal IP ---
 INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 export INTERNAL_IP
 
-echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-    echo -e "${RED}SteamCMD Proton-GE Image by gOOvER - https://discord.goover.dev${NC}"
-	echo -e "${RED}THIS IMAGE IS LICENSED UNDER AGPLv3${NC}"
-    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-    echo -e "${YELLOW}Linux Distribution: ${RED} $(. /etc/os-release ; echo $PRETTY_NAME)${NC}"
-    echo -e "${YELLOW}Kernel: ${RED} $(uname -r)${NC}"
-    echo -e "${YELLOW}Current timezone: ${RED} $(cat /etc/timezone)${NC}"
-    echo -e "${YELLOW}Proton Version: ${RED} $(cat /usr/local/bin/version)${NC}"
-    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+# --- System info ---
+echo -e "$LINE"
+log_info "Proton-GE Image | goover.dev | Licensed under AGPLv3"
+echo -e "$LINE"
+log_info "Linux: $(. /etc/os-release; echo $PRETTY_NAME)"
+log_info "Kernel: $(uname -r)"
+log_info "Timezone: $(cat /etc/timezone 2>/dev/null || echo $TZ)"
+log_info "Proton Version: $(cat /usr/local/bin/version 2>/dev/null || echo 'Unknown')"
+echo -e "$LINE"
 
-# Set environment for Steam Proton
-if [ ! -z ${STEAM_APPID} ]; then
-    mkdir -p /home/container/.steam/steam/steamapps/compatdata/${STEAM_APPID}
-    export STEAM_COMPAT_CLIENT_INSTALL_PATH="/home/container/.steam/steam"
-    export STEAM_COMPAT_DATA_PATH="/home/container/.steam/steam/steamapps/compatdata/${STEAM_APPID}"
-    export WINETRICKS="/usr/sbin/winetricks"
-    export STEAM_DIR="/home/container/.steam/steam/"
-
-else
-    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-    echo -e "${RED}WARNING!!! Proton needs variable STEAM_APPID, else it will not work. Please add it${NC}"
-    echo -e "${RED}Server stops now${NC}"
-    echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-    exit 0
+# --- Check Steam AppID ---
+if [ -z "${STEAM_APPID:-}" ]; then
+    echo -e "$LINE"
+    log_error "Missing STEAM_APPID! Proton cannot run without it."
+    echo -e "$LINE"
+    exit 1
 fi
 
-sleep 2
+# --- Setup Proton paths ---
+mkdir -p "/home/container/.steam/steam/steamapps/compatdata/${STEAM_APPID}"
 
-# Switch to the container's working directory
-cd /home/container || exit 1
+export STEAM_COMPAT_CLIENT_INSTALL_PATH="/home/container/.steam/steam"
+export STEAM_COMPAT_DATA_PATH="/home/container/.steam/steam/steamapps/compatdata/${STEAM_APPID}"
+export WINETRICKS="/usr/sbin/winetricks"
+export STEAM_DIR="/home/container/.steam/steam"
 
-## just in case someone removed the defaults.
-if [ "${STEAM_USER}" == "" ]; then
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-    echo -e "${YELLOW}Steam user is not set.\n ${NC}"
-    echo -e "${YELLOW}Using anonymous user.\n ${NC}"
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-    STEAM_USER=anonymous
+# Proton paths
+export PROTON_HOME="/opt/ProtonGE"
+export WINEPREFIX="${STEAM_COMPAT_DATA_PATH}/pfx"
+export WINE="${PROTON_HOME}/dist/bin/wine"
+export WINE64="${PROTON_HOME}/dist/bin/wine64"
+
+# --- Steam credentials ---
+if [ -z "${STEAM_USER:-}" ]; then
+    log_warn "No Steam user set, using anonymous login"
+    STEAM_USER="anonymous"
     STEAM_PASS=""
     STEAM_AUTH=""
 else
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-    echo -e "${YELLOW}user set to ${STEAM_USER} ${NC}"
-    echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+    log_info "Steam user set to: $STEAM_USER"
 fi
 
-## if auto_update is not set or to 1 update
-if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
-	if [ -f /home/container/DepotDownloader ]; then
-		./DepotDownloader -dir /home/container -username ${STEAM_USER} -password ${STEAM_PASS} -remember-password $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) -app ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-branch ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-branchpassword ${STEAM_BETAPASS}" )
-		mkdir -p /home/container/.steam/sdk64
-		./DepotDownloader -dir /home/container/.steam/sdk64 $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) -app 1007
-		chmod +x $HOME/*
+# --- Update game if enabled ---
+if [ -z "${AUTO_UPDATE:-}" ] || [ "${AUTO_UPDATE}" == "1" ]; then
+    if [ -f /home/container/DepotDownloader ]; then
+        run_or_fail "Updating game via DepotDownloader" \
+            ./DepotDownloader -dir /home/container \
+            -username "${STEAM_USER}" -password "${STEAM_PASS}" -remember-password \
+            $( [[ "${WINDOWS_INSTALL:-0}" == "1" ]] && printf %s '-os windows' ) \
+            -app "${STEAM_APPID}" \
+            $( [[ -n "${STEAM_BETAID:-}" ]] && printf %s "-branch ${STEAM_BETAID}" ) \
+            $( [[ -n "${STEAM_BETAPASS:-}" ]] && printf %s "-branchpassword ${STEAM_BETAPASS}" )
 
-	else
-	   	./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) $( [[ "${STEAM_SDK}" == "1" ]] && printf %s '+app_update 1007' ) +app_update ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) ${INSTALL_FLAGS} $( [[ "${VALIDATE}" == "1" ]] && printf %s 'validate' ) +quit
-	fi
+        mkdir -p /home/container/.steam/sdk64
+        ./DepotDownloader -dir /home/container/.steam/sdk64 \
+            $( [[ "${WINDOWS_INSTALL:-0}" == "1" ]] && printf %s '-os windows' ) -app 1007
+        chmod +x "$HOME"/*
+    else
+        run_or_fail "Updating game via SteamCMD" \
+            ./steamcmd/steamcmd.sh +force_install_dir /home/container \
+            +login "${STEAM_USER}" "${STEAM_PASS}" "${STEAM_AUTH}" \
+            $( [[ "${WINDOWS_INSTALL:-0}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) \
+            $( [[ "${STEAM_SDK:-0}" == "1" ]] && printf %s '+app_update 1007' ) \
+            +app_update "${STEAM_APPID}" \
+            $( [[ -n "${STEAM_BETAID:-}" ]] && printf %s "-beta ${STEAM_BETAID}" ) \
+            $( [[ -n "${STEAM_BETAPASS:-}" ]] && printf %s "-betapassword ${STEAM_BETAPASS}" ) \
+            ${INSTALL_FLAGS:-} \
+            $( [[ "${VALIDATE:-0}" == "1" ]] && printf %s 'validate' ) +quit
+    fi
 else
-    echo -e "${BLUE}---------------------------------------------------------------${NC}"
-    echo -e "${YELLOW}Not updating game server as auto update was set to 0. Starting Server${NC}"
-    echo -e "${BLUE}---------------------------------------------------------------${NC}"
+    log_info "Auto update disabled (AUTO_UPDATE=0), skipping update."
 fi
 
-echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
-echo -e "${GREEN}Starting Server.... Please wait...${NC}"
-echo -e "${BLUE}----------------------------------------------------------------------------------${NC}"
+# --- Run Protontricks if requested ---
+install_protontricks
 
-# List and install other packages
-#for trick in $PROTONTRICKS_RUN; do
-#        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-#        echo -e "${YELLOW}Installing: ${NC} ${GREEN} $trick ${NC}"
-#        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-#        protontricks ${STEAM_APPID} $trick
-#done
+# --- Run winecfg if requested and prefix not exists ---
+run_winecfg
 
-# Replace Startup Variables
-MODIFIED_STARTUP=$(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
+echo -e "$LINE"
+log_info "Starting server..."
+echo -e "$LINE"
+
+# --- Replace Pelican variables in STARTUP ---
+MODIFIED_STARTUP=$(echo -e "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')
 echo -e ":/home/container$ ${MODIFIED_STARTUP}"
 
-# Run the Server
-eval ${MODIFIED_STARTUP}
+# --- Run server ---
+exec bash -c "${MODIFIED_STARTUP}"
