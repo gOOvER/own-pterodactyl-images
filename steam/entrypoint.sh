@@ -162,6 +162,17 @@ install_protontricks
 # --- Run winecfg if requested and prefix not exists ---
 run_winecfg
 
+# --- Start Xvfb only if XVFB=1 ---
+if [ "${XVFB:-0}" == "1" ]; then
+    export DISPLAY=:1
+    Xvfb $DISPLAY -screen 0 1024x768x24 +extension RANDR &
+    XVFB_PID=$!
+    trap "log_info 'Stopping Xvfb...'; kill $XVFB_PID" EXIT
+    log_info "Xvfb started on display $DISPLAY (PID $XVFB_PID)"
+else
+    log_info "XVFB not enabled, skipping virtual framebuffer."
+fi
+
 echo -e "$LINE"
 log_info "Starting server..."
 echo -e "$LINE"

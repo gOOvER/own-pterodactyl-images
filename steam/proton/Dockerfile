@@ -19,7 +19,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN dpkg --add-architecture i386 && \
     apt update && apt -y upgrade
 
-# Install required packages (single layer)
+# Install required packages
 RUN apt install -y --no-install-recommends \
     alsa-tools \
     ca-certificates \
@@ -89,7 +89,7 @@ RUN apt install -y --no-install-recommends \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Download and install Proton-GE latest release to /opt/ProtonGE and symlink globally
+# Download and install Proton-GE
 RUN mkdir -p /opt/ProtonGE && \
     cd /tmp && \
     PROTON_URL=$(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest \
@@ -104,13 +104,22 @@ RUN rm -f /etc/machine-id /var/lib/dbus/machine-id && \
     dbus-uuidgen --ensure=/etc/machine-id && \
     dbus-uuidgen --ensure
 
-# Install Winetricks, Protontricks and bash completion
-RUN wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks && \
+# Create non-root user and set working directory
+RUN useradd -m -d /home/container -s /bin/bash container
+USER container
+ENV USER=container HOME=/home/container
+WORKDIR /home/container
+
+# --- Ensure pipx bin path in PATH ---
+ENV PATH="/home/container/.local/bin:${PATH}"
+
+# Install Winetricks, Protontricks via pipx
+RUN pipx ensurepath && \
+    pipx install protontricks && \
+    wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks && \
     chmod +x /usr/sbin/winetricks && \
     wget -q -O /usr/share/bash-completion/completions/winetricks \
-    https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion && \
-    pipx ensurepath && \
-    pipx install protontricks
+    https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion
 
 # Set locale
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
@@ -125,16 +134,10 @@ RUN cd /tmp && \
     mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/ && \
     rm -rf rcon*
 
-# Create non-root user and set working directory
-RUN useradd -m -d /home/container -s /bin/bash container
-USER container
-ENV USER=container HOME=/home/container
-WORKDIR /home/container
-
 # Default stop signal
 STOPSIGNAL SIGINT
 
-# Copy entrypoint (adjust path if needed)
+# Copy entrypoint
 ARG ENTRYPOINT_PATH=../entrypoint.sh
 COPY --chown=container:container ${ENTRYPOINT_PATH} /entrypoint.sh
 RUN chmod +x /entrypoint.sh
