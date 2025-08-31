@@ -56,7 +56,7 @@ RUN apt install -y --no-install-recommends \
     yad \
     lib32gcc-s1 \
     libao-common \
-    libasound2 \
+    libasound2t64 \
     libfreetype6 \
     libfreetype6:i386 \
     libsdl1.2debian \
