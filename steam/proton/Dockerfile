@@ -1,7 +1,7 @@
 # ---------------------------------------------
 # Steam Proton-GE image (with Protontricks)
 # ---------------------------------------------
-FROM debian:trixie-sli
+FROM debian:trixie-slim
 
 # Metadata
 LABEL org.opencontainers.image.description="STEAM Proton-GE Image to use with Pelican/Pterodactyl Gamepanel"
