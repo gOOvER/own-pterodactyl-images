@@ -8,28 +8,26 @@ set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
 
 # --- Steam directories ---
-export STEAM_DIR="/home/container/.steam/steam"
-export STEAM_BIN="$STEAM_DIR/bin"
+export STEAM_DIR="$HOME/.steam/steam"
 export STEAM_COMPAT_CLIENT_INSTALL_PATH="$STEAM_DIR"
-export STEAM_COMPAT_DATA_PATH="$STEAM_DIR/steamapps/compatdata/${STEAM_APPID}"
-export WINEPREFIX="${STEAM_COMPAT_DATA_PATH}/pfx"
-export PROTON_HOME="$STEAM_DIR/.proton"
-mkdir -p "$PROTON_HOME" "$WINEPREFIX" "$STEAM_BIN"
+export STEAM_COMPAT_DATA_PATH="$STEAM_DIR/steamapps/compatdata/${STEAM_APPID:-}"
+export WINEPREFIX="$STEAM_COMPAT_DATA_PATH/pfx"
+export PROTON_HOME="$HOME/.protonGE"
+mkdir -p "$PROTON_HOME" "$WINEPREFIX"
 
 # --- XDG runtime dir in Steam folder ---
 export XDG_RUNTIME_DIR="$STEAM_DIR/.config/xdg"
 mkdir -p "$XDG_RUNTIME_DIR"
 
+# --- User-local binaries ---
+export PATH="$HOME/.local/bin:$PATH"
+
 # --- Proton / Wine paths ---
-export PATH="$STEAM_BIN:$PATH"
 export WINE="$PROTON_HOME/dist/bin/wine"
 export WINE64="$PROTON_HOME/dist/bin/wine64"
-export WINETRICKS="$STEAM_BIN/winetricks"
-export PROTONTRICKS_BIN="$STEAM_BIN/protontricks"
-export PROTON_DISTLOCK="$PROTON_HOME/dist.lock"
-
-# --- Protonfixes directory ---
-PROTONFIX_DIR="$STEAM_DIR/.config/protonfixes"
+export WINETRICKS="$HOME/.local/bin/winetricks"
+export PROTONTRICKS_BIN="$HOME/.local/bin/protontricks"
+export PROTONFIX_DIR="$STEAM_DIR/.config/protonfixes"
 mkdir -p "$PROTONFIX_DIR"
 
 # --- Colors ---
@@ -111,7 +109,7 @@ echo -e "$LINE"
 log_info "Linux: $(. /etc/os-release; echo $PRETTY_NAME)"
 log_info "Kernel: $(uname -r)"
 log_info "Timezone: $TZ"
-log_info "Proton Version: $(cat /opt/ProtonGE/version 2>/dev/null || echo 'Unknown')"
+log_info "Proton Version: $(cat $PROTON_HOME/version 2>/dev/null || echo 'Unknown')"
 echo -e "$LINE"
 
 # --- Check Steam AppID ---
@@ -124,9 +122,9 @@ fi
 
 # --- Auto-update ---
 if [ -z "${AUTO_UPDATE:-}" ] || [ "${AUTO_UPDATE}" == "1" ]; then
-    if [ -f /home/container/DepotDownloader ]; then
+    if [ -f "$HOME/DepotDownloader" ]; then
         run_or_fail "Updating game via DepotDownloader" \
-            ./DepotDownloader -dir /home/container \
+            ./DepotDownloader -dir "$HOME" \
             -username "${STEAM_USER:-anonymous}" -password "${STEAM_PASS:-}" -remember-password \
             $( [[ "${WINDOWS_INSTALL:-0}" == "1" ]] && printf %s '-os windows' ) \
             -app "${STEAM_APPID}" \
@@ -139,7 +137,7 @@ if [ -z "${AUTO_UPDATE:-}" ] || [ "${AUTO_UPDATE}" == "1" ]; then
         chmod +x "$HOME"/*
     else
         run_or_fail "Updating game via SteamCMD" \
-            ./steamcmd/steamcmd.sh +force_install_dir /home/container \
+            ./steamcmd/steamcmd.sh +force_install_dir "$HOME" \
             +login "${STEAM_USER:-anonymous}" "${STEAM_PASS:-}" "${STEAM_AUTH:-}" \
             $( [[ "${WINDOWS_INSTALL:-0}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) \
             $( [[ "${STEAM_SDK:-0}" == "1" ]] && printf %s '+app_update 1007' ) \
@@ -176,7 +174,7 @@ echo -e "$LINE"
 
 # --- Replace Pelican variables in STARTUP ---
 MODIFIED_STARTUP=$(echo -e "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')
-echo -e ":/home/container$ ${MODIFIED_STARTUP}"
+echo -e ":$HOME$ ${MODIFIED_STARTUP}"
 
 # --- Run server ---
 exec bash -c "${MODIFIED_STARTUP}"
