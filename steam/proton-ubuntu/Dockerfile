@@ -1,5 +1,5 @@
 # ---------------------------------------------
-# Steam Proton-GE Image (with Protontricks)
+# Steam Proton-GE image (with Protontricks)
 # ---------------------------------------------
 FROM ubuntu:24.04
 
@@ -12,139 +12,147 @@ SHELL ["/bin/bash", "-c"]
 ARG DEBIAN_FRONTEND=noninteractive
 
 # -----------------------------
-# System setup & 32-bit support
+# Enable 32-bit architecture and update system
 # -----------------------------
-RUN dpkg --add-architecture i386 \
-    && apt update \
-    && apt -y upgrade \
-    && apt install -y --no-install-recommends \
-        alsa-tools \
-        ca-certificates \
-        cabextract \
-        curl \
-        dbus \
-        ffmpeg \
-        file \
-        flatpak \
-        git \
-        gnupg \
-        gnupg2 \
-        gnutls-bin \
-        iproute2 \
-        locales \
-        numactl \
-        mesa-utils \
-        net-tools \
-        netcat-openbsd \
-        openssl \
-        pulseaudio \
-        python3 \
-        python3-pip \
-        python3-setuptools \
-        python3-venv \
-        pipx \
-        tar \
-        tini \
-        virt-what \
-        wget \
-        winbind \
-        xauth \
-        xvfb \
-        yad \
-        lib32gcc-s1 \
-        libao-common \
-        libfreetype6 \
-        libfreetype6:i386 \
-        libsdl1.2debian \
-        libsdl1.2debian:i386 \
-        libsdl2-2.0-0 \
-        libsdl2-2.0-0:i386 \
-        libssl3 \
-        libssl3:i386 \
-        libgdiplus \
-        libncurses5-dev:i386 \
-        libncurses6 \
-        libntlm0 \
-        libnss-wrapper \
-        libnss3 \
-        libpulse-dev \
-        libpulse0 \
-        libgstreamer1.0-dev \
-        libgstreamer-plugins-base1.0-dev \
-        libgstreamer-plugins-bad1.0-dev \
-        gstreamer1.0-plugins-base \
-        gstreamer1.0-plugins-good \
-        gstreamer1.0-plugins-bad \
-        gstreamer1.0-plugins-ugly \
-        gstreamer1.0-libav \
-        gstreamer1.0-tools \
-        gstreamer1.0-x \
-        gstreamer1.0-alsa \
-        gstreamer1.0-gl \
-        gstreamer1.0-pulseaudio \
-    && rm -rf /var/lib/apt/lists/*
+RUN dpkg --add-architecture i386 && \
+    apt update && apt -y upgrade
 
 # -----------------------------
-# Locale
+# Install required packages
 # -----------------------------
-RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
-ENV LANG=en_US.UTF-8
-ENV LANGUAGE=en_US:en
-ENV LC_ALL=en_US.UTF-8
+RUN apt install -y --no-install-recommends \
+    alsa-tools \
+    ca-certificates \
+    cabextract \
+    curl \
+    dbus \
+    ffmpeg \
+    file \
+    flatpak \
+    git \
+    gnupg \
+    gnupg2 \
+    gnutls-bin \
+    iproute2 \
+    locales \
+    numactl \
+    mesa-utils \
+    net-tools \
+    netcat-openbsd \
+    openssl \
+    pulseaudio \
+    python3 \
+    python3-pip \
+    python3-setuptools \
+    python3-venv \
+    pipx \
+    tar \
+    tini \
+    virt-what \
+    wget \
+    winbind \
+    xauth \
+    xvfb \
+    yad \
+    lib32gcc-s1 \
+    libao-common \
+    libfreetype6 \
+    libfreetype6:i386 \
+    libsdl1.2debian \
+    libsdl1.2debian:i386 \
+    libsdl2-2.0-0 \
+    libsdl2-2.0-0:i386 \
+    libssl3 \
+    libssl3:i386 \
+    libgdiplus \
+    libncurses5-dev:i386 \
+    libncurses6 \
+    libntlm0 \
+    libnss-wrapper \
+    libnss3 \
+    libpulse-dev \
+    libpulse0 \
+    libgstreamer1.0-dev \
+    libgstreamer-plugins-base1.0-dev \
+    libgstreamer-plugins-bad1.0-dev \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly \
+    gstreamer1.0-libav \
+    gstreamer1.0-tools \
+    gstreamer1.0-x \
+    gstreamer1.0-alsa \
+    gstreamer1.0-gl \
+    gstreamer1.0-pulseaudio && \
+    apt clean && rm -rf /var/lib/apt/lists/*
+
+# -----------------------------
+# Proton-GE requires /opt/ProtonGE to be root-owned
+# -----------------------------
+RUN mkdir -p /opt/ProtonGE && \
+    rm -f /etc/machine-id /var/lib/dbus/machine-id && \
+    dbus-uuidgen --ensure=/etc/machine-id && \
+    dbus-uuidgen --ensure
 
 # -----------------------------
 # Create non-root user
 # -----------------------------
 RUN useradd -m -d /home/container -s /bin/bash container
 USER container
-ENV USER=container
-ENV HOME=/home/container
-ENV PATH="$HOME/.local/bin:$PATH"
+ENV USER=container HOME=/home/container
 WORKDIR /home/container
+ENV PATH="$HOME/.local/bin:$PATH"
 
 # -----------------------------
-# Proton-GE installation (Root)
+# Install Proton-GE, Winetricks, Protontricks as container user
+# -----------------------------
+RUN set -eux; \
+    # Proton-GE
+    cd /tmp; \
+    PROTON_URL=$(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest \
+        | grep browser_download_url | cut -d\" -f4 | grep .tar.gz); \
+    curl -sLOJ "$PROTON_URL"; \
+    tar -xzf GE-Proton*.tar.gz -C /opt/ProtonGE --strip-components=1; \
+    rm GE-Proton*.*; \
+    ln -sf /opt/ProtonGE/proton $HOME/.local/bin/proton-ge; \
+    ln -sf /opt/ProtonGE/proton $HOME/.local/bin/proton; \
+    \
+    # Winetricks
+    mkdir -p $HOME/.local/bin $HOME/.local/share/bash-completion/completions; \
+    wget -q -O $HOME/.local/bin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks; \
+    chmod +x $HOME/.local/bin/winetricks; \
+    wget -q -O $HOME/.local/share/bash-completion/completions/winetricks \
+        https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion; \
+    \
+    # pipx + Protontricks
+    python3 -m pip install --break-system-packages --user pipx; \
+    python3 -m pipx ensurepath; \
+    python3 -m pipx install protontricks; \
+    \
+    # RCON CLI
+    cd /tmp; \
+    curl -sSL https://github.com/gorcon/rcon-cli/releases/download/v0.10.3/rcon-0.10.3-amd64_linux.tar.gz -o rcon.tar.gz; \
+    tar xvf rcon.tar.gz; \
+    mv rcon-0.10.3-amd64_linux/rcon $HOME/.local/bin/; \
+    rm -rf /tmp/*
+
+# -----------------------------
+# Set locale
 # -----------------------------
 USER root
-RUN mkdir -p /opt/ProtonGE \
-    && cd /tmp \
-    && PROTON_URL=$(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest \
-        | grep browser_download_url | cut -d\" -f4 | grep .tar.gz) \
-    && curl -sLOJ "$PROTON_URL" \
-    && tar -xzf GE-Proton*.tar.gz -C /opt/ProtonGE --strip-components=1 \
-    && rm GE-Proton*.* \
-    && ln -sf /opt/ProtonGE/proton /usr/local/bin/proton-ge \
-    && ln -sf /opt/ProtonGE/proton /usr/local/bin/proton
-
-# -----------------------------
-# Winetricks & Protontricks (container user)
-# -----------------------------
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
 USER container
-RUN mkdir -p $HOME/.local/bin \
-    && mkdir -p $HOME/.local/share/bash-completion/completions \
-    && wget -q -O $HOME/.local/bin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
-    && chmod +x $HOME/.local/bin/winetricks \
-    && wget -q -O $HOME/.local/share/bash-completion/completions/winetricks \
-        https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion \
-    && python3 -m pip install --break-system-packages --user pipx \
-    && python3 -m pipx ensurepath \
-    && python3 -m pipx install --force protontricks
-
-# -----------------------------
-# RCON CLI
-# -----------------------------
-RUN cd /tmp \
-    && curl -sSL https://github.com/gorcon/rcon-cli/releases/download/v0.10.3/rcon-0.10.3-amd64_linux.tar.gz -o rcon.tar.gz \
-    && tar xvf rcon.tar.gz \
-    && mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/ \
-    && rm -rf /tmp/*
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
 
 # -----------------------------
 # Default stop signal & entrypoint
 # -----------------------------
 STOPSIGNAL SIGINT
-COPY --chown=container:container ../entrypoint.sh /entrypoint.sh
+ARG ENTRYPOINT_PATH=../entrypoint.sh
+COPY --chown=container:container ${ENTRYPOINT_PATH} /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-
 ENTRYPOINT ["/usr/bin/tini", "-g", "--"]
 CMD ["/entrypoint.sh"]
