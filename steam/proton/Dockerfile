@@ -89,7 +89,7 @@ RUN rm -f /etc/machine-id /var/lib/dbus/machine-id && \
     dbus-uuidgen --ensure=/etc/machine-id && \
     dbus-uuidgen --ensure
 
-# Ensure pipx bin path in PATH
+# Ensure pipx bin path in PATH for container user
 ENV PATH="/home/container/.local/bin:${PATH}"
 
 # --- Proton-GE + Winetricks + Protontricks (user-local) ---
@@ -111,9 +111,8 @@ RUN set -eux; \
     wget -q -O /home/container/.local/share/bash-completion/completions/winetricks \
         https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion; \
     \
-    # Install Protontricks via pipx
-    pipx ensurepath; \
-    pipx install protontricks; \
+    # Install Protontricks via pipx as container user
+    su container -c "pipx ensurepath && pipx install protontricks"; \
     rm -rf /tmp/*
 
 # Set locale

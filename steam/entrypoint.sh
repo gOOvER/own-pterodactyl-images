@@ -7,6 +7,9 @@ set -euo pipefail
 # --- Non-interactive for apt ---
 export DEBIAN_FRONTEND=noninteractive
 
+# --- Ensure pipx bin path for container user ---
+export PATH="${HOME}/.local/bin:${PATH}"
+
 # --- Colors ---
 RED=$(tput setaf 1)
 GREEN=$(tput setaf 2)
@@ -17,7 +20,7 @@ NC=$(tput sgr0)
 # --- Line separator ---
 LINE="${BLUE}----------------------------------------------------------------${NC}"
 
-# --- Logging functions with timestamp ---
+# --- Logging functions ---
 log_info()    { echo "$(date '+%F %T') ${BLUE}[INFO]${NC} $*"; }
 log_warn()    { echo "$(date '+%F %T') ${YELLOW}[WARN]${NC} $*"; }
 log_error()   { echo "$(date '+%F %T') ${RED}[ERROR]${NC} $*" >&2; }
