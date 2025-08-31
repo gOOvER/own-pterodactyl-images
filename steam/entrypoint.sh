@@ -104,6 +104,7 @@ INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 export INTERNAL_IP
 
 # --- System info ---
+clear
 echo -e "$LINE"
 log_info "Proton-GE Image | goover.dev | Licensed under AGPLv3"
 echo -e "$LINE"
