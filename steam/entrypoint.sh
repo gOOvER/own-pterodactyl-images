@@ -17,11 +17,11 @@ NC=$(tput sgr0)
 # --- Line separator ---
 LINE="${BLUE}----------------------------------------------------------------${NC}"
 
-# --- Logging functions ---
-log_info()    { echo "${BLUE}[INFO]${NC} $*"; }
-log_warn()    { echo "${YELLOW}[WARN]${NC} $*"; }
-log_error()   { echo "${RED}[ERROR]${NC} $*" >&2; }
-log_success() { echo "${GREEN}[ OK ]${NC} $*"; }
+# --- Logging functions with timestamp ---
+log_info()    { echo "$(date '+%F %T') ${BLUE}[INFO]${NC} $*"; }
+log_warn()    { echo "$(date '+%F %T') ${YELLOW}[WARN]${NC} $*"; }
+log_error()   { echo "$(date '+%F %T') ${RED}[ERROR]${NC} $*" >&2; }
+log_success() { echo "$(date '+%F %T') ${GREEN}[ OK ]${NC} $*"; }
 
 # --- Helper for running commands safely ---
 run_or_fail() {
@@ -62,7 +62,7 @@ install_protontricks() {
 # --- Run winecfg if requested and prefix not exists ---
 run_winecfg() {
     if [ "${WINECFG_RUN:-0}" == "1" ]; then
-        if [ ! -d "${WINEPREFIX}" ]; then
+        if [ ! -f "${WINEPREFIX}/system.reg" ]; then
             echo -e "$LINE"
             log_info "Initializing new Wineprefix and running winecfg for AppID ${STEAM_APPID}"
             echo -e "$LINE"
@@ -90,7 +90,8 @@ echo -e "$LINE"
 log_info "Linux: $(. /etc/os-release; echo $PRETTY_NAME)"
 log_info "Kernel: $(uname -r)"
 log_info "Timezone: $(cat /etc/timezone 2>/dev/null || echo $TZ)"
-log_info "Proton Version: $(cat /usr/local/bin/version 2>/dev/null || echo 'Unknown')"
+PROTON_VERSION=$(ls /opt/ProtonGE | grep -E '^GE-Proton' || echo "Unknown")
+log_info "Proton Version: $PROTON_VERSION"
 echo -e "$LINE"
 
 # --- Check Steam AppID ---
@@ -101,19 +102,21 @@ if [ -z "${STEAM_APPID:-}" ]; then
     exit 1
 fi
 
-# --- Setup Proton paths ---
+# --- Setup Proton/Wine paths ---
 mkdir -p "/home/container/.steam/steam/steamapps/compatdata/${STEAM_APPID}"
-
 export STEAM_COMPAT_CLIENT_INSTALL_PATH="/home/container/.steam/steam"
 export STEAM_COMPAT_DATA_PATH="/home/container/.steam/steam/steamapps/compatdata/${STEAM_APPID}"
 export WINETRICKS="/usr/sbin/winetricks"
 export STEAM_DIR="/home/container/.steam/steam"
 
-# Proton paths
 export PROTON_HOME="/opt/ProtonGE"
 export WINEPREFIX="${STEAM_COMPAT_DATA_PATH}/pfx"
 export WINE="${PROTON_HOME}/dist/bin/wine"
 export WINE64="${PROTON_HOME}/dist/bin/wine64"
+
+# --- Ensure Wineprefix directory exists ---
+mkdir -p "${WINEPREFIX}"
+log_info "Wineprefix directory ensured at ${WINEPREFIX}"
 
 # --- Steam credentials ---
 if [ -z "${STEAM_USER:-}" ]; then
@@ -125,7 +128,7 @@ else
     log_info "Steam user set to: $STEAM_USER"
 fi
 
-# --- Update game if enabled ---
+# --- Auto-update game ---
 if [ -z "${AUTO_UPDATE:-}" ] || [ "${AUTO_UPDATE}" == "1" ]; then
     if [ -f /home/container/DepotDownloader ]; then
         run_or_fail "Updating game via DepotDownloader" \
@@ -134,12 +137,8 @@ if [ -z "${AUTO_UPDATE:-}" ] || [ "${AUTO_UPDATE}" == "1" ]; then
             $( [[ "${WINDOWS_INSTALL:-0}" == "1" ]] && printf %s '-os windows' ) \
             -app "${STEAM_APPID}" \
             $( [[ -n "${STEAM_BETAID:-}" ]] && printf %s "-branch ${STEAM_BETAID}" ) \
-            $( [[ -n "${STEAM_BETAPASS:-}" ]] && printf %s "-branchpassword ${STEAM_BETAPASS}" )
-
-        mkdir -p /home/container/.steam/sdk64
-        ./DepotDownloader -dir /home/container/.steam/sdk64 \
-            $( [[ "${WINDOWS_INSTALL:-0}" == "1" ]] && printf %s '-os windows' ) -app 1007
-        chmod +x "$HOME"/*
+            $( [[ -n "${STEAM_BETAPASS:-}" ]] && printf %s "-branchpassword ${STEAM_BETAPASS}" ) \
+            | tee /home/container/depot_update.log
     else
         run_or_fail "Updating game via SteamCMD" \
             ./steamcmd/steamcmd.sh +force_install_dir /home/container \
@@ -150,7 +149,7 @@ if [ -z "${AUTO_UPDATE:-}" ] || [ "${AUTO_UPDATE}" == "1" ]; then
             $( [[ -n "${STEAM_BETAID:-}" ]] && printf %s "-beta ${STEAM_BETAID}" ) \
             $( [[ -n "${STEAM_BETAPASS:-}" ]] && printf %s "-betapassword ${STEAM_BETAPASS}" ) \
             ${INSTALL_FLAGS:-} \
-            $( [[ "${VALIDATE:-0}" == "1" ]] && printf %s 'validate' ) +quit
+            $( [[ "${VALIDATE:-0}" == "1" ]] && printf %s 'validate' ) +quit | tee /home/container/steam_update.log
     fi
 else
     log_info "Auto update disabled (AUTO_UPDATE=0), skipping update."
@@ -159,7 +158,7 @@ fi
 # --- Run Protontricks if requested ---
 install_protontricks
 
-# --- Run winecfg if requested and prefix not exists ---
+# --- Run winecfg if requested ---
 run_winecfg
 
 # --- Start Xvfb only if XVFB=1 ---
@@ -173,13 +172,19 @@ else
     log_info "XVFB not enabled, skipping virtual framebuffer."
 fi
 
+# --- Check STARTUP variable ---
+if [ -z "${STARTUP:-}" ]; then
+    log_error "STARTUP variable not set. Cannot start server."
+    exit 1
+fi
+
 echo -e "$LINE"
 log_info "Starting server..."
 echo -e "$LINE"
 
 # --- Replace Pelican variables in STARTUP ---
 MODIFIED_STARTUP=$(echo -e "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')
-echo -e ":/home/container$ ${MODIFIED_STARTUP}"
+log_info "Executing command: ${MODIFIED_STARTUP}"
 
 # --- Run server ---
 exec bash -c "${MODIFIED_STARTUP}"

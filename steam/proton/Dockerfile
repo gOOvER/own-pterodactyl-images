@@ -3,16 +3,12 @@
 # ---------------------------------------------
 FROM debian:trixie-slim
 
-# Metadata
 LABEL org.opencontainers.image.description="STEAM Proton-GE Image to use with Pelican/Pterodactyl Gamepanel"
 LABEL org.opencontainers.image.authors="info@goover.de"
 LABEL org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
 LABEL org.opencontainers.image.licenses=AGPL-3.0-or-later
 
-# Use bash as default shell
 SHELL ["/bin/bash", "-c"]
-
-# Set noninteractive frontend for apt
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Enable 32-bit architecture and update system
@@ -86,40 +82,39 @@ RUN apt install -y --no-install-recommends \
     gstreamer1.0-alsa \
     gstreamer1.0-gl \
     gstreamer1.0-pulseaudio && \
-    apt clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Download and install Proton-GE
-RUN mkdir -p /opt/ProtonGE && \
-    cd /tmp && \
-    PROTON_URL=$(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest \
-    | grep browser_download_url | cut -d\" -f4 | grep .tar.gz) && \
-    curl -sLOJ $PROTON_URL && \
-    tar -xzf GE-Proton*.tar.gz -C /opt/ProtonGE --strip-components=1 && \
-    rm GE-Proton*.* && \
-    ln -sf /opt/ProtonGE/proton /usr/local/bin/proton-ge || true
+    apt clean && rm -rf /var/lib/apt/lists/*
 
 # Proton machine-id fix
 RUN rm -f /etc/machine-id /var/lib/dbus/machine-id && \
     dbus-uuidgen --ensure=/etc/machine-id && \
     dbus-uuidgen --ensure
 
-# Create non-root user and set working directory
-RUN useradd -m -d /home/container -s /bin/bash container
-USER container
-ENV USER=container HOME=/home/container
-WORKDIR /home/container
-
-# --- Ensure pipx bin path in PATH ---
+# Ensure pipx bin path in PATH
 ENV PATH="/home/container/.local/bin:${PATH}"
 
-# Install Winetricks, Protontricks via pipx
-RUN pipx ensurepath && \
-    pipx install protontricks && \
-    wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks && \
-    chmod +x /usr/sbin/winetricks && \
-    wget -q -O /usr/share/bash-completion/completions/winetricks \
-    https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion
+# --- Proton-GE + Winetricks + Protontricks (user-local) ---
+RUN set -eux; \
+    mkdir -p /opt/ProtonGE; \
+    cd /tmp; \
+    PROTON_URL=$(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest \
+        | grep browser_download_url | cut -d\" -f4 | grep .tar.gz); \
+    curl -sLOJ "$PROTON_URL"; \
+    tar -xzf GE-Proton*.tar.gz -C /opt/ProtonGE --strip-components=1; \
+    rm GE-Proton*.*; \
+    ln -sf /opt/ProtonGE/proton /usr/local/bin/proton-ge; \
+    ln -sf /opt/ProtonGE/proton /usr/local/bin/proton; \
+    \
+    # Install Winetricks in home directory
+    mkdir -p /home/container/.local/bin /home/container/.local/share/bash-completion/completions; \
+    wget -q -O /home/container/.local/bin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks; \
+    chmod +x /home/container/.local/bin/winetricks; \
+    wget -q -O /home/container/.local/share/bash-completion/completions/winetricks \
+        https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion; \
+    \
+    # Install Protontricks via pipx
+    pipx ensurepath; \
+    pipx install protontricks; \
+    rm -rf /tmp/*
 
 # Set locale
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
@@ -133,6 +128,12 @@ RUN cd /tmp && \
     tar xvf rcon.tar.gz && \
     mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/ && \
     rm -rf rcon*
+
+# Create non-root user
+RUN useradd -m -d /home/container -s /bin/bash container
+USER container
+ENV USER=container HOME=/home/container
+WORKDIR /home/container
 
 # Default stop signal
 STOPSIGNAL SIGINT
