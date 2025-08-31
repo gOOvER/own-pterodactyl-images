@@ -19,12 +19,18 @@ mkdir -p "$PROTON_HOME" "$WINEPREFIX"
 export XDG_RUNTIME_DIR="$STEAM_DIR/.config/xdg"
 mkdir -p "$XDG_RUNTIME_DIR"
 
-# --- Proton / Wine paths ---
-export PATH="/opt/ProtonGE/dist/bin:$PATH"
+# --- Proton / Wine paths (global) ---
+export PATH="/opt/ProtonGE/dist/bin:/usr/local/bin:$PATH"
+export PATH="/usr/local/bin:$PATH"
 export WINE="$PROTON_HOME/dist/bin/wine"
 export WINE64="$PROTON_HOME/dist/bin/wine64"
 export WINETRICKS="/usr/local/bin/winetricks"
 export PROTONTRICKS_BIN="/usr/local/bin/protontricks"
+export PROTON_DISTLOCK="$STEAM_DIR/.proton/dist.lock"
+
+# --- Protonfixes directory ---
+PROTONFIX_DIR="$STEAM_DIR/.config/protonfixes"
+mkdir -p "$PROTONFIX_DIR"
 
 # --- Colors ---
 RED=$(tput setaf 1)
@@ -40,6 +46,7 @@ log_warn()    { echo "${YELLOW}[WARN]${NC} $*"; }
 log_error()   { echo "${RED}[ERROR]${NC} $*" >&2; }
 log_success() { echo "${GREEN}[ OK ]${NC} $*"; }
 
+# --- Safe command execution ---
 run_or_fail() {
     local desc="$1"; shift
     if "$@"; then
@@ -85,10 +92,6 @@ run_winecfg() {
         fi
     fi
 }
-
-# --- Protonfixes directory ---
-PROTONFIX_DIR="$STEAM_DIR/.config/protonfixes"
-mkdir -p "$PROTONFIX_DIR"
 
 # --- Wait for container startup ---
 sleep 1
