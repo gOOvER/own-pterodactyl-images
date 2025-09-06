@@ -106,7 +106,9 @@ RUN rm -f /etc/machine-id /var/lib/dbus/machine-id && \
 RUN wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks && \
     chmod +x /usr/sbin/winetricks && \
     wget -q -O /usr/share/bash-completion/completions/winetricks \
-    https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion
+    https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion && \
+    pipx ensurepath && \
+    pipx install protontricks
 
 # Set locale
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
