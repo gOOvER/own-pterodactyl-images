@@ -96,9 +96,20 @@ RUN dpkg --add-architecture i386 && \
 
 # Download and install Proton-GE latest release into /opt and register with Steam
 RUN set -eux; cd /tmp; \
-    PROTON_URL=$(curl -sSf https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest | grep "browser_download_url" | cut -d'\"' -f4 | grep '\.tar\.gz$' | head -n1); \
-    if [ -z "$PROTON_URL" ]; then echo "Could not determine Proton-GE URL" >&2; exit 1; fi; \
+    # Determine Proton-GE latest tarball URL. Use a robust extraction that does
+    # not rely on cut with multi-character delimiter (which fails on some shells).
+    PROTON_JSON=$(curl -sSf https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest || true); \
+    PROTON_URL=""; \
+    if command -v jq >/dev/null 2>&1; then \
+        PROTON_URL=$(printf '%s' "$PROTON_JSON" | jq -r '.assets[].browser_download_url' 2>/dev/null | grep '\.tar\.gz$' | head -n1 || true); \
+    else \
+        # Fallback to grep + sed: find the first browser_download_url value
+        PROTON_URL=$(printf '%s' "$PROTON_JSON" | grep 'browser_download_url' || true); \
+        PROTON_URL=$(printf '%s' "$PROTON_URL" | sed -n 's/.*"browser_download_url": "\([^"]*\.tar\.gz\)".*/\1/p' | head -n1 || true); \
+    fi; \
+    if [ -z "$PROTON_URL" ]; then echo "Could not determine Proton-GE URL" >&2; echo "Response snippet:"; printf '%s\n' "${PROTON_JSON:0:400}" >&2; exit 1; fi; \
     curl -sSL "$PROTON_URL" -o proton-ge.tar.gz; \
+    if [ ! -s proton-ge.tar.gz ]; then echo "Downloaded Proton-GE archive is empty" >&2; ls -l proton-ge.tar.gz || true; exit 1; fi; \
     mkdir -p /opt; tar -xzf proton-ge.tar.gz -C /opt; \
     # find extracted folder (GE-Proton*), normalize to /opt/ProtonGE
     PROTON_DIR=$(find /opt -maxdepth 1 -type d -name 'GE-Proton*' -print -quit || true); \
