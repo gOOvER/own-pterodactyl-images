@@ -115,7 +115,11 @@ RUN set -eux; cd /tmp; \
     PROTON_DIR=$(find /opt -maxdepth 1 -type d -name 'GE-Proton*' -print -quit || true); \
     if [ -n "$PROTON_DIR" ]; then mv "$PROTON_DIR" /opt/ProtonGE; fi; \
     # Register tool for Steam (compatibilitytools.d expects a folder)
-    if [ -d /opt/ProtonGE ]; then rm -rf /usr/local/share/steam/compatibilitytools.d/ProtonGE || true; cp -a /opt/ProtonGE /usr/local/share/steam/compatibilitytools.d/ProtonGE; fi; \
+    if [ -d /opt/ProtonGE ]; then \
+        rm -rf /usr/local/share/steam/compatibilitytools.d/ProtonGE || true; \
+        mkdir -p /usr/local/share/steam/compatibilitytools.d; \
+        cp -a /opt/ProtonGE /usr/local/share/steam/compatibilitytools.d/ProtonGE; \
+    fi; \
     rm -rf /tmp/*
 
 # Proton machine-id fix
@@ -148,6 +152,22 @@ RUN useradd -m -d /home/container -s /bin/bash container && mkdir -p /home/conta
 ENV USER=container HOME=/home/container
 WORKDIR /home/container
 USER container
+
+# Provide a simple system-wide `proton` wrapper that launches the installed
+# Proton-GE. This makes `proton` available for all users inside the container.
+RUN set -eux; \
+    printf '%s\n' '#!/bin/bash' \
+        'if [ -d /opt/ProtonGE ]; then' \
+        '    PROTON_DIR=/opt/ProtonGE' \
+        'elif [ -d /usr/local/share/steam/compatibilitytools.d/ProtonGE ]; then' \
+        '    PROTON_DIR=/usr/local/share/steam/compatibilitytools.d/ProtonGE' \
+        'else' \
+        '    echo "Proton-GE not found (expected in /opt/ProtonGE or /usr/local/share/steam/compatibilitytools.d/ProtonGE)" >&2' \
+        '    exit 1' \
+        'fi' \
+        'exec """$PROTON_DIR/proton""" "$@"' \
+    > /usr/local/bin/proton; \
+    chmod +x /usr/local/bin/proton
 
 # Default stop signal
 STOPSIGNAL SIGINT
