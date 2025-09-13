@@ -26,10 +26,7 @@ RUN dpkg --add-architecture i386 && \
     dbus \
     ffmpeg \
     file \
-    # flatpak, git and related tooling are not required at runtime for Proton
-    # (removed to slim image)
-    # flatpak \
-    # git \
+    git \
     # gnupg2 \
     # gnutls-bin \
     iproute2 \
@@ -41,16 +38,11 @@ RUN dpkg --add-architecture i386 && \
     openssl \
     pulseaudio \
     python3-full \
-    # python3-pip and python3-setuptools are not required because we use a
-    # dedicated venv for pipx/protontricks
-    # python3-pip \
-    # python3-setuptools \
     python3-venv \
+	steam \
     tar \
     tini \
-    # virt-what and yad are helper tools not required for runtime
-    # virt-what \
-    # yad \
+
     wget \
     winbind \
     xauth \
@@ -67,24 +59,17 @@ RUN dpkg --add-architecture i386 && \
     libssl3 \
     libssl3:i386 \
     libgdiplus \
-    # libncurses5-dev:i386 is a development package; remove to slim image
-    # libncurses5-dev:i386 \
     libncurses6 \
     libntlm0 \
     libnss-wrapper \
     libnss3 \
     libpulse-dev \
     libpulse0 \
-    # Remove gstreamer development and tooling packages; keep runtime plugins
-    # libgstreamer1.0-dev \
-    # libgstreamer-plugins-base1.0-dev \
-    # libgstreamer-plugins-bad1.0-dev \
     gstreamer1.0-plugins-base \
     gstreamer1.0-plugins-good \
     gstreamer1.0-plugins-bad \
     gstreamer1.0-plugins-ugly \
     gstreamer1.0-libav \
-    # gstreamer1.0-tools \
     gstreamer1.0-x \
     gstreamer1.0-alsa \
     gstreamer1.0-gl \

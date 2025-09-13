@@ -265,8 +265,25 @@ fi
 # Use PROTONTRICKS_RUN to install packages via `protontricks` if provided.
 # Example: PROTONTRICKS_RUN="vcrun2015 corefonts" (space-separated list)
 is_valid_steam_dir() {
-    # Consider a Steam dir valid if it contains steamapps or compatibilitytools.d
-    [ -d "$1/steamapps" ] || [ -d "$1/compatibilitytools.d" ]
+    # Consider a Steam dir valid if it contains any strong Steam markers:
+    # - steam.sh or steam (client binary)
+    # - steamapps/libraryfolders.vdf (library descriptor)
+    # - steamapps (basic steamapps layout)
+    # - compatibilitytools.d (for Proton compatibility tools)
+    local dir="$1"
+    if [ -f "$dir/steam.sh" ] || [ -x "$dir/steam" ]; then
+        return 0
+    fi
+    if [ -f "$dir/steamapps/libraryfolders.vdf" ]; then
+        return 0
+    fi
+    if [ -d "$dir/steamapps" ]; then
+        return 0
+    fi
+    if [ -d "$dir/compatibilitytools.d" ]; then
+        return 0
+    fi
+    return 1
 }
 
 if [ -n "${PROTONTRICKS_RUN:-}" ]; then
@@ -277,6 +294,23 @@ if [ -n "${PROTONTRICKS_RUN:-}" ]; then
         # Example: PROTONTRICKS_OPTS="--no-gui --another-flag"
         if ! is_valid_steam_dir "$STEAM_DIR"; then
             msg RED "STEAM_DIR='$STEAM_DIR' does not look like a valid Steam installation; skipping protontricks installations"
+            # Provide diagnostics to help debug why the path was considered invalid
+            line BLUE
+            msg YELLOW "Diagnostics: listing candidate Steam locations (appended to $ERROR_LOG)"
+            line BLUE
+            # List the provided STEAM_DIR
+            msg YELLOW "Contents of $STEAM_DIR :"
+            ls -la "$STEAM_DIR" 2>/dev/null | tee -a "$ERROR_LOG" || true
+            # Also show the canonical local path we manage
+            msg YELLOW "Contents of /home/container/steam :"
+            ls -la /home/container/steam 2>/dev/null | tee -a "$ERROR_LOG" || true
+            # Show system-installed Steam path if present
+            msg YELLOW "Contents of /usr/local/share/steam :"
+            ls -la /usr/local/share/steam 2>/dev/null | tee -a "$ERROR_LOG" || true
+            # Show ProtonGE system location
+            msg YELLOW "Contents of /opt/ProtonGE :"
+            ls -la /opt/ProtonGE 2>/dev/null | tee -a "$ERROR_LOG" || true
+
             # skip the protontricks block entirely
             PROTONTRICKS_RUN=""
         fi
