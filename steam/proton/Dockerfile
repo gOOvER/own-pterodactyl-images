@@ -152,6 +152,7 @@ RUN set -eux; cd /tmp; \
 # wrapper is owned by root and executable by all users.
 RUN set -eux; \
     printf '%s\n' '#!/bin/bash' \
+        'set -euo pipefail' \
         'if [ -d /opt/ProtonGE ]; then' \
         '    PROTON_DIR=/opt/ProtonGE' \
         'elif [ -d /usr/local/share/steam/compatibilitytools.d/ProtonGE ]; then' \
@@ -160,7 +161,25 @@ RUN set -eux; \
         '    echo "Proton-GE not found (expected in /opt/ProtonGE or /usr/local/share/steam/compatibilitytools.d/ProtonGE)" >&2' \
         '    exit 1' \
         'fi' \
-        'exec "$PROTON_DIR/proton" "$@"' \
+        '' \
+        '# Common candidate locations for Proton launcher' \
+        'CANDIDATES=("$PROTON_DIR/proton" "$PROTON_DIR/proton.sh" "$PROTON_DIR/bin/proton" "$PROTON_DIR/dist/bin/proton" "$PROTON_DIR/x86_64/bin/proton")' \
+        'for p in "${CANDIDATES[@]}"; do' \
+        '    if [ -x "$p" ]; then' \
+        '        exec "$p" "$@"' \
+        '    fi' \
+        'done' \
+        '' \
+        '# Fallback: search for an executable named proton* within the Proton dir' \
+        'FOUND=$(find "$PROTON_DIR" -maxdepth 4 -type f -iname "proton*" -executable -print -quit 2>/dev/null || true)' \
+        'if [ -n "${FOUND:-}" ]; then' \
+        '    exec "${FOUND}" "$@"' \
+        'fi' \
+        '' \
+        '# If we reach here, no executable was found. Report helpful diagnostics.' \
+        'echo "Proton executable not found or not executable inside $PROTON_DIR" >&2' \
+        'echo "Contents (top-level):" >&2; ls -la "$PROTON_DIR" || true >&2' \
+        'exit 1' \
     > /usr/local/bin/proton; \
     chmod 755 /usr/local/bin/proton
 
