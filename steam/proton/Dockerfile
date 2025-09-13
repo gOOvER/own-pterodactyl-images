@@ -147,14 +147,9 @@ RUN set -eux; cd /tmp; \
     if [ -n "$RCON_LATEST" ]; then curl -sSL "$RCON_LATEST" -o rcon.tar.gz; tar xvf rcon.tar.gz; mv rcon-*-amd64_linux/rcon /usr/local/bin/ || true; chmod +x /usr/local/bin/rcon || true; fi; \
     rm -rf /tmp/*
 
-# Create non-root user and set working directory
-RUN useradd -m -d /home/container -s /bin/bash container && mkdir -p /home/container && chown container:container /home/container
-ENV USER=container HOME=/home/container
-WORKDIR /home/container
-USER container
-
 # Provide a simple system-wide `proton` wrapper that launches the installed
-# Proton-GE. This makes `proton` available for all users inside the container.
+# Proton-GE. Create this as root (before switching to non-root user) so the
+# wrapper is owned by root and executable by all users.
 RUN set -eux; \
     printf '%s\n' '#!/bin/bash' \
         'if [ -d /opt/ProtonGE ]; then' \
@@ -165,9 +160,15 @@ RUN set -eux; \
         '    echo "Proton-GE not found (expected in /opt/ProtonGE or /usr/local/share/steam/compatibilitytools.d/ProtonGE)" >&2' \
         '    exit 1' \
         'fi' \
-        'exec """$PROTON_DIR/proton""" "$@"' \
+        'exec "$PROTON_DIR/proton" "$@"' \
     > /usr/local/bin/proton; \
-    chmod +x /usr/local/bin/proton
+    chmod 755 /usr/local/bin/proton
+
+# Create non-root user and set working directory
+RUN useradd -m -d /home/container -s /bin/bash container && mkdir -p /home/container && chown container:container /home/container
+ENV USER=container HOME=/home/container
+WORKDIR /home/container
+USER container
 
 # Default stop signal
 STOPSIGNAL SIGINT
