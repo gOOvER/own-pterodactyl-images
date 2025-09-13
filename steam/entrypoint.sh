@@ -4,12 +4,6 @@ set -euo pipefail
 ERROR_LOG="install_error.log"
 : > "$ERROR_LOG"  # Clear old log file (no-op)
 
-#!/bin/bash
-set -e
-
-ERROR_LOG="install_error.log"
-: > "$ERROR_LOG"  # Clear old log file (no-op)
-
 # ----------------------------
 # Colors via tput
 # ----------------------------
@@ -126,28 +120,14 @@ fi
 HOME=${HOME:-/home/container}
 
 if [ -n "${STEAM_APPID:-}" ]; then
-    # Ensure all Steam/Proton directories live under /home/container/steam
+    # Ensure all Steam/Proton directories live under /home/container/Steam
     # Create canonical steam directory and compatdata path
+	mkdir -p /home/container/Steam
     mkdir -p /home/container/Steam/steamapps/compatdata/${STEAM_APPID}
     mkdir -p /home/container/Steam/compatibilitytools.d
 
-    # ProtonGE is available system-wide; no per-user copy is required
-
-    # Determine STEAM_DIR: only accept a local ./Steam directory (resolved to an absolute path).
-    # Protontricks expects a Steam layout under this directory (steamapps/ or SteamApps/).
-    if [ -d "./Steam/steamapps" ] || [ -d "./Steam/SteamApps" ]; then
-        # Resolve to absolute path to avoid later relative-path issues
-        STEAM_DIR=$(cd ./Steam >/dev/null 2>&1 && pwd || echo "./Steam")
-        export STEAM_DIR
-    elif [ -d "/usr/local/share/steam/steamapps" ] || [ -d "/usr/local/share/steam/SteamApps" ]; then
-        # Allow system-wide steam as a fallback if explicitly present
-        export STEAM_DIR="/usr/local/share/steam"
-    else
-        msg RED "No valid Steam directory found! Please ensure a './Steam' folder exists in the container (contains steamapps)."
-        exit 1
-    fi
-
-    export STEAM_COMPAT_CLIENT_INSTALL_PATH="$STEAM_DIR"
+	export STEAM_DIR="/home/container/Steam"
+	export STEAM_COMPAT_CLIENT_INSTALL_PATH="$STEAM_DIR"
     export STEAM_COMPAT_DATA_PATH="$STEAM_COMPAT_CLIENT_INSTALL_PATH/steamapps/compatdata/${STEAM_APPID}"
     export WINETRICKS="/usr/sbin/winetricks"
 
