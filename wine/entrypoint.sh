@@ -2,7 +2,7 @@
 set -e
 
 ERROR_LOG="install_error.log"
-> "$ERROR_LOG"  # Alte Logdatei leeren
+: > "$ERROR_LOG"  # Alte Logdatei leeren (no-op)
 
 # ----------------------------
 # Colors via tput
@@ -30,8 +30,10 @@ msg() {
 
 line() {
     local color="${1:-BLUE}"
-    local term_width=$(tput cols 2>/dev/null || echo 70)
-    local sep=$(printf '%*s' "$term_width" '' | tr ' ' '-')
+    local term_width
+    term_width=$(tput cols 2>/dev/null || echo 70)
+    local sep
+    sep=$(printf '%*s' "$term_width" '' | tr ' ' '-')
     
     case "$color" in
         RED) COLOR="$RED";;
@@ -73,7 +75,8 @@ line BLUE
 # Environment
 # ----------------------------
 export TZ=${TZ:-UTC}
-export INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
+internal_ip=$(ip route get 1 | awk '{print $(NF-2);exit}' 2>/dev/null || echo "127.0.0.1")
+export INTERNAL_IP="$internal_ip"
 export XDG_RUNTIME_DIR="/home/container/.config/xdg"
 mkdir -p "$XDG_RUNTIME_DIR"
 
@@ -207,19 +210,25 @@ if [ -f ./DepotDownloader ]; then
 
     printf "${YELLOW}Steam user: ${GREEN}%s${NC}\n" "$STEAM_USER"
 
-    ./DepotDownloader -dir . \
-        -username "$STEAM_USER" \
-        -password "$STEAM_PASS" \
-        -remember-password \
-        $( [ "$WINDOWS_INSTALL" = "1" ] && echo "-os windows" ) \
-        -app "$STEAM_APPID" \
-        $( [ -n "$STEAM_BETAID" ] && echo "-branch $STEAM_BETAID" ) \
-        $( [ -n "$STEAM_BETAPASS" ] && echo "-branchpassword $STEAM_BETAPASS" )
+    dd_args=( -dir . -username "$STEAM_USER" -password "$STEAM_PASS" -remember-password )
+    if [ "${WINDOWS_INSTALL:-0}" = "1" ]; then
+        dd_args+=( -os windows )
+    fi
+    dd_args+=( -app "$STEAM_APPID" )
+    if [ -n "${STEAM_BETAID:-}" ]; then
+        dd_args+=( -branch "$STEAM_BETAID" )
+    fi
+    if [ -n "${STEAM_BETAPASS:-}" ]; then
+        dd_args+=( -branchpassword "$STEAM_BETAPASS" )
+    fi
+    ./DepotDownloader "${dd_args[@]}"
 
     mkdir -p .steam/sdk64
-    ./DepotDownloader -dir .steam/sdk64 \
-        $( [ "$WINDOWS_INSTALL" = "1" ] && echo "-os windows" ) \
-        -app 1007
+    dd_sdk_args=( -dir .steam/sdk64 -app 1007 )
+    if [ "${WINDOWS_INSTALL:-0}" = "1" ]; then
+        dd_sdk_args+=( -os windows )
+    fi
+    ./DepotDownloader "${dd_sdk_args[@]}"
 
     chmod +x "$HOME"/*
 else
@@ -233,16 +242,29 @@ else
 
     printf "${YELLOW}Steam user: ${GREEN}%s${NC}\n" "$STEAM_USER"
 
-    ./steamcmd/steamcmd.sh +force_install_dir /home/container \
-        +login "$STEAM_USER" "$STEAM_PASS" "$STEAM_AUTH" \
-        $( [ "$WINDOWS_INSTALL" = "1" ] && echo "+@sSteamCmdForcePlatformType windows" ) \
-        $( [ "$STEAM_SDK" = "1" ] && echo "+app_update 1007" ) \
-        +app_update "$STEAM_APPID" \
-        $( [ -n "$STEAM_BETAID" ] && echo "-beta $STEAM_BETAID" ) \
-        $( [ -n "$STEAM_BETAPASS" ] && echo "-betapassword $STEAM_BETAPASS" ) \
-        $INSTALL_FLAGS \
-        $( [ "$VALIDATE" = "1" ] && echo "validate" ) +quit || \
-        printf "${RED}SteamCMD failed!${NC}\n"
+    sc_args=( +force_install_dir /home/container +login "$STEAM_USER" "$STEAM_PASS" "$STEAM_AUTH" )
+    if [ "${WINDOWS_INSTALL:-0}" = "1" ]; then
+        sc_args+=( +@sSteamCmdForcePlatformType windows )
+    fi
+    if [ "${STEAM_SDK:-0}" = "1" ]; then
+        sc_args+=( +app_update 1007 )
+    fi
+    sc_args+=( +app_update "$STEAM_APPID" )
+    if [ -n "${STEAM_BETAID:-}" ]; then
+        sc_args+=( -beta "$STEAM_BETAID" )
+    fi
+    if [ -n "${STEAM_BETAPASS:-}" ]; then
+        sc_args+=( -betapassword "$STEAM_BETAPASS" )
+    fi
+    if [ -n "${INSTALL_FLAGS:-}" ]; then
+        IFS=' ' read -r -a extra_flags <<<"$INSTALL_FLAGS"
+        sc_args+=( "${extra_flags[@]}" )
+    fi
+    if [ "${VALIDATE:-0}" = "1" ]; then
+        sc_args+=( validate )
+    fi
+    sc_args+=( +quit )
+    ./steamcmd/steamcmd.sh "${sc_args[@]}" || printf "${RED}SteamCMD failed!${NC}\n"
 fi
 
 # ----------------------------

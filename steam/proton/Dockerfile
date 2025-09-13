@@ -15,12 +15,10 @@ SHELL ["/bin/bash", "-c"]
 # Set noninteractive frontend for apt
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Enable 32-bit architecture and update system
+# Enable 32-bit architecture, update system, install packages and pipx/protontricks in one layer
 RUN dpkg --add-architecture i386 && \
-    apt update && apt -y upgrade
-
-# Install required packages (merge into one layer)
-RUN apt install -y --no-install-recommends \
+    apt-get update && apt-get -y upgrade && \
+    apt-get install -y --no-install-recommends \
     alsa-tools \
     ca-certificates \
     cabextract \
@@ -45,7 +43,6 @@ RUN apt install -y --no-install-recommends \
     python3-pip \
     python3-setuptools \
     python3-venv \
-    pipx \
     tar \
     tini \
     virt-what \
@@ -86,16 +83,21 @@ RUN apt install -y --no-install-recommends \
     gstreamer1.0-alsa \
     gstreamer1.0-gl \
     gstreamer1.0-pulseaudio && \
-    apt clean && \
-    rm -rf /var/lib/apt/lists/*
+    python3 -m pip install --no-cache-dir pipx protontricks && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/*
 
-# Download and install Proton-GE latest release
-RUN cd /tmp && \
-    PROTON_URL=$(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest \
-    | grep browser_download_url | cut -d\" -f4 | egrep .tar.gz) && \
-    curl -sLOJ $PROTON_URL && \
-    tar -xzf GE-Proton*.tar.gz -C /usr/local/bin/ --strip-components=1 && \
-    rm GE-Proton*.*
+# Download and install Proton-GE latest release into /opt and register with Steam
+RUN set -eux; cd /tmp; \
+    PROTON_URL=$(curl -sSf https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest | grep "browser_download_url" | cut -d'\"' -f4 | grep '\.tar\.gz$' | head -n1); \
+    if [ -z "$PROTON_URL" ]; then echo "Could not determine Proton-GE URL" >&2; exit 1; fi; \
+    curl -sSL "$PROTON_URL" -o proton-ge.tar.gz; \
+    mkdir -p /opt; tar -xzf proton-ge.tar.gz -C /opt; \
+    # find extracted folder (GE-Proton*), normalize to /opt/ProtonGE
+    PROTON_DIR=$(find /opt -maxdepth 1 -type d -name 'GE-Proton*' -print -quit || true); \
+    if [ -n "$PROTON_DIR" ]; then mv "$PROTON_DIR" /opt/ProtonGE; fi; \
+    # Register tool for Steam (compatibilitytools.d expects a folder)
+    if [ -d /opt/ProtonGE ]; then rm -rf /usr/local/share/steam/compatibilitytools.d/ProtonGE || true; cp -a /opt/ProtonGE /usr/local/share/steam/compatibilitytools.d/ProtonGE; fi; \
+    rm -rf /tmp/*
 
 # Proton machine-id fix
 RUN rm -f /etc/machine-id /var/lib/dbus/machine-id && \
@@ -117,23 +119,16 @@ ENV LC_ALL=en_US.UTF-8
 # -----------------------------
 # RCON CLI installation (latest release)
 # -----------------------------
-RUN cd /tmp \
-    && RCON_LATEST=$(curl -s https://api.github.com/repos/gorcon/rcon-cli/releases/latest \
-        | grep browser_download_url | cut -d\" -f4 | grep amd64_linux) \
-    && curl -sSL $RCON_LATEST -o rcon.tar.gz \
-    && tar xvf rcon.tar.gz \
-    && mv rcon-*-amd64_linux/rcon /usr/local/bin/ \
-    && chmod +x /usr/local/bin/rcon \
-    && rm -rf /tmp/*
+RUN set -eux; cd /tmp; \
+    RCON_LATEST=$(curl -sSf https://api.github.com/repos/gorcon/rcon-cli/releases/latest | grep "browser_download_url" | cut -d'\"' -f4 | grep amd64_linux | head -n1) || true; \
+    if [ -n "$RCON_LATEST" ]; then curl -sSL "$RCON_LATEST" -o rcon.tar.gz; tar xvf rcon.tar.gz; mv rcon-*-amd64_linux/rcon /usr/local/bin/ || true; chmod +x /usr/local/bin/rcon || true; fi; \
+    rm -rf /tmp/*
 
 # Create non-root user and set working directory
-RUN useradd -m -d /home/container -s /bin/bash container
-USER container
+RUN useradd -m -d /home/container -s /bin/bash container && mkdir -p /home/container && chown container:container /home/container
 ENV USER=container HOME=/home/container
 WORKDIR /home/container
-
-# Install protontricks for the current user
-RUN pipx ensurepath && pipx install protontricks
+USER container
 
 # Default stop signal
 STOPSIGNAL SIGINT
