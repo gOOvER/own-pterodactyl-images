@@ -123,10 +123,10 @@ if [ -n "${STEAM_APPID:-}" ]; then
     # Ensure all Steam/Proton directories live under /home/container/Steam
     # Create canonical steam directory and compatdata path
 	mkdir -p /home/container/Steam
-    mkdir -p /home/container/steamapps/compatdata/${STEAM_APPID}
-    mkdir -p /home/container/compatibilitytools.d
+    mkdir -p /home/container/Steam/steamapps/compatdata/${STEAM_APPID}
+    mkdir -p /home/container/Steam/compatibilitytools.d
 
-	export STEAM_DIR="/home/container/"
+	export STEAM_DIR="/home/container/Steam"
 	export STEAM_COMPAT_CLIENT_INSTALL_PATH="$STEAM_DIR"
     export STEAM_COMPAT_DATA_PATH="$STEAM_COMPAT_CLIENT_INSTALL_PATH/steamapps/compatdata/${STEAM_APPID}"
     export WINETRICKS="/usr/sbin/winetricks"
