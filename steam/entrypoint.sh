@@ -339,6 +339,47 @@ if [ -n "${PROTONTRICKS_RUN:-}" ]; then
 fi
 
 # ----------------------------
+# Winetricks runtime installation (into the per-app WINEPREFIX)
+# ----------------------------
+# Use `WINETRICKS_RUN` to install runtimes or verbs into the WINEPREFIX.
+# Example: WINETRICKS_RUN="vcrun2015 corefonts" and optional
+# `WINETRICKS_OPTS` for winetricks flags (e.g. --no-isolate --force).
+if [ -n "${WINETRICKS_RUN:-}" ]; then
+    # Default location for winetricks binary (can be overridden by env)
+    WINETRICKS=${WINETRICKS:-/usr/sbin/winetricks}
+
+    if [ -z "${WINEPREFIX:-}" ]; then
+        msg RED "WINETRICKS_RUN is set but WINEPREFIX is empty; cannot run winetricks"
+    else
+        line BLUE
+        msg YELLOW "Preparing to run winetricks into WINEPREFIX=${GREEN}${WINEPREFIX}${NC}"
+        line BLUE
+
+        # Ensure prefix directories exist (non-destructive)
+        mkdir -p "${WINEPREFIX%/pfx}" 2>/dev/null || true
+        mkdir -p "$WINEPREFIX" 2>/dev/null || true
+
+        if command -v "$WINETRICKS" >/dev/null 2>&1; then
+            # Show intended actions
+            msg YELLOW "winetricks actions: ${GREEN}$WINETRICKS_RUN${NC}"
+
+            # Run winetricks with optional options. We intentionally allow
+            # the shell to split $WINETRICKS_RUN into separate verbs so
+            # multiple verbs can be passed in one invocation.
+            if [ -n "${WINETRICKS_OPTS:-}" ]; then
+                msg YELLOW "Running: WINEPREFIX=${WINEPREFIX} $WINETRICKS $WINETRICKS_OPTS $WINETRICKS_RUN"
+                env WINEPREFIX="$WINEPREFIX" "$WINETRICKS" $WINETRICKS_OPTS $WINETRICKS_RUN || msg RED "winetricks failed"
+            else
+                msg YELLOW "Running: WINEPREFIX=${WINEPREFIX} $WINETRICKS $WINETRICKS_RUN"
+                env WINEPREFIX="$WINEPREFIX" "$WINETRICKS" $WINETRICKS_RUN || msg RED "winetricks failed"
+            fi
+        else
+            msg RED "winetricks not found at ${WINETRICKS}; cannot install runtimes"
+        fi
+    fi
+fi
+
+# ----------------------------
 # Startup command
 # ----------------------------
 if [ -z "${STARTUP:-}" ]; then
