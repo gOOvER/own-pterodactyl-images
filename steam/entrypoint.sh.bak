@@ -4,12 +4,6 @@ set -euo pipefail
 ERROR_LOG="install_error.log"
 : > "$ERROR_LOG"  # Clear old log file (no-op)
 
-#!/bin/bash
-set -e
-
-ERROR_LOG="install_error.log"
-: > "$ERROR_LOG"  # Alte Logdatei leeren (no-op)
-
 # ----------------------------
 # Colors via tput
 # ----------------------------
@@ -26,7 +20,7 @@ NC=$(tput sgr0)
 msg() {
     local color="$1"
     shift
-    # Wenn ROT, zusätzlich in install_error.log schreiben
+    # If RED, also write to install_error.log
     if [ "$color" = "RED" ]; then
         printf "%b\n" "${RED}$*${NC}" | tee -a "$ERROR_LOG" >&2
     else
@@ -40,7 +34,6 @@ line() {
     term_width=$(tput cols 2>/dev/null || echo 70)
     local sep
     sep=$(printf '%*s' "$term_width" '' | tr ' ' '-')
-
     case "$color" in
         RED) COLOR="$RED";;
         GREEN) COLOR="$GREEN";;
@@ -51,6 +44,7 @@ line() {
     esac
     printf "%b\n" "${COLOR}${sep}${NC}"
 }
+
 # ----------------------------
 # Error trap for uncaught errors
 # Print timestamp, failing command and line number

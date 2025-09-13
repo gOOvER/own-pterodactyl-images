@@ -4,53 +4,7 @@ set -euo pipefail
 ERROR_LOG="install_error.log"
 : > "$ERROR_LOG"  # Clear old log file (no-op)
 
-#!/bin/bash
-set -e
-
-ERROR_LOG="install_error.log"
-: > "$ERROR_LOG"  # Alte Logdatei leeren (no-op)
-
-# ----------------------------
-# Colors via tput
-# ----------------------------
-RED=$(tput setaf 1)
-GREEN=$(tput setaf 2)
-YELLOW=$(tput setaf 3)
-BLUE=$(tput setaf 4)
-CYAN=$(tput setaf 6)
-NC=$(tput sgr0)
-
-# ----------------------------
-# Functions
-# ----------------------------
-msg() {
-    local color="$1"
-    shift
-    # Wenn ROT, zusätzlich in install_error.log schreiben
-    if [ "$color" = "RED" ]; then
-        printf "%b\n" "${RED}$*${NC}" | tee -a "$ERROR_LOG" >&2
-    else
-        printf "%b\n" "${!color}$*${NC}"
-    fi
-}
-
-line() {
-    local color="${1:-BLUE}"
-    local term_width
-    term_width=$(tput cols 2>/dev/null || echo 70)
-    local sep
-    sep=$(printf '%*s' "$term_width" '' | tr ' ' '-')
-
-    case "$color" in
-        RED) COLOR="$RED";;
-        GREEN) COLOR="$GREEN";;
-        YELLOW) COLOR="$YELLOW";;
-        BLUE) COLOR="$BLUE";;
-        CYAN) COLOR="$CYAN";;
-        *) COLOR="$NC";;
-    esac
-    printf "%b\n" "${COLOR}${sep}${NC}"
-}
+# ----------------------------\n# Colors via tput\nRED=$(tput setaf 1)\nGREEN=$(tput setaf 2)\nYELLOW=$(tput setaf 3)\nBLUE=$(tput setaf 4)\nCYAN=$(tput setaf 6)\nNC=$(tput sgr0)\n\n# ----------------------------\n# Functions\n# ----------------------------\nmsg() {\n    local color=\"$1\"\n    shift\n    # Wenn ROT, zusätzlich in install_error.log schreiben\n    if [ \"$color\" = \"RED\" ]; then\n        printf \"%b\\n\" \"${RED}$*${NC}\" | tee -a \"$ERROR_LOG\" >&2\n    else\n        printf \"%b\\n\" \"${!color}$*${NC}\"\n    fi\n}\n\nline() {\n    local color=\"${1:-BLUE}\"\n    local term_width\n    term_width=$(tput cols 2>/dev/null || echo 70)\n    local sep\n    sep=$(printf '%*s' \"$term_width\" '' | tr ' ' '-')\n    \n    case \"$color\" in\n        RED) COLOR=\"$RED\";;\n        GREEN) COLOR=\"$GREEN\";;\n        YELLOW) COLOR=\"$YELLOW\";;\n        BLUE) COLOR=\"$BLUE\";;\n        CYAN) COLOR=\"$CYAN\";;\n        *) COLOR=\"$NC\";;\n    esac\n    printf \"%b\\n\" \"${COLOR}${sep}${NC}\"\n}\n
 # ----------------------------
 # Error trap for uncaught errors
 # Print timestamp, failing command and line number

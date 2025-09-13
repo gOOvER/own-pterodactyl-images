@@ -39,7 +39,7 @@ RUN dpkg --add-architecture i386 && \
     netcat-openbsd \
     openssl \
     pulseaudio \
-    python3 \
+    python3-full \
     python3-pip \
     python3-setuptools \
     python3-venv \
