@@ -111,59 +111,63 @@ else
 fi
 
 # ----------------------------
-# Update/Download
+# SteamCMD / DepotDownloader Update
 # ----------------------------
-if [ -z "${AUTO_UPDATE}" ] || [ "${AUTO_UPDATE}" == "1" ]; then
-    if [ -f /home/container/DepotDownloader ]; then
-        ./DepotDownloader -dir /home/container \
-            -username "${STEAM_USER}" \
-            -password "${STEAM_PASS}" \
-            -remember-password \
-            $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) \
-            -app "${STEAM_APPID}" \
-            $( [[ -n "${STEAM_BETAID}" ]] && printf %s "-branch ${STEAM_BETAID}" ) \
-            $( [[ -n "${STEAM_BETAPASS}" ]] && printf %s "-branchpassword ${STEAM_BETAPASS}" )
-        mkdir -p /home/container/.steam/sdk64
-        ./DepotDownloader -dir /home/container/.steam/sdk64 \
-            $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '-os windows' ) \
-            -app 1007
-        chmod +x $HOME/*
-    else
-        ./steamcmd/steamcmd.sh +force_install_dir /home/container \
-            +login "${STEAM_USER}" "${STEAM_PASS}" "${STEAM_AUTH}" \
-            $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) \
-            $( [[ "${STEAM_SDK}" == "1" ]] && printf %s '+app_update 1007' ) \
-            +app_update "${STEAM_APPID}" \
-            $( [[ -n "${STEAM_BETAID}" ]] && printf %s "-beta ${STEAM_BETAID}" ) \
-            $( [[ -n "${STEAM_BETAPASS}" ]] && printf %s "-betapassword ${STEAM_BETAPASS}" ) \
-            ${INSTALL_FLAGS} \
-            $( [[ "${VALIDATE}" == "1" ]] && printf %s 'validate' ) +quit
-    fi
+if [ -f ./DepotDownloader ]; then
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    printf "${YELLOW}Using DepotDownloader for updates${NC}\n"
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+
+    : "${STEAM_USER:=anonymous}"  # Default anonymous user
+    : "${STEAM_PASS:=}"
+    : "${STEAM_AUTH:=}"
+
+    printf "${YELLOW}Steam user: ${GREEN}%s${NC}\n" "$STEAM_USER"
+
+    ./DepotDownloader -dir . \
+        -username "$STEAM_USER" \
+        -password "$STEAM_PASS" \
+        -remember-password \
+        $( [ "$WINDOWS_INSTALL" = "1" ] && echo "-os windows" ) \
+        -app "$STEAM_APPID" \
+        $( [ -n "$STEAM_BETAID" ] && echo "-branch $STEAM_BETAID" ) \
+        $( [ -n "$STEAM_BETAPASS" ] && echo "-branchpassword $STEAM_BETAPASS" )
+
+    mkdir -p .steam/sdk64
+    ./DepotDownloader -dir .steam/sdk64 \
+        $( [ "$WINDOWS_INSTALL" = "1" ] && echo "-os windows" ) \
+        -app 1007
+
+    chmod +x "$HOME"/*
 else
-    line BLUE
-    msg YELLOW "Not updating game server as auto update was set to 0. Starting Server."
-    line BLUE
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    printf "${YELLOW}Using SteamCMD for updates${NC}\n"
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+
+    : "${STEAM_USER:=anonymous}"  # Default anonymous user
+    : "${STEAM_PASS:=}"
+    : "${STEAM_AUTH:=}"
+
+    printf "${YELLOW}Steam user: ${GREEN}%s${NC}\n" "$STEAM_USER"
+
+    ./steamcmd/steamcmd.sh +force_install_dir /home/container \
+        +login "$STEAM_USER" "$STEAM_PASS" "$STEAM_AUTH" \
+        $( [ "$WINDOWS_INSTALL" = "1" ] && echo "+@sSteamCmdForcePlatformType windows" ) \
+        $( [ "$STEAM_SDK" = "1" ] && echo "+app_update 1007" ) \
+        +app_update "$STEAM_APPID" \
+        $( [ -n "$STEAM_BETAID" ] && echo "-beta $STEAM_BETAID" ) \
+        $( [ -n "$STEAM_BETAPASS" ] && echo "-betapassword $STEAM_BETAPASS" ) \
+        $INSTALL_FLAGS \
+        $( [ "$VALIDATE" = "1" ] && echo "validate" ) +quit || \
+        printf "${RED}SteamCMD failed!${NC}\n"
 fi
 
-line BLUE
-msg GREEN "Starting Server.... Please wait..."
-line BLUE
+# ----------------------------
+# Startup command
+# ----------------------------
+MODIFIED_STARTUP=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')
+msg CYAN ":/home/container$ $MODIFIED_STARTUP"
 
-# ----------------------------
-# Protontricks support
-# ----------------------------
-if [ -n "${PROTONTRICKS_RUN}" ]; then
-    for trick in $PROTONTRICKS_RUN; do
-        line BLUE
-        msg YELLOW "Protontricks: Installing ${trick}"
-        line BLUE
-        protontricks "${STEAM_APPID}" "${trick}" || msg RED "Protontricks for ${trick} failed!"
-    done
-fi
+# exec bash -c für komplexe Shell-Kommandos
+exec bash -c "$MODIFIED_STARTUP"
 
-# ----------------------------
-# Replace Startup Variables and run server
-# ----------------------------
-MODIFIED_STARTUP=$(echo -e "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')
-msg CYAN ":/home/container$ ${MODIFIED_STARTUP}"
-eval "${MODIFIED_STARTUP}"

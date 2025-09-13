@@ -122,7 +122,7 @@ ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
 
 # Default stop signal
-#STOPSIGNAL SIGINT
+STOPSIGNAL SIGINT
 
 # Copy entrypoint (adjust path if needed)
 ARG         ENTRYPOINT_PATH=../entrypoint.sh
