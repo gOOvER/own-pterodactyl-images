@@ -37,7 +37,7 @@ echo -e "${GREEN}Starting Server.... Please wait...${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
 ## just in case someone removed the defaults.
-if [ "${STEAM_USER}" == "" ]; then
+if [ "${STEAM_USER:-}" == "" ]; then
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}Steam user is not set. ${NC}"
     echo -e "${YELLOW}Using anonymous user.${NC}"

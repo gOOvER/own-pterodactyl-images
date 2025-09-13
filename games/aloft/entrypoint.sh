@@ -33,7 +33,7 @@ export INTERNAL_IP
 cd /home/container || exit 1
 
 ## just in case someone removed the defaults.
-if [ "${STEAM_USER}" == "" ]; then
+if [ "${STEAM_USER:-}" == "" ]; then
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}Steam user is not set.\n ${NC}"
     echo -e "${YELLOW}Using anonymous user.\n ${NC}"

@@ -32,7 +32,7 @@ echo -e "${BLUE}----------------------------------------------------------------
 chmod +x /PathOfTitans/Binaries/Linux/PathOfTitansServer-Linux-Shipping
 
 ## check for serverupdates
-if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
+if [ -z ${AUTO_UPDATE:-} ] || [${AUTO_UPDATE:-}E}" == "1" ]; then
     cd /home/container
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}checkig for Server update. please wait...${NC}"
@@ -52,3 +52,4 @@ echo -e ":/home/container$ ${MODIFIED_STARTUP}"
 
 # Run the Server
 eval ${MODIFIED_STARTUP}
+

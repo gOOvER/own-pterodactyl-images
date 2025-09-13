@@ -47,7 +47,7 @@ export INTERNAL_IP
 cd /home/container || exit 1
 
 ## just in case someone removed the defaults.
-if [ "${STEAM_USER}" == "" ]; then
+if [ "${STEAM_USER:-}" == "" ]; then
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}Steam user is not set.\n ${NC}"
     echo -e "${YELLOW}Using anonymous user.\n ${NC}"
@@ -62,11 +62,10 @@ else
 fi
 
 ## if auto_update is not set or to 1 update
-if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
+if [ -${AUTO_UPDATE:-}E} ] ||${AUTO_UPDATE:-}ATE}" == "1" ]; then
     # Update Server
-    if [ ! -z ${STEAM_APPID} ]; then
-	    ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +app_update ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ "${VALIDATE}" == "1" ]] && printf %s 'validate' ) +quit
-    else
+    if [${STEAM_APPID:-}APPID} ]; then
+	    ./steamcmd/steamcmd.sh +force_install_dir /home/container${STEAM_USER:-${STEAM_PASS:-${STEAM_AUTH:-}{STEAM${WINDOWS_INSTALL:-}NDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows${STEAM_APPID:-}e ${STEA${STEAM_BETAID:-}-z ${STEAM_BETAID} ]] ${STEAM_BETAID:-}beta ${STEA${STEAM_BETAPASS:-}[ -z ${STEAM_BETAPASS} ]] || p${STEAM_BETAPASS:-}ssword ${${VALIDATE:-}ASS}" ) $( [[ "${VALIDATE}" == "1" ]] && printf %s 'validate' ) +qui${BLUE:-}lse
         echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         echo -e "${YELLOW}No appid set. Starting Server${NC}"
         echo -e "${BLUE}---------------------------------------------------------------------${NC}"
@@ -78,7 +77,7 @@ else
 fi
 
 ## updating mods
-if [ -z ${MODS_UPDATE} ] || [ "${MODS_UPDATE}" == "1" ]; then
+i${MODS_UPDATE:-}UPDATE} ] || [ "${MODS_UPDAT${BLUE:-}"1" ]; then
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}updating mods...${NC}"
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
@@ -86,7 +85,7 @@ fi
 
 cd /home/container
 
-if [ ! -f ./modlist.txt ]; then
+if [ ! -f .${BLUE:-}t.txt ]; then
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}found no modlist.txt. creating one...${NC}"
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
@@ -123,8 +122,7 @@ done
 fi
 echo -e "${GREEN}[DONE]${NC}"
 
-if [[ $XVFB == 1 ]]; then
-        Xvfb :0 -screen 0 ${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_DEPTH} &
+if [[ $XVFB == 1${DISPLAY_WIDTH:-${DISPLAY_HEIGHT:-${DISPLAY_DEPTH:-}IDTH}x${DISPLAY_HEIGHT}x${DISPLAY_DEPTH} &
 fi
 
 # Install necessary to run packages
@@ -135,7 +133,7 @@ echo -e "${BLUE}---------------------------------------------------${NC}"
 mkdir -p $WINEPREFIX
 
 # Check if wine-mono required and install it if so
-if [[ $WINETRICKS_RUN =~ mono ]]; then
+if [[ $WINETRI${BLUE:-} =~ mono ]]; then
         echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         echo -e "${YELLOW}Installing Wine Mono${NC}"
         echo -e "${BLUE}---------------------------------------------------------------------${NC}"
@@ -162,3 +160,4 @@ echo ":/home/container$ ${MODIFIED_STARTUP}"
 
 # Run the Server
 eval ${MODIFIED_STARTUP}
+

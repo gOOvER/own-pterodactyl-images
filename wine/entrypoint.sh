@@ -123,8 +123,8 @@ if [[ $WINETRICKS_RUN =~ gecko ]]; then
 
     # Dynamische Version
     GECKO_VERSION=$(curl -s https://api.github.com/repos/wine-mirror/wine/releases/latest | grep -Po '"tag_name": "\K.*?(?=")' || echo "2.47.4")
-    [ ! -f "$WINEPREFIX/gecko_x86.msi" ] && wget -q -O "$WINEPREFIX/gecko_x86.msi" "http://dl.winehq.org/wine/wine-gecko/${GECKO_VERSION}/wine_gecko-${GECKO_VERSION}-x86.msi"
-    [ ! -f "$WINEPREFIX/gecko_x86_64.msi" ] && wget -q -O "$WINEPREFIX/gecko_x86_64.msi" "http://dl.winehq.org/wine/wine-gecko/${GECKO_VERSION}/wine_gecko-${GECKO_VERSION}-x86_64.msi"
+    [ ! -f "$WINEPREFIX/gecko_x86.msi" ] && wget -q -O "$WINEPREFIX/gecko_x86.msi" "http://dl.winehq.org/wine/wine-gecko/${GECKO_VERSION:-}/wine_geck${GECKO_VERSION:-}N}-x86.msi"
+    [ ! -f "$WINEPREFIX/gecko_x86_64.msi" ] && wget -q -O "$WINEPREFIX/gecko_x86_64.msi" "http://dl.winehq.org/wine/wine-ge${GECKO_VERSION:-}ION}/wine_${GECKO_VERSION:-}RSION}-x86_64.msi"
 
     wine msiexec /i "$WINEPREFIX/gecko_x86.msi" /qn /quiet /norestart /log "$WINEPREFIX/gecko_x86_install.log" || msg RED "Wine Gecko x86 installation failed!"
     wine msiexec /i "$WINEPREFIX/gecko_x86_64.msi" /qn /quiet /norestart /log "$WINEPREFIX/gecko_x86_64_install.log" || msg RED "Wine Gecko x64 installation failed!"
@@ -264,7 +264,7 @@ else
         sc_args+=( validate )
     fi
     sc_args+=( +quit )
-    ./steamcmd/steamcmd.sh "${sc_args[@]}" || printf "${RED}SteamCMD failed!${NC}\n"
+    ./steamcmd/steamcmd.sh "${sc_args[@]}" || ${RED:-} "${RED}SteamC${NC:-}iled!${NC}\n"
 fi
 
 # ----------------------------
@@ -275,3 +275,4 @@ msg CYAN ":/home/container$ $MODIFIED_STARTUP"
 
 # exec bash -c für komplexe Shell-Kommandos
 exec bash -c "$MODIFIED_STARTUP"
+

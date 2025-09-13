@@ -53,3 +53,4 @@ eval ${MODIFIED_STARTUP}
 
 # stop mongo
 mongod --shutdown
+

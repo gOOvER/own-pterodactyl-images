@@ -19,7 +19,7 @@ export INTERNAL_IP
 PARSED=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g' | eval echo "$(cat -)")
 
 ## just in case someone removed the defaults.
-if [ "${STEAM_USER}" == "" ]; then
+if [ "${STEAM_USER:-}" == "" ]; then
     echo -e "steam user is not set.\n"
     echo -e "Using anonymous user.\n"
     STEAM_USER=anonymous
@@ -32,7 +32,7 @@ fi
 ## if auto_update is not set or to 1 update
 if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
     # Update Source Server
-    if [ ! -z ${STEAM_APPID} ]; then
+    if [ ! -z ${STEAM_APPID:-} ]; then
         ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} +app_update ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ -z ${HLDS_GAME} ]] || printf %s "+app_set_config 90 mod ${HLDS_GAME}" ) $( [[ -z ${VALIDATE} ]] || printf %s "validate" ) +quit
     else
         echo -e "No appid set. Starting Server"

@@ -31,7 +31,7 @@ NC='\033[0m' # No Color
 # Runs SteamCMD with specified variables and performs error handling.
 function RunSteamCMD { #[Input: int server=0 mod=1 optional_mod=2; int id]
     # Clear previous SteamCMD log
-    if [[ -f "${STEAMCMD_LOG}" ]]; then
+    if [[ -f "${STEAMCMD_LOG:-}" ]]; then
         rm -f "${STEAMCMD_LOG:?}"
     fi
 
@@ -55,7 +55,7 @@ function RunSteamCMD { #[Input: int server=0 mod=1 optional_mod=2; int id]
         # Error checking for SteamCMD
         steamcmdExitCode=${PIPESTATUS[0]}
         loggedErrors=$(grep -i "error\|failed" "${STEAMCMD_LOG}" | grep -iv "setlocal\|SDL\|steamservice\|thread")
-        if [[ -n ${loggedErrors} ]]; then # Catch errors (ignore setlocale, SDL, steamservice, and thread priority warnings)
+        if [[ -n ${loggedErrors:-} ]]; then # Catch errors (ignore setlocale, SDL, steamservice, and thread priority warnings)
             # Soft errors
             if [[ -n $(grep -i "Timeout downloading item" "${STEAMCMD_LOG}") ]]; then # Mod download timeout
                 echo -e "\n${YELLOW}[UPDATE]: ${NC}Timeout downloading Steam Workshop mod: \"${CYAN}${modName}${NC}\" (${CYAN}${2}${NC})"
@@ -70,24 +70,24 @@ function RunSteamCMD { #[Input: int server=0 mod=1 optional_mod=2; int id]
                 break
             # Fatal errors
             elif [[ -n $(grep -i "Invalid Password\|two-factor\|No subscription" "${STEAMCMD_LOG}") ]]; then # Wrong username/password, Steam Guard is turned on, or host is using anonymous account
-                echo -e "\n${RED}[UPDATE]: Cannot login to Steam - Improperly configured account and/or credentials"
+                echo -e "\n${RED:-}[UPDATE]: Cannot login to Steam - Improperly configured account and/or credentials"
                 echo -e "\t${YELLOW}Please contact your administrator/host and give them the following message:${NC}"
                 echo -e "\t${CYAN}Your Egg, or your client's server, is not configured with valid Steam credentials.${NC}"
                 echo -e "\t${CYAN}Either the username/password is wrong, or Steam Guard is not properly configured"
                 echo -e "\t${CYAN}according to this egg's documentation/README.${NC}\n"
                 exit 1
             elif [[ -n $(grep -i "Download item" "${STEAMCMD_LOG}") ]]; then # Steam account does not own base game for mod downloads, or unknown
-                echo -e "\n${RED}[UPDATE]: Cannot download mod - Download failed"
+                echo -e "\n${RED:-}[UPDATE]: Cannot download mod - Download failed"
                 echo -e "\t${YELLOW}While unknown, this error is likely due to your host's Steam account not owning the base game.${NC}"
                 echo -e "\t${YELLOW}(Please contact your administrator/host if this issue persists)${NC}\n"
                 exit 1
             elif [[ -n $(grep -i "0x202\|0x212" "${STEAMCMD_LOG}") ]]; then # Not enough disk space
-                echo -e "\n${RED}[UPDATE]: Unable to complete download - Not enough storage"
+                echo -e "\n${RED:-}[UPDATE]: Unable to complete download - Not enough storage"
                 echo -e "\t${YELLOW}You have run out of your allotted disk space.${NC}"
                 echo -e "\t${YELLOW}Please contact your administrator/host for potential storage upgrades.${NC}\n"
                 exit 1
             elif [[ -n $(grep -i "0x606" "${STEAMCMD_LOG}") ]]; then # Disk write failure
-                echo -e "\n${RED}[UPDATE]: Unable to complete download - Disk write failure"
+                echo -e "\n${RED:-}[UPDATE]: Unable to complete download - Disk write failure"
                 echo -e "\t${YELLOW}This is normally caused by directory permissions issues,"
                 echo -e "\t${YELLOW}but could be a more serious hardware issue.${NC}"
                 echo -e "\t${YELLOW}(Please contact your administrator/host if this issue persists)${NC}\n"
@@ -184,7 +184,7 @@ export INTERNAL_IP
 cd /home/container || exit 1
 
 # Check for old eggs
-if [[ -z ${VALIDATE_SERVER} ]]; then # VALIDATE_SERVER was not in the previous version
+if [[ -z ${VALIDATE_SERVER:-} ]]; then # VALIDATE_SERVER was not in the previous version
     echo -e "\n${RED}[STARTUP_ERR]: Please contact your administrator/host for support, and give them the following message:${NC}\n"
     echo -e "\t${CYAN}Your Arma 3 Egg is outdated and no longer supported.${NC}"
     echo -e "\t${CYAN}Please download the latest version at the following link, and install it in your panel:${NC}"
@@ -200,11 +200,11 @@ else
 fi
 if [[ -f ${MOD_FILE} ]] && [[ -n "$(cat ${MOD_FILE} | grep 'Created by Arma 3 Launcher')" ]]; then # If the mod list file exists and is valid, parse and add mods to the client-side mods list
     CLIENT_MODS+=$(cat ${MOD_FILE} | grep 'id=' | cut -d'=' -f3 | cut -d'"' -f1 | xargs printf '@%s;')
-elif [[ -n "${MOD_FILE}" ]]; then # If MOD_FILE is not null, warn user file is missing or invalid
+elif [[ -n "${MOD_FILE:-}" ]]; then # If MOD_FILE is not null, warn user file is missing or invalid
     echo -e "\n${YELLOW}[STARTUP_WARN]: Arma 3 Modlist file \"${CYAN}${MOD_FILE}${YELLOW}\" could not be found, or is invalid!${NC}"
     echo -e "\tEnsure your uploaded modlist's file name matches your Startup Parameter."
     echo -e "\tOnly files exported from an Arma 3 Launcher are permitted."
-    if [[ -n "${CLIENT_MODS}" ]]; then
+    if [[ -n "${CLIENT_MODS:-}" ]]; then
         echo -e "\t${CYAN}Reverting to the manual mod list...${NC}"
     fi
 fi
@@ -224,14 +224,14 @@ allMods=$(RemoveDuplicates ${allMods}) # Remove duplicate mods from allMods, if 
 allMods=$(echo $allMods | sed -e 's/;/ /g') # Convert from string to array
 
 # Update everything (server and mods), if specified
-if [[ ${UPDATE_SERVER} == 1 ]]; then
+if [[ ${UPDATE_SERVER:-} == 1 ]]; then
     echo -e "\n${GREEN}[STARTUP]: ${CYAN}Starting checks for all updates...${NC}"
     echo -e "(It is okay to ignore any \"SDL\", \"steamservice\", and \"thread priority\" errors during this process)\n"
 
     ## Update game server
     echo -e "${GREEN}[UPDATE]:${NC} Checking for game server updates with App ID: ${CYAN}${STEAMCMD_APPID}${NC}..."
 
-    if [[ ${VALIDATE_SERVER} == 1 ]]; then # Validate will be added as a parameter if specified
+    if [[ ${VALIDATE_SERVER:-} == 1 ]]; then # Validate will be added as a parameter if specified
         echo -e "\t${CYAN}File validation enabled.${NC} (This may take extra time to complete)"
         validateServer="validate"
     else
@@ -239,10 +239,10 @@ if [[ ${UPDATE_SERVER} == 1 ]]; then
     fi
 
     # Determine what extra flags should be set
-    if [[ -n ${STEAMCMD_EXTRA_FLAGS} ]]; then
+    if [[ -n ${STEAMCMD_EXTRA_FLAGS:-} ]]; then
         echo -e "\t(${YELLOW}Advanced${NC}) Extra SteamCMD flags specified: ${CYAN}${STEAMCMD_EXTRA_FLAGS}${NC}\n"
         extraFlags=${STEAMCMD_EXTRA_FLAGS}
-    elif [[ ${CDLC} == 1 ]]; then
+    elif [[ ${CDLC:-} == 1 ]]; then
         echo -e "\t${CYAN}Download/Update Creator DLC server files enabled.${NC}\n"
         extraFlags="-beta creatordlc"
     else
@@ -253,7 +253,7 @@ if [[ ${UPDATE_SERVER} == 1 ]]; then
     RunSteamCMD 0 ${STEAMCMD_APPID}
 
     ## Update mods
-    if [[ -n $allMods ]] && [[ ${DISABLE_MOD_UPDATES} != 1 ]]; then
+    if [[ -n $allMods ]] && [[ ${DISABLE_MOD_UPDATES:-} != 1 ]]; then
         echo -e "\n${GREEN}[UPDATE]:${NC} Checking all ${CYAN}Steam Workshop mods${NC} for updates..."
         for modID in $(echo $allMods | sed -e 's/@//g')
         do
@@ -303,7 +303,7 @@ if [[ ${UPDATE_SERVER} == 1 ]]; then
             keyFileName=$(basename ${keyFile})
 
             # If the key file is using the optional mod file name
-            if [[ "${keyFileName}" == "optional_"* ]]; then
+            if [[ "${keyFileName:-}" == "optional_"* ]]; then
                 modID=$(echo "${keyFileName}" | cut -d _ -f 2)
 
                 # If mod is not in optional mods, delete it
@@ -329,7 +329,7 @@ if [[ ${UPDATE_SERVER} == 1 ]]; then
 fi
 
 # Check if specified server binary exists.
-if [[ ! -f ./${SERVER_BINARY} ]]; then
+if [[ ! -f ./${SERVER_BINARY:-} ]]; then
     echo -e "\n${RED}[STARTUP_ERR]: Specified Arma 3 server binary could not be found in the root directory!${NC}"
     echo -e "${YELLOW}Please do the following to resolve this issue:${NC}"
     echo -e "\t${CYAN}- Double check your \"Server Binary\" Startup Variable is correct.${NC}"
@@ -339,7 +339,7 @@ if [[ ! -f ./${SERVER_BINARY} ]]; then
 fi
 
 # Make mods lowercase, if specified
-if [[ ${MODS_LOWERCASE} == "1" ]]; then
+if [[ ${MODS_LOWERCASE:-} == "1" ]]; then
     for modDir in $allMods
     do
         ModsLowercase $modDir
@@ -347,7 +347,7 @@ if [[ ${MODS_LOWERCASE} == "1" ]]; then
 fi
 
 # Clear HC cache, if specified
-if [[ ${CLEAR_CACHE} == "1" ]]; then
+if [[ ${CLEAR_CACHE:-} == "1" ]]; then
     echo -e "\n${GREEN}[STARTUP]: ${CYAN}Clearing Headless Client profiles cache...${NC}"
     for profileDir in ./serverprofile/home/*
     do
@@ -368,7 +368,7 @@ export USER_ID=$(id -u)
 export GROUP_ID=$(id -g)
 envsubst < /passwd.template > ${NSS_WRAPPER_PASSWD}
 
-if [[ ${SERVER_BINARY} == *"x64"* ]]; then # Check which libnss-wrapper architecture to run, based off the server binary name
+if [[ ${SERVER_BINARY:-} == *"x64"* ]]; then # Check which libnss-wrapper architecture to run, based off the server binary name
     export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnss_wrapper.so
 else
     export LD_PRELOAD=/usr/lib/i386-linux-gnu/libnss_wrapper.so
@@ -378,11 +378,11 @@ fi
 modifiedStartup=`eval echo $(echo ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')`
 
 # Start Headless Clients if applicable
-if [[ ${HC_NUM} > 0 ]]; then
+if [[ ${HC_NUM:-} > 0 ]]; then
     echo -e "\n${GREEN}[STARTUP]:${NC} Starting ${CYAN}${HC_NUM}${NC} Headless Client(s)."
     for i in $(seq ${HC_NUM})
     do
-        if [[ ${HC_HIDE} == "1" ]];
+        if [[ ${HC_HIDE:-} == "1" ]];
         then
             ./${SERVER_BINARY} -client -connect=127.0.0.1 -port=${SERVER_PORT} -password="${SERVER_PASSWORD}" -profiles=./serverprofile -bepath=./battleye -mod="${CLIENT_MODS}" ${STARTUP_PARAMS} > /dev/null 2>&1 &
         else

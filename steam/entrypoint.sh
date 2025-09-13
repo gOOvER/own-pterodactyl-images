@@ -111,7 +111,7 @@ cd /home/container || { msg RED "Cannot cd to /home/container"; exit 1; }
 # ----------------------------
 # Steam user check
 # ----------------------------
-if [ -z "${STEAM_USER}" ]; then
+if [ -z "${STEAM_USER:-}" ]; then
     line BLUE
     msg YELLOW "Steam user is not set."
     msg YELLOW "Using anonymous user."
@@ -206,7 +206,7 @@ else
             fi
             sc_args+=( +quit )
 
-            ./steamcmd/steamcmd.sh "${sc_args[@]}" || printf "${RED}SteamCMD failed!${NC}\n"
+            ./steamcmd/steamcmd.sh "${sc_args[@]}" || printf "${RED:-}SteamCMD faile${NC:-}C}\n"
     fi
 fi
 
@@ -223,4 +223,6 @@ msg CYAN ":/home/container$ $MODIFIED_STARTUP"
 
 # Use exec to replace shell with the startup command. Quote carefully.
 exec bash -lc "$MODIFIED_STARTUP"
+
+
 

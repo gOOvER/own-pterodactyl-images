@@ -38,7 +38,7 @@ fi
 
 # Set environment for Steam Proton
 if [ -f "/usr/local/bin/proton" ]; then
-    if [ ! -z ${STEAM_APPID} ]; then
+    if [ ! -z ${STEAM_APPID:-} ]; then
 	    mkdir -p /home/container/.steam/steam/steamapps/compatdata/${STEAM_APPID}
         export STEAM_COMPAT_CLIENT_INSTALL_PATH="/home/container/.steam/steam"
         export STEAM_COMPAT_DATA_PATH="/home/container/.steam/steam/steamapps/compatdata/${STEAM_APPID}"
@@ -66,7 +66,7 @@ echo -e "${GREEN}Starting Server.... Please wait...${NC}"
 echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
 ## just in case someone removed the defaults.
-if [ "${STEAM_USER}" == "" ]; then
+if [ "${STEAM_USER:-}" == "" ]; then
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
     echo -e "${YELLOW}Steam user is not set. ${NC}"
     echo -e "${YELLOW}Using anonymous user.${NC}"
@@ -83,8 +83,8 @@ fi
 ## if auto_update is not set or to 1 update
 if [ -z ${AUTO_UPDATE} ] || [ "${AUTO_UPDATE}" == "1" ]; then
     # Update Source Server
-    if [ ! -z ${STEAM_APPID} ]; then
-	    if [ "${STEAM_USER}" == "anonymous" ]; then
+    if [ ! -z ${STEAM_APPID:-} ]; then
+	    if [ "${STEAM_USER:-}" == "anonymous" ]; then
             ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +app_update ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ -z ${HLDS_GAME} ]] || printf %s "+app_set_config 90 mod ${HLDS_GAME}" ) $( [[ -z ${VALIDATE} ]] || printf %s "validate" ) +quit
 	    else
             numactl --physcpubind=+0 ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +app_update ${STEAM_APPID} $( [[ -z ${STEAM_BETAID} ]] || printf %s "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS} ]] || printf %s "-betapassword ${STEAM_BETAPASS}" ) $( [[ -z ${HLDS_GAME} ]] || printf %s "+app_set_config 90 mod ${HLDS_GAME}" ) $( [[ -z ${VALIDATE} ]] || printf %s "validate" ) +quit

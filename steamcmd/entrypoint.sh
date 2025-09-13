@@ -148,7 +148,7 @@ else
         sc_args+=( validate )
     fi
     sc_args+=( +quit )
-    ./steamcmd/steamcmd.sh "${sc_args[@]}" || printf "${RED}SteamCMD failed!${NC}\n"
+    ./steamcmd/steamcmd.sh "${sc_args[@]}" || printf "${RED:-}SteamCMD faile${NC:-}C}\n"
 fi
 
 
@@ -160,3 +160,4 @@ msg CYAN ":/home/container$ $MODIFIED_STARTUP"
 
 # exec bash -c für komplexe Shell-Kommandos
 exec bash -c "$MODIFIED_STARTUP"
+
