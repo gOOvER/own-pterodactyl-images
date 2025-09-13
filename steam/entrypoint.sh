@@ -296,18 +296,36 @@ is_valid_steam_dir() {
     # - steamapps (basic steamapps layout)
     # - compatibilitytools.d (for Proton compatibility tools)
     local dir="$1"
+    # Check for Steam runtime folder 'ubuntu12_32' in a few common locations
+    RUNTIME_FOUND=0
+    if [ -d "$dir/ubuntu12_32" ] || [ -d "$dir/.steam/root/ubuntu12_32" ] || [ -d "$HOME/.steam/root/ubuntu12_32" ]; then
+        RUNTIME_FOUND=1
+    fi
+
     if [ -f "$dir/steam.sh" ] || [ -x "$dir/steam" ]; then
-        msg GREEN "Detected Steam dir: $dir (found steam.sh/steam binary)"
-        return 0
+        if [ "$RUNTIME_FOUND" -eq 1 ]; then
+            msg GREEN "Detected Steam dir: $dir (found steam.sh/steam binary and runtime)"
+            return 0
+        else
+            msg YELLOW "Found steam.sh/steam binary in $dir but runtime folder 'ubuntu12_32' not found; continuing checks"
+        fi
     fi
     # Accept both 'steamapps' and 'SteamApps' directories and different casings
     if [ -f "$dir/steamapps/libraryfolders.vdf" ] || [ -f "$dir/SteamApps/libraryfolders.vdf" ] || [ -f "$dir/steamapps/LibraryFolders.vdf" ] || [ -f "$dir/SteamApps/LibraryFolders.vdf" ]; then
-        msg GREEN "Detected Steam dir: $dir (found libraryfolders.vdf/LibraryFolders.vdf)"
-        return 0
+        if [ "$RUNTIME_FOUND" -eq 1 ]; then
+            msg GREEN "Detected Steam dir: $dir (found libraryfolders.vdf/LibraryFolders.vdf and runtime)"
+            return 0
+        else
+            msg YELLOW "Found libraryfolders.vdf in $dir but runtime folder 'ubuntu12_32' not found; continuing checks"
+        fi
     fi
     if [ -d "$dir/steamapps" ] || [ -d "$dir/SteamApps" ]; then
-        msg GREEN "Detected Steam dir: $dir (contains steamapps/ or SteamApps/)"
-        return 0
+        if [ "$RUNTIME_FOUND" -eq 1 ]; then
+            msg GREEN "Detected Steam dir: $dir (contains steamapps/ or SteamApps/ and runtime)"
+            return 0
+        else
+            msg YELLOW "Found steamapps/ in $dir but runtime folder 'ubuntu12_32' not found; continuing checks"
+        fi
     fi
     if [ -d "$dir/compatibilitytools.d" ]; then
         msg GREEN "Detected Steam dir: $dir (contains compatibilitytools.d/)"
