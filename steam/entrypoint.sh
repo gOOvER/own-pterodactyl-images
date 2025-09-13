@@ -395,11 +395,41 @@ if [ -n "${PROTONTRICKS_RUN:-}" ]; then
             if command -v protontricks >/dev/null 2>&1; then
                 # Use eval-like array splitting: run protontricks $PROTONTRICKS_OPTS <APPID> <ACTIONS>
                 # We rely on the shell to split $trick into separate args if it contains multiple actions.
+                # Temporarily unset common test environment variables so
+                # ProtonFixes inside protontricks does not mistakenly detect
+                # a unit-test environment and skip fixes.
+                test_env_vars=(PYTEST_CURRENT_TEST PYTEST_RUNNING UNITTEST TESTING TEST CI GITHUB_ACTIONS)
+                for tev in "${test_env_vars[@]}"; do
+                    if [ -n "${!tev:-}" ]; then
+                        # Save into SAVED_<VAR>
+                        printf -v "SAVED_%s" "$tev" "${!tev}"
+                        unset "$tev"
+                    fi
+                done
+
+                # Ensure the WINEPREFIX exists (non-destructive)
+                mkdir -p "${WINEPREFIX%/pfx}" 2>/dev/null || true
+                mkdir -p "$WINEPREFIX" 2>/dev/null || true
+
+                # Run protontricks with an explicit WINEPREFIX to avoid ambiguity.
+                # We use env to prefix the command so it's visible in logs and debugging.
                 if [ -n "${PROTONTRICKS_OPTS:-}" ]; then
-                    protontricks $PROTONTRICKS_OPTS "$STEAM_APPID" $trick || msg RED "Protontricks installation for $trick failed!"
+                    msg YELLOW "Running: WINEPREFIX=${WINEPREFIX} protontricks ${PROTONTRICKS_OPTS} ${STEAM_APPID} ${trick}"
+                    env WINEPREFIX="$WINEPREFIX" protontricks $PROTONTRICKS_OPTS "$STEAM_APPID" $trick || msg RED "Protontricks installation for $trick failed!"
                 else
-                    protontricks "$STEAM_APPID" $trick || msg RED "Protontricks installation for $trick failed!"
+                    msg YELLOW "Running: WINEPREFIX=${WINEPREFIX} protontricks ${STEAM_APPID} ${trick}"
+                    env WINEPREFIX="$WINEPREFIX" protontricks "$STEAM_APPID" $trick || msg RED "Protontricks installation for $trick failed!"
                 fi
+
+                # Restore saved test env vars
+                for tev in "${test_env_vars[@]}"; do
+                    SVNAME="SAVED_$tev"
+                    if [ -n "${!SVNAME:-}" ]; then
+                        # declare -x sets and exports the variable named by $tev
+                        declare -x "$tev"="${!SVNAME}"
+                        unset "$SVNAME"
+                    fi
+                done
             else
                 msg RED "protontricks not found in PATH; cannot install $trick"
                 break
