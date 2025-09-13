@@ -64,7 +64,39 @@ trap 'rc=$?; echo "$(date "+%Y-%m-%d %H:%M:%S") - Unexpected error (exit $rc) at
 # ----------------------------
 LINUX=$(. /etc/os-release; echo "$PRETTY_NAME")
 TIMEZONE=$(if [ -f /etc/timezone ]; then cat /etc/timezone; else readlink /etc/localtime | sed 's|.*/zoneinfo/||'; fi)
-PROTON_VER=$(cat /usr/local/bin/version 2>/dev/null || echo "Unknown")
+
+# Robust Proton version detection. We try several locations in order:
+# 1) /opt/ProtonGE/version
+# 2) /usr/local/share/steam/compatibilitytools.d/ProtonGE/version
+# 3) run `proton --version` if a wrapper/binary exists
+# 4) fallback: inspect extracted folder names like GE-Proton* under /opt or compatibilitytools.d
+PROTON_VER="Unknown"
+if [ -f /opt/ProtonGE/version ]; then
+    PROTON_VER=$(cat /opt/ProtonGE/version 2>/dev/null || echo "Unknown")
+fi
+if [ "$PROTON_VER" = "Unknown" ] && [ -f /usr/local/share/steam/compatibilitytools.d/ProtonGE/version ]; then
+    PROTON_VER=$(cat /usr/local/share/steam/compatibilitytools.d/ProtonGE/version 2>/dev/null || echo "Unknown")
+fi
+if [ "$PROTON_VER" = "Unknown" ] && command -v proton >/dev/null 2>&1; then
+    # Some proton wrappers accept --version; capture first non-empty line
+    PROTON_VER=$(proton --version 2>/dev/null | head -n1 || true)
+    # normalize empty to Unknown
+    if [ -z "${PROTON_VER:-}" ]; then
+        PROTON_VER="Unknown"
+    fi
+fi
+if [ "$PROTON_VER" = "Unknown" ]; then
+    # Try to infer from folder names under /opt or compatibilitytools.d
+    DIRNAME=$(find /opt -maxdepth 1 -type d -name 'GE-Proton*' -printf '%f\n' 2>/dev/null | head -n1 || true)
+    if [ -n "$DIRNAME" ]; then
+        PROTON_VER="$DIRNAME"
+    else
+        DIRNAME=$(find /usr/local/share/steam/compatibilitytools.d -maxdepth 1 -type d -name 'GE-Proton*' -printf '%f\n' 2>/dev/null | head -n1 || true)
+        if [ -n "$DIRNAME" ]; then
+            PROTON_VER="$DIRNAME"
+        fi
+    fi
+fi
 
 # ----------------------------
 # Banner
@@ -294,6 +326,31 @@ if [ -n "${PROTONTRICKS_RUN:-}" ]; then
         # Example: PROTONTRICKS_OPTS="--no-gui --another-flag"
         if ! is_valid_steam_dir "$STEAM_DIR"; then
             msg RED "STEAM_DIR='$STEAM_DIR' does not look like a valid Steam installation; skipping protontricks installations"
+            # If STEAM_DIR is our managed local directory, try to create minimal
+            # Steam marker files non-destructively so tools like protontricks
+            # can detect it as a Steam layout. Only run for the local fallback
+            # (/home/container/steam) to avoid touching real system steam installs.
+            if [ "$STEAM_DIR" = "/home/container/steam" ]; then
+                msg YELLOW "Attempting to create minimal Steam markers under $STEAM_DIR to satisfy protontricks detection"
+                mkdir -p "$STEAM_DIR/steamapps"
+                # Create an empty libraryfolders.vdf if missing
+                if [ ! -f "$STEAM_DIR/steamapps/libraryfolders.vdf" ]; then
+                    printf '"libraryfolders"{\n}\n' > "$STEAM_DIR/steamapps/libraryfolders.vdf" || true
+                    msg GREEN "Wrote minimal $STEAM_DIR/steamapps/libraryfolders.vdf"
+                fi
+                # Create a stub steam.sh launcher if missing
+                if [ ! -f "$STEAM_DIR/steam.sh" ]; then
+                    printf '#!/bin/sh\necho "Steam stub"\n' > "$STEAM_DIR/steam.sh" || true
+                    chmod +x "$STEAM_DIR/steam.sh" || true
+                    msg GREEN "Wrote minimal $STEAM_DIR/steam.sh"
+                fi
+                # Create a minimal appmanifest for the AppID so steamapps exists
+                APP_MANIFEST="$STEAM_DIR/steamapps/appmanifest_${STEAM_APPID}.acf"
+                if [ ! -f "$APP_MANIFEST" ]; then
+                    printf '"AppState"\n{\n    "appid" "%s"\n}\n' "$STEAM_APPID" > "$APP_MANIFEST" || true
+                    msg GREEN "Wrote minimal $APP_MANIFEST"
+                fi
+            fi
             # Provide diagnostics to help debug why the path was considered invalid
             line BLUE
             msg YELLOW "Diagnostics: listing candidate Steam locations (appended to $ERROR_LOG)"
