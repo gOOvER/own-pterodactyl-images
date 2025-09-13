@@ -297,16 +297,20 @@ is_valid_steam_dir() {
     # - compatibilitytools.d (for Proton compatibility tools)
     local dir="$1"
     if [ -f "$dir/steam.sh" ] || [ -x "$dir/steam" ]; then
+        msg GREEN "Detected Steam dir: $dir (found steam.sh/steam binary)"
         return 0
     fi
     # Accept both 'steamapps' and 'SteamApps' directories and different casings
     if [ -f "$dir/steamapps/libraryfolders.vdf" ] || [ -f "$dir/SteamApps/libraryfolders.vdf" ] || [ -f "$dir/steamapps/LibraryFolders.vdf" ] || [ -f "$dir/SteamApps/LibraryFolders.vdf" ]; then
+        msg GREEN "Detected Steam dir: $dir (found libraryfolders.vdf/LibraryFolders.vdf)"
         return 0
     fi
     if [ -d "$dir/steamapps" ] || [ -d "$dir/SteamApps" ]; then
+        msg GREEN "Detected Steam dir: $dir (contains steamapps/ or SteamApps/)"
         return 0
     fi
     if [ -d "$dir/compatibilitytools.d" ]; then
+        msg GREEN "Detected Steam dir: $dir (contains compatibilitytools.d/)"
         return 0
     fi
     return 1
