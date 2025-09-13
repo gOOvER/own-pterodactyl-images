@@ -94,11 +94,18 @@ fi
 HOME=${HOME:-/home/container}
 
 if [ -n "${STEAM_APPID:-}" ]; then
-    mkdir -p /home/container/.steam/steam/steamapps/compatdata/${STEAM_APPID}
-    export STEAM_COMPAT_CLIENT_INSTALL_PATH="/home/container/.steam/steam"
-    export STEAM_COMPAT_DATA_PATH="/home/container/.steam/steam/steamapps/compatdata/${STEAM_APPID}"
+    # Ensure all Steam/Proton directories live under /home/container/steam
+    # Create canonical steam directory and compatdata path
+    mkdir -p /home/container/steam/steamapps/compatdata/${STEAM_APPID}
+    mkdir -p /home/container/steam/compatibilitytools.d
+
+    # ProtonGE is available system-wide; no per-user copy is required
+
+    # Set STEAM_DIR and compat paths to the local /home/container/steam layout
+    export STEAM_DIR="/home/container/steam"
+    export STEAM_COMPAT_CLIENT_INSTALL_PATH="$STEAM_DIR"
+    export STEAM_COMPAT_DATA_PATH="$STEAM_DIR/steamapps/compatdata/${STEAM_APPID}"
     export WINETRICKS="/usr/sbin/winetricks"
-    export STEAM_DIR="/home/container/.steam/steam/"
 else
     line BLUE
     msg RED "WARNING!!! Proton needs variable STEAM_APPID, else it will not work. Please add it."
