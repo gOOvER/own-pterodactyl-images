@@ -115,6 +115,33 @@ if [ -n "${STEAM_APPID:-}" ]; then
     export STEAM_COMPAT_CLIENT_INSTALL_PATH="$STEAM_DIR"
     export STEAM_COMPAT_DATA_PATH="$STEAM_COMPAT_CLIENT_INSTALL_PATH/steamapps/compatdata/${STEAM_APPID}"
     export WINETRICKS="/usr/sbin/winetricks"
+
+    # If ProtonGE is installed system-wide under /opt/ProtonGE, create a
+    # non-destructive symlink into the per-container compatibilitytools.d
+    # so tools like protontricks can find it without duplicating content.
+    if [ -d "/opt/ProtonGE" ]; then
+        TARGET_DIR="$STEAM_COMPAT_CLIENT_INSTALL_PATH/compatibilitytools.d"
+        TARGET_LINK="$TARGET_DIR/ProtonGE"
+        if [ ! -e "$TARGET_LINK" ]; then
+            mkdir -p "$TARGET_DIR"
+            if ln -s /opt/ProtonGE "$TARGET_LINK" 2>/dev/null; then
+                msg GREEN "Created symlink: $TARGET_LINK -> /opt/ProtonGE"
+            else
+                msg RED "Failed to create symlink $TARGET_LINK -> /opt/ProtonGE"
+            fi
+        else
+            if [ -L "$TARGET_LINK" ]; then
+                # If it's already a symlink, check whether it points to the same source.
+                EXIST_SRC=$(readlink -f "$TARGET_LINK" || true)
+                if [ "$EXIST_SRC" != "/opt/ProtonGE" ]; then
+                    msg YELLOW "Existing symlink $TARGET_LINK points to $EXIST_SRC; not modifying."
+                fi
+            else
+                # Target exists and is not a symlink (file/dir) — do not overwrite.
+                msg YELLOW "Target $TARGET_LINK already exists and is not a symlink; skipping symlink creation to avoid data loss."
+            fi
+        fi
+    fi
 else
     line BLUE
     msg RED "WARNING!!! Proton needs variable STEAM_APPID, else it will not work. Please add it."
