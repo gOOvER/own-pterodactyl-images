@@ -101,10 +101,19 @@ if [ -n "${STEAM_APPID:-}" ]; then
 
     # ProtonGE is available system-wide; no per-user copy is required
 
-    # Set STEAM_DIR and compat paths to the local /home/container/steam layout
-    export STEAM_DIR="/home/container/steam"
+    # Determine a valid STEAM_DIR. Prefer system-installed Steam, then the
+    # user's ~/.steam/steam, then the local /home/container/steam layout.
+    if [ -d "/usr/local/share/steam" ] && [ -d "/usr/local/share/steam/steamapps" ]; then
+        export STEAM_DIR="/usr/local/share/steam"
+    elif [ -d "/home/container/.steam/steam" ] && [ -d "/home/container/.steam/steam/steamapps" ]; then
+        export STEAM_DIR="/home/container/.steam/steam"
+    else
+        # Fall back to the local /home/container/steam directory we created.
+        export STEAM_DIR="/home/container/steam"
+    fi
+
     export STEAM_COMPAT_CLIENT_INSTALL_PATH="$STEAM_DIR"
-    export STEAM_COMPAT_DATA_PATH="$STEAM_DIR/steamapps/compatdata/${STEAM_APPID}"
+    export STEAM_COMPAT_DATA_PATH="$STEAM_COMPAT_CLIENT_INSTALL_PATH/steamapps/compatdata/${STEAM_APPID}"
     export WINETRICKS="/usr/sbin/winetricks"
 else
     line BLUE
@@ -228,12 +237,22 @@ fi
 # ----------------------------
 # Use PROTONTRICKS_RUN to install packages via `protontricks` if provided.
 # Example: PROTONTRICKS_RUN="vcrun2015 corefonts" (space-separated list)
+is_valid_steam_dir() {
+    # Consider a Steam dir valid if it contains steamapps or compatibilitytools.d
+    [ -d "$1/steamapps" ] || [ -d "$1/compatibilitytools.d" ]
+}
+
 if [ -n "${PROTONTRICKS_RUN:-}" ]; then
     if [ -z "${STEAM_APPID:-}" ]; then
         msg RED "PROTONTRICKS_RUN is set but STEAM_APPID is empty; skipping protontricks installations"
     else
         # PROTONTRICKS_OPTS can contain options that must be placed before <APPID>
         # Example: PROTONTRICKS_OPTS="--no-gui --another-flag"
+        if ! is_valid_steam_dir "$STEAM_DIR"; then
+            msg RED "STEAM_DIR='$STEAM_DIR' does not look like a valid Steam installation; skipping protontricks installations"
+            # skip the protontricks block entirely
+            PROTONTRICKS_RUN=""
+        fi
         for trick in $PROTONTRICKS_RUN; do
             line BLUE
             msg YELLOW "Installing for AppID ${GREEN}$STEAM_APPID${NC}: ${GREEN}$trick"
