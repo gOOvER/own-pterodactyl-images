@@ -217,6 +217,37 @@ else
 fi
 
 # ----------------------------
+# Protontricks package installation
+# ----------------------------
+# Use PROTONTRICKS_RUN to install packages via `protontricks` if provided.
+# Example: PROTONTRICKS_RUN="vcrun2015 corefonts" (space-separated list)
+if [ -n "${PROTONTRICKS_RUN:-}" ]; then
+    if [ -z "${STEAM_APPID:-}" ]; then
+        msg RED "PROTONTRICKS_RUN is set but STEAM_APPID is empty; skipping protontricks installations"
+    else
+        # PROTONTRICKS_OPTS can contain options that must be placed before <APPID>
+        # Example: PROTONTRICKS_OPTS="--no-gui --another-flag"
+        for trick in $PROTONTRICKS_RUN; do
+            line BLUE
+            msg YELLOW "Installing for AppID ${GREEN}$STEAM_APPID${NC}: ${GREEN}$trick"
+            line BLUE
+            if command -v protontricks >/dev/null 2>&1; then
+                # Use eval-like array splitting: run protontricks $PROTONTRICKS_OPTS <APPID> <ACTIONS>
+                # We rely on the shell to split $trick into separate args if it contains multiple actions.
+                if [ -n "${PROTONTRICKS_OPTS:-}" ]; then
+                    protontricks $PROTONTRICKS_OPTS "$STEAM_APPID" $trick || msg RED "Protontricks installation for $trick failed!"
+                else
+                    protontricks "$STEAM_APPID" $trick || msg RED "Protontricks installation for $trick failed!"
+                fi
+            else
+                msg RED "protontricks not found in PATH; cannot install $trick"
+                break
+            fi
+        done
+    fi
+fi
+
+# ----------------------------
 # Startup command
 # ----------------------------
 if [ -z "${STARTUP:-}" ]; then

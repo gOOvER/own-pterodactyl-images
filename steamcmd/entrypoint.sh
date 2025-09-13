@@ -155,25 +155,6 @@ fi
 # ----------------------------
 # Startup command
 # ----------------------------
-# ----------------------------
-# Protontricks package installation
-# ----------------------------
-# Use PROTONTRICKS_RUN to install packages via `protontricks` if provided.
-# Example: PROTONTRICKS_RUN="vcrun2015 corefonts" (space-separated list)
-if [ -n "${PROTONTRICKS_RUN:-}" ]; then
-    for trick in $PROTONTRICKS_RUN; do
-        line BLUE
-        msg YELLOW "Installing: ${GREEN}$trick"
-        line BLUE
-        if command -v protontricks >/dev/null 2>&1; then
-            # Try to run protontricks; allow it to fail but log the error
-            protontricks "$trick" || msg RED "Protontricks installation for $trick failed!"
-        else
-            msg RED "protontricks not found in PATH; cannot install $trick"
-            break
-        fi
-    done
-fi
 
 MODIFIED_STARTUP=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')
 msg CYAN ":/home/container$ $MODIFIED_STARTUP"
