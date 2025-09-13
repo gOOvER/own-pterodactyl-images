@@ -42,7 +42,6 @@ RUN dpkg --add-architecture i386 && \
 	steam \
     tar \
     tini \
-
     wget \
     winbind \
     xauth \
