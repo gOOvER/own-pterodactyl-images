@@ -36,7 +36,6 @@ RUN         apt install -y --no-install-recommends  \
                 net-tools \
                 netcat-openbsd \
                 openssl \
-				protontricks \
                 pulseaudio \
                 python3 \
                 python3-pip \
@@ -60,15 +59,15 @@ RUN         apt install -y --no-install-recommends  \
                 libsdl1.2debian:i386 \
                 libsdl2-2.0-0 \
                 libsdl2-2.0-0:i386 \
-                libssl3 \
-                libssl3:i386 \
-                libgdiplus \
+                openssl \
+                pulseaudio \
+                python3 \
                 libncurses5-dev:i386 \
                 libncurses6 \
                 libntlm0 \
 				libnss-wrapper \
                 libnss3 \
-                libpulse-dev \
+                	steam \
                 libpulse0 \
                 libgstreamer1.0-dev \
                 libgstreamer-plugins-base1.0-dev \

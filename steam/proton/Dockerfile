@@ -73,15 +73,7 @@ RUN dpkg --add-architecture i386 && \
     gstreamer1.0-alsa \
     gstreamer1.0-gl \
     gstreamer1.0-pulseaudio && \
-    # Install pipx and protontricks into an isolated virtualenv to avoid
-    # PEP 668 "system site packages" warnings when pip detects a distro-managed
-    # Python. We install into /opt/pytools and expose the tool entrypoints via
-    # symlinks into /usr/local/bin.
-    python3 -m venv /opt/pytools && \
-    /opt/pytools/bin/python -m pip install --no-cache-dir --upgrade pip setuptools wheel && \
-    /opt/pytools/bin/python -m pip install --no-cache-dir pipx protontricks && \
-    ln -s /opt/pytools/bin/pipx /usr/local/bin/pipx || true && \
-    ln -s /opt/pytools/bin/protontricks /usr/local/bin/protontricks || true && \
+       # (protontricks removed) no pipx/protontricks installation in this image
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/*
 
 # Download and install Proton-GE latest release into /opt and register with Steam

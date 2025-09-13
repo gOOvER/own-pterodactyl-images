@@ -119,12 +119,10 @@ RUN wget -q -O /usr/local/bin/winetricks https://raw.githubusercontent.com/Winet
         https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks.bash-completion
 
 # -----------------------------
-# Pipx + Protontricks installation (global)
+# Pipx installation (kept minimal)
 # -----------------------------
 RUN python3 -m pip install --break-system-packages pipx \
-    && python3 -m pipx ensurepath \
-    && python3 -m pipx install protontricks \
-    && ln -sf $(python3 -m pipx which protontricks) /usr/local/bin/protontricks
+    && python3 -m pip cache purge || true
 
 # -----------------------------
 # RCON CLI installation (latest, dynamisch)

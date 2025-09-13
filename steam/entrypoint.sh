@@ -284,11 +284,6 @@ else
     fi
 fi
 
-# ----------------------------
-# Protontricks package installation
-# ----------------------------
-# Use PROTONTRICKS_RUN to install packages via `protontricks` if provided.
-# Example: PROTONTRICKS_RUN="vcrun2015 corefonts" (space-separated list)
 is_valid_steam_dir() {
     # Consider a Steam dir valid if it contains any strong Steam markers:
     # - steam.sh or steam (client binary)
@@ -335,106 +330,12 @@ is_valid_steam_dir() {
 }
 
 if [ -n "${PROTONTRICKS_RUN:-}" ]; then
-    if [ -z "${STEAM_APPID:-}" ]; then
-        msg RED "PROTONTRICKS_RUN is set but STEAM_APPID is empty; skipping protontricks installations"
-    else
-        # PROTONTRICKS_OPTS can contain options that must be placed before <APPID>
-        # Example: PROTONTRICKS_OPTS="--no-gui --another-flag"
-        if ! is_valid_steam_dir "$STEAM_DIR"; then
-            msg RED "STEAM_DIR='$STEAM_DIR' does not look like a valid Steam installation; skipping protontricks installations"
-            # If STEAM_DIR is our managed local directory, try to create minimal
-            # Steam marker files non-destructively so tools like protontricks
-            # can detect it as a Steam layout. Only run for the local fallback
-            # (/home/container/steam) to avoid touching real system steam installs.
-            if [ "$STEAM_DIR" = "/home/container/steam" ]; then
-                msg YELLOW "Attempting to create minimal Steam markers under $STEAM_DIR to satisfy protontricks detection"
-                mkdir -p "$STEAM_DIR/steamapps"
-                # Create an empty libraryfolders.vdf if missing
-                if [ ! -f "$STEAM_DIR/steamapps/libraryfolders.vdf" ]; then
-                    printf '"libraryfolders"{\n}\n' > "$STEAM_DIR/steamapps/libraryfolders.vdf" || true
-                    msg GREEN "Wrote minimal $STEAM_DIR/steamapps/libraryfolders.vdf"
-                fi
-                # Create a stub steam.sh launcher if missing
-                if [ ! -f "$STEAM_DIR/steam.sh" ]; then
-                    printf '#!/bin/sh\necho "Steam stub"\n' > "$STEAM_DIR/steam.sh" || true
-                    chmod +x "$STEAM_DIR/steam.sh" || true
-                    msg GREEN "Wrote minimal $STEAM_DIR/steam.sh"
-                fi
-                # Create a minimal appmanifest for the AppID so steamapps exists
-                APP_MANIFEST="$STEAM_DIR/steamapps/appmanifest_${STEAM_APPID}.acf"
-                if [ ! -f "$APP_MANIFEST" ]; then
-                    printf '"AppState"\n{\n    "appid" "%s"\n}\n' "$STEAM_APPID" > "$APP_MANIFEST" || true
-                    msg GREEN "Wrote minimal $APP_MANIFEST"
-                fi
-            fi
-            # Provide diagnostics to help debug why the path was considered invalid
-            line BLUE
-            msg YELLOW "Diagnostics: listing candidate Steam locations (appended to $ERROR_LOG)"
-            line BLUE
-            # List the provided STEAM_DIR
-            msg YELLOW "Contents of $STEAM_DIR :"
-            ls -la "$STEAM_DIR" 2>/dev/null | tee -a "$ERROR_LOG" || true
-            # Also show the canonical local path we manage
-            msg YELLOW "Contents of /home/container/steam :"
-            ls -la /home/container/steam 2>/dev/null | tee -a "$ERROR_LOG" || true
-            # Show system-installed Steam path if present
-            msg YELLOW "Contents of /usr/local/share/steam :"
-            ls -la /usr/local/share/steam 2>/dev/null | tee -a "$ERROR_LOG" || true
-            # Show ProtonGE system location
-            msg YELLOW "Contents of /opt/ProtonGE :"
-            ls -la /opt/ProtonGE 2>/dev/null | tee -a "$ERROR_LOG" || true
-
-            # skip the protontricks block entirely
-            PROTONTRICKS_RUN=""
-        fi
-        for trick in $PROTONTRICKS_RUN; do
-            line BLUE
-            msg YELLOW "Installing for AppID ${GREEN}$STEAM_APPID${NC}: ${GREEN}$trick"
-            line BLUE
-            if command -v protontricks >/dev/null 2>&1; then
-                # Use eval-like array splitting: run protontricks $PROTONTRICKS_OPTS <APPID> <ACTIONS>
-                # We rely on the shell to split $trick into separate args if it contains multiple actions.
-                # Temporarily unset common test environment variables so
-                # ProtonFixes inside protontricks does not mistakenly detect
-                # a unit-test environment and skip fixes.
-                test_env_vars=(PYTEST_CURRENT_TEST PYTEST_RUNNING UNITTEST TESTING TEST CI GITHUB_ACTIONS)
-                for tev in "${test_env_vars[@]}"; do
-                    if [ -n "${!tev:-}" ]; then
-                        # Save into SAVED_<VAR>
-                        printf -v "SAVED_%s" "$tev" "${!tev}"
-                        unset "$tev"
-                    fi
-                done
-
-                # Ensure the WINEPREFIX exists (non-destructive)
-                mkdir -p "${WINEPREFIX%/pfx}" 2>/dev/null || true
-                mkdir -p "$WINEPREFIX" 2>/dev/null || true
-
-                # Run protontricks with an explicit WINEPREFIX to avoid ambiguity.
-                # We use env to prefix the command so it's visible in logs and debugging.
-                if [ -n "${PROTONTRICKS_OPTS:-}" ]; then
-                    msg YELLOW "Running: WINEPREFIX=${WINEPREFIX} protontricks ${PROTONTRICKS_OPTS} ${STEAM_APPID} ${trick}"
-                    env WINEPREFIX="$WINEPREFIX" protontricks $PROTONTRICKS_OPTS "$STEAM_APPID" $trick || msg RED "Protontricks installation for $trick failed!"
-                else
-                    msg YELLOW "Running: WINEPREFIX=${WINEPREFIX} protontricks ${STEAM_APPID} ${trick}"
-                    env WINEPREFIX="$WINEPREFIX" protontricks "$STEAM_APPID" $trick || msg RED "Protontricks installation for $trick failed!"
-                fi
-
-                # Restore saved test env vars
-                for tev in "${test_env_vars[@]}"; do
-                    SVNAME="SAVED_$tev"
-                    if [ -n "${!SVNAME:-}" ]; then
-                        # declare -x sets and exports the variable named by $tev
-                        declare -x "$tev"="${!SVNAME}"
-                        unset "$SVNAME"
-                    fi
-                done
-            else
-                msg RED "protontricks not found in PATH; cannot install $trick"
-                break
-            fi
-        done
-    fi
+    # protontricks support has been removed from this image. The build no longer
+    # installs or exposes protontricks. If you need to run winetricks-like
+    # actions, run them manually on your host or in a different image that
+    # includes protontricks. We intentionally do not attempt any automatic
+    # installations here to avoid surprising changes to user prefixes.
+    msg YELLOW "PROTONTRICKS_RUN is set but protontricks support has been removed from this image; skipping."
 fi
 
 # ----------------------------
@@ -450,6 +351,3 @@ msg CYAN ":/home/container$ $MODIFIED_STARTUP"
 
 # Use exec to replace shell with the startup command. Quote carefully.
 exec bash -lc "$MODIFIED_STARTUP"
-
-
-
