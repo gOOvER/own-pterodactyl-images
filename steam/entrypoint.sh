@@ -8,7 +8,7 @@ ERROR_LOG="install_error.log"
 set -e
 
 ERROR_LOG="install_error.log"
-: > "$ERROR_LOG"  # Alte Logdatei leeren (no-op)
+: > "$ERROR_LOG"  # Clear old log file (no-op)
 
 # ----------------------------
 # Colors via tput
@@ -26,7 +26,7 @@ NC=$(tput sgr0)
 msg() {
     local color="$1"
     shift
-    # Wenn ROT, zusätzlich in install_error.log schreiben
+    # If RED, also write the message to install_error.log
     if [ "$color" = "RED" ]; then
         printf "%b\n" "${RED}$*${NC}" | tee -a "$ERROR_LOG" >&2
     else
@@ -133,15 +133,16 @@ if [ -n "${STEAM_APPID:-}" ]; then
 
     # ProtonGE is available system-wide; no per-user copy is required
 
-    # Determine a valid STEAM_DIR. Prefer system-installed Steam, then the
-    # user's ~/.steam/steam, then the local /home/container/steam layout.
-    if [ -d "/usr/local/share/steam" ] && [ -d "/usr/local/share/steam/steamapps" ]; then
+    # Determine STEAM_DIR by checking common locations (prefer user-local paths)
+    if [ -d "$HOME/.steam/steam/steamapps" ]; then
+        export STEAM_DIR="$HOME/.steam/steam"
+    elif [ -d "$HOME/.local/share/Steam/steamapps" ]; then
+        export STEAM_DIR="$HOME/.local/share/Steam"
+    elif [ -d "/usr/local/share/steam/steamapps" ]; then
         export STEAM_DIR="/usr/local/share/steam"
-    elif [ -d "/home/container/.steam/steam" ] && [ -d "/home/container/.steam/steam/steamapps" ]; then
-        export STEAM_DIR="/home/container/.steam/steam"
     else
-        # Fall back to the local /home/container/steam directory we created.
-        export STEAM_DIR="/home/container/steam"
+    msg RED "No valid Steam directory found! Please check your installation."
+    exit 1
     fi
 
     export STEAM_COMPAT_CLIENT_INSTALL_PATH="$STEAM_DIR"

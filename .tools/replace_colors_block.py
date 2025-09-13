@@ -31,7 +31,7 @@ CANONICAL_BLOCK = (
     "msg() {\n"
     "    local color=\"$1\"\n"
     "    shift\n"
-    "    # Wenn ROT, zusätzlich in install_error.log schreiben\n"
+    "    # If RED, also write the message to install_error.log\n"
     "    if [ \"$color\" = \"RED\" ]; then\n"
     "        printf \"%b\\n\" \"${RED}$*${NC}\" | tee -a \"$ERROR_LOG\" >&2\n"
     "    else\n"

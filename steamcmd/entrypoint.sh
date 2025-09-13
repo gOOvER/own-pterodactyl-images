@@ -2,7 +2,7 @@
 set -e
 
 ERROR_LOG="install_error.log"
-: > "$ERROR_LOG"  # Alte Logdatei leeren (no-op)
+: > "$ERROR_LOG"  # Clear old log file (no-op)
 
 # ----------------------------
 # Colors via tput
@@ -20,7 +20,7 @@ NC=$(tput sgr0)
 msg() {
     local color="$1"
     shift
-    # Wenn ROT, zusätzlich in install_error.log schreiben
+    # If RED, also write the message to install_error.log
     if [ "$color" = "RED" ]; then
         printf "%b\n" "${RED}$*${NC}" | tee -a "$ERROR_LOG" >&2
     else
