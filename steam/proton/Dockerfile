@@ -39,7 +39,7 @@ RUN dpkg --add-architecture i386 && \
     pulseaudio \
     python3-full \
     python3-venv \
-	steam \
+	steam-devices \
     tar \
     tini \
     wget \
@@ -88,17 +88,34 @@ RUN dpkg --add-architecture i386 && \
 RUN set -eux; cd /tmp; \
     # Determine Proton-GE latest tarball URL. Use a robust extraction that does
     # not rely on cut with multi-character delimiter (which fails on some shells).
-    PROTON_JSON=$(curl -sSf https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest || true); \
+    PROTON_JSON=""; \
+    # Fetch release JSON: prefer curl, fallback to wget; if neither is present, install curl
+    if command -v curl >/dev/null 2>&1; then \
+        PROTON_JSON=$(curl -sSf https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest || true); \
+    elif command -v wget >/dev/null 2>&1; then \
+        PROTON_JSON=$(wget -qO- https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest || true); \
+    else \
+        apt-get update || true; apt-get install -y --no-install-recommends curl || true; \
+        PROTON_JSON=$(curl -sSf https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest || true); \
+    fi; \
     PROTON_URL=""; \
     if command -v jq >/dev/null 2>&1; then \
         PROTON_URL=$(printf '%s' "$PROTON_JSON" | jq -r '.assets[].browser_download_url' 2>/dev/null | grep '\.tar\.gz$' | head -n1 || true); \
     else \
         # Fallback to grep + sed: find the first browser_download_url value
         PROTON_URL=$(printf '%s' "$PROTON_JSON" | grep 'browser_download_url' || true); \
-        PROTON_URL=$(printf '%s' "$PROTON_URL" | sed -n 's/.*"browser_download_url": "\([^"]*\.tar\.gz\)".*/\1/p' | head -n1 || true); \
+        PROTON_URL=$(printf '%s' "$PROTON_URL" | sed -n 's/.*"browser_download_url": "\([^\"]*\.tar\.gz\)".*/\1/p' | head -n1 || true); \
     fi; \
     if [ -z "$PROTON_URL" ]; then echo "Could not determine Proton-GE URL" >&2; echo "Response snippet:"; printf '%s\n' "${PROTON_JSON:0:400}" >&2; exit 1; fi; \
-    curl -sSL "$PROTON_URL" -o proton-ge.tar.gz; \
+    # Download Proton-GE tarball using available downloader (curl preferred)
+    if command -v curl >/dev/null 2>&1; then \
+        curl -sSL "$PROTON_URL" -o proton-ge.tar.gz; \
+    elif command -v wget >/dev/null 2>&1; then \
+        wget -qO proton-ge.tar.gz "$PROTON_URL"; \
+    else \
+        apt-get update || true; apt-get install -y --no-install-recommends curl || true; \
+        curl -sSL "$PROTON_URL" -o proton-ge.tar.gz; \
+    fi; \
     if [ ! -s proton-ge.tar.gz ]; then echo "Downloaded Proton-GE archive is empty" >&2; ls -l proton-ge.tar.gz || true; exit 1; fi; \
     mkdir -p /opt; tar -xzf proton-ge.tar.gz -C /opt; \
     # find extracted folder (GE-Proton*), normalize to /opt/ProtonGE
