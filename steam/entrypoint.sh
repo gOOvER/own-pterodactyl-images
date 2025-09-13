@@ -46,7 +46,7 @@ line() {
 # ----------------------------
 # Error trap for uncaught errors
 # ----------------------------
-trap 'echo "$(date +%Y-%m-%d %H:%M:%S) - Unexpected error at line $LINENO" | tee -a "$ERROR_LOG" >&2' ERR
+trap 'echo "$(date "+%Y-%m-%d %H:%M:%S") - Unexpected error at line $LINENO" | tee -a "$ERROR_LOG" >&2' ERR
 
 # ----------------------------
 # System Info
