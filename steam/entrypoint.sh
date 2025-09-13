@@ -148,6 +148,22 @@ if [ -n "${STEAM_APPID:-}" ]; then
     export STEAM_COMPAT_DATA_PATH="$STEAM_COMPAT_CLIENT_INSTALL_PATH/steamapps/compatdata/${STEAM_APPID}"
     export WINETRICKS="/usr/sbin/winetricks"
 
+    # Set WINEPREFIX to the per-App compatibilityprefix (non-destructive).
+    # Prefer the per-user Steam path under $HOME if it exists, otherwise fall
+    # back to the STEAM_COMPAT_DATA_PATH we manage.
+    if [ -z "${WINEPREFIX:-}" ]; then
+        if [ -d "${HOME}/.steam/steam" ]; then
+            WINEPREFIX="${HOME}/.steam/steam/steamapps/compatdata/${STEAM_APPID}/pfx"
+        else
+            WINEPREFIX="$STEAM_COMPAT_DATA_PATH/pfx"
+        fi
+        # Ensure the directory exists (non-destructive)
+        mkdir -p "${WINEPREFIX%/pfx}" 2>/dev/null || true
+        mkdir -p "$WINEPREFIX" 2>/dev/null || true
+        export WINEPREFIX
+        msg GREEN "WINEPREFIX set to $WINEPREFIX"
+    fi
+
     # If ProtonGE is installed system-wide under /opt/ProtonGE, create a
     # non-destructive symlink into the per-container compatibilitytools.d
     # so tools like protontricks can find it without duplicating content.
