@@ -34,7 +34,7 @@ line() {
     term_width=$(tput cols 2>/dev/null || echo 70)
     local sep
     sep=$(printf '%*s' "$term_width" '' | tr ' ' '-')
-    
+
     case "$color" in
         RED) COLOR="$RED";;
         GREEN) COLOR="$GREEN";;
@@ -264,7 +264,9 @@ else
         sc_args+=( validate )
     fi
     sc_args+=( +quit )
-    ./steamcmd/steamcmd.sh "${sc_args[@]}" || ${RED:-} "${RED}SteamC${NC:-}iled!${NC}\n"
+    if ! ./steamcmd/steamcmd.sh "${sc_args[@]}"; then
+        msg RED "SteamCMD failed!"
+    fi
 fi
 
 # ----------------------------
