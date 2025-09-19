@@ -199,16 +199,19 @@ done
 # ----------------------------
 # SteamCMD / DepotDownloader Update
 # ----------------------------
+if [ -z "${STEAM_APPID:-}" ] && [ -n "${SRCDS_APPID:-}" ]; then
+    STEAM_APPID="$SRCDS_APPID"
+fi
 if [ -f ./DepotDownloader ]; then
-    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-    printf "${YELLOW}Using DepotDownloader for updates${NC}\n"
-    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    line BLUE
+    msg YELLOW "Using DepotDownloader for updates"
+    line BLUE
 
     : "${STEAM_USER:=anonymous}"  # Default anonymous user
     : "${STEAM_PASS:=}"
     : "${STEAM_AUTH:=}"
 
-    printf "${YELLOW}Steam user: ${GREEN}%s${NC}\n" "$STEAM_USER"
+    msg YELLOW "Steam user: ${GREEN}$STEAM_USER${NC}"
 
     dd_args=( -dir . -username "$STEAM_USER" -password "$STEAM_PASS" -remember-password )
     if [ "${WINDOWS_INSTALL:-0}" = "1" ]; then
@@ -232,15 +235,15 @@ if [ -f ./DepotDownloader ]; then
 
     chmod +x "$HOME"/*
 else
-    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-    printf "${YELLOW}Using SteamCMD for updates${NC}\n"
-    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    line BLUE
+    msg YELLOW "Using SteamCMD for updates"
+    line BLUE
 
     : "${STEAM_USER:=anonymous}"  # Default anonymous user
     : "${STEAM_PASS:=}"
     : "${STEAM_AUTH:=}"
 
-    printf "${YELLOW}Steam user: ${GREEN}%s${NC}\n" "$STEAM_USER"
+    msg YELLOW "Steam user: ${GREEN}$STEAM_USER${NC}"
 
     sc_args=( +force_install_dir /home/container +login "$STEAM_USER" "$STEAM_PASS" "$STEAM_AUTH" )
     if [ "${WINDOWS_INSTALL:-0}" = "1" ]; then
