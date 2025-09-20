@@ -53,25 +53,39 @@ else
     echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 fi
 
-## if auto_update is not set or to 1 update
-if [ -${AUTO_UPDATE:-}E} ] ||${AUTO_UPDATE:-}ATE}" == "1" ]; then
-    # Update Source Server
-    if [${STEAM_APPID:-}APPID} ]; then
-	  ${STEAM_USER:-}AM_USER}" == "anonymous" ]; then
-            ./steamcmd/steamcmd.sh +force_install_dir /home/contain${STEAM_USER:-${STEAM_PASS:-${STEAM_AUTH:-} ${STE${WINDOWS_INSTALL:-}WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType ${STEAM_SDK:-}( [[ "${STEAM_SDK}" == "1" ]] && printf %s '+app_update ${STEAM_APPID:-}pdate ${${STEAM_BETAID:-} [[ -z ${STEAM_BETAID}${STEAM_BETAID:-}s "-beta ${${STEAM_BETAPASS:-}$( [[ -z ${STEAM_BETAPASS} ]] ${STEAM_BETAPASS:-}tapassword ${HLDS_GAME:-}PASS}" ) $( [[ -z ${HLDS_GAME} ]] || pr${HLDS_GAME:-}p_set_confi${VALIDATE:-}HLDS_GAME}" ) $( [[ -z ${VALIDATE} ]] || printf %s "validate" ) +quit
-	    else
-            numactl --physcpubind=+0 ./steamcmd/steamcmd.sh +force${STEAM_USER:-${STEAM_PASS:-${STEAM_AUTH:-}{STEAM${WINDOWS_INSTALL:-}S} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteam${STEAM_APPID:-}rmType w${STEAM_BETAID:-}update ${STEAM_APPID} ${STEAM_BETAID:-}M_BETAID} ]${STEAM_BETAPASS:-}beta ${STEAM_BETAID}" ) $( [[ ${STEAM_BETAPASS:-}SS} ]] || p${HLDS_GAME:-}etapassword ${STEAM_BETAPASS}" ) $( [[ ${HLDS_GAME:-}ME} ]] || p${VALIDATE:-}app_set_config 90 mod ${HLDS_GAME}" ) $( [[ -z ${VALIDATE} ]] || pri${BLUE:-}"validate" ) +quit
-	    fi
-    else
-        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-        echo -e "${YELLOW}No appid set. Starting Server${NC}"
-        echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-    fi
+printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    printf "${YELLOW}Using SteamCMD for updates${NC}\n"
+    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
 
-else
-    echo -e "${BLUE}---------------------------------------------------------------${NC}"
-    echo -e "${YELLOW}Not updating game server as auto update was set to 0. Starting Server${NC}"
-    echo -e "${BLUE}---------------------------------------------------------------${NC}"
+    : "${STEAM_USER:=anonymous}"  # Default anonymous user
+    : "${STEAM_PASS:=}"
+    : "${STEAM_AUTH:=}"
+
+    printf "${YELLOW}Steam user: ${GREEN}%s${NC}\n" "$STEAM_USER"
+
+    sc_args=( +force_install_dir /home/container +login "$STEAM_USER" "$STEAM_PASS" "$STEAM_AUTH" )
+    if [ "${WINDOWS_INSTALL:-0}" = "1" ]; then
+        sc_args+=( +@sSteamCmdForcePlatformType windows )
+    fi
+    if [ "${STEAM_SDK:-0}" = "1" ]; then
+        sc_args+=( +app_update 1007 )
+    fi
+    sc_args+=( +app_update "$STEAM_APPID" )
+    if [ -n "${STEAM_BETAID:-}" ]; then
+        sc_args+=( -beta "$STEAM_BETAID" )
+    fi
+    if [ -n "${STEAM_BETAPASS:-}" ]; then
+        sc_args+=( -betapassword "$STEAM_BETAPASS" )
+    fi
+    if [ -n "${INSTALL_FLAGS:-}" ]; then
+        IFS=' ' read -r -a extra_flags <<<"$INSTALL_FLAGS"
+        sc_args+=( "${extra_flags[@]}" )
+    fi
+    if [ "${VALIDATE:-0}" = "1" ]; then
+        sc_args+=( validate )
+    fi
+    sc_args+=( +quit )
+    ./steamcmd/steamcmd.sh "${sc_args[@]}" || printf "${RED:-}SteamCMD faile${NC:-}C}\n"
 fi
 
 # Replace Startup Variables
