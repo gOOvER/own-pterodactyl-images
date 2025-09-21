@@ -88,7 +88,9 @@ RUN         apt install -y \
                 libxi6 \
                 libxrandr2 \
                 libxss1 \
-                libxtst6
+                libxtst6 \
+        && apt-get clean \
+        && rm -rf /var/lib/apt/lists/*
 
 ## install dotnet to support STEAM dotnet games
 RUN curl -sSL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh && \
