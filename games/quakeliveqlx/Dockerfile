@@ -1,4 +1,4 @@
-FROM        --platform=$BUILDPLATFORM python:3.9-slim-bookworm
+FROM        --platform=$BUILDPLATFORM python:3.9-slim-trixie
 
 LABEL       org.opencontainers.image.authors="Torsten Widmann - gOOvER - info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
@@ -30,7 +30,6 @@ RUN         apt install -y \
                 mesa-utils \
                 net-tools \
                 netcat-openbsd \
-                numactl \
                 psmisc \
                 sed \
                 software-properties-common \
@@ -93,11 +92,26 @@ RUN         apt install -y \
                 libxss1 \
                 libxtst6
 
-## install rcon
-RUN         cd /tmp/ \
-            && curl -sSL https://github.com/gorcon/rcon-cli/releases/download/v0.10.3/rcon-0.10.3-amd64_linux.tar.gz > rcon.tar.gz \
-            && tar xvf rcon.tar.gz \
-            && mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/
+## install dotnet to support STEAM dotnet games
+RUN         set -euo pipefail \
+            && curl -sSL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh \
+            && chmod +x /tmp/dotnet-install.sh \
+            && /tmp/dotnet-install.sh -i /usr/share \
+            && ln -s /usr/share/dotnet /usr/bin/dotnet \
+            && rm -f /tmp/dotnet-install.sh
+
+## install rcon (download latest release from GitHub)
+RUN         set -euo pipefail && cd /tmp/ \
+            && TAG=$(curl -sSL https://api.github.com/repos/gorcon/rcon-cli/releases/latest | jq -r '.tag_name // empty') \
+            && if [ -z "$TAG" ]; then echo "Failed to get rcon latest tag" >&2; exit 1; fi \
+            && V=${TAG#v} \
+            && URL="https://github.com/gorcon/rcon-cli/releases/download/${TAG}/rcon-${V}-amd64_linux.tar.gz" \
+            && echo "Downloading rcon from ${URL}" \
+            && curl --fail -L "$URL" -o rcon.tar.gz \
+            && tar xzf rcon.tar.gz \
+            && mv rcon-${V}-amd64_linux/rcon /usr/local/bin/ \
+            && chmod +x /usr/local/bin/rcon \
+            && rm -rf /tmp/*
 
 ##python deps
 RUN         wget https://github.com/MinoMino/minqlx-plugins/raw/master/requirements.txt

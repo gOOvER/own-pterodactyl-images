@@ -24,15 +24,12 @@ jobs:
         game:
           - aloft
           - aloft-proton
-          #- foundry
           - interstellarrift
           - mtsa
           - quakeliveqlx
-          - rust
           - screeps
           - staxel
           - thefront
-          - valheim
           - wurm
 
     steps:
