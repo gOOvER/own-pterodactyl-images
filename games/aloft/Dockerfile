@@ -26,6 +26,7 @@ RUN             apt install -y --no-install-recommends \
 					gnutls-bin \
                     icu-devtools \
                     iproute2 \
+					jq \
                     locales \
                     net-tools \
                     netcat-openbsd \
