@@ -7,11 +7,11 @@ LABEL       org.opencontainers.image.description="Docker image for Pelican Hosti
 
 # Update the repository and install needed packages
 ARG         DEBIAN_FRONTEND=noninteractive
-RUN         set -euo pipefail \
-        && dpkg --add-architecture i386 \
-        && apt-get update \
-        && apt-get -y upgrade \
-        && apt-get install -y --no-install-recommends \
+RUN         bash -lc 'set -euo pipefail; \
+    dpkg --add-architecture i386; \
+    apt-get update; \
+    apt-get -y upgrade; \
+    apt-get install -y --no-install-recommends' \
             ca-certificates \
             curl \
             dbus \
@@ -95,31 +95,30 @@ RUN         set -euo pipefail \
         && rm -rf /var/lib/apt/lists/*
 
 ## install rcon (download latest release from GitHub)
-RUN         set -euo pipefail && cd /tmp/ \
-            && TAG=$(curl -sSL https://api.github.com/repos/gorcon/rcon-cli/releases/latest | jq -r '.tag_name // empty') \
-            && if [ -z "$TAG" ]; then echo "Failed to get rcon latest tag" >&2; exit 1; fi \
-            && V=${TAG#v} \
-            && URL="https://github.com/gorcon/rcon-cli/releases/download/${TAG}/rcon-${V}-amd64_linux.tar.gz" \
-            && echo "Downloading rcon from ${URL}" \
-            && curl --fail -L "$URL" -o rcon.tar.gz \
-            && tar xzf rcon.tar.gz \
-            && mv rcon-${V}-amd64_linux/rcon /usr/local/bin/ \
-            && chmod +x /usr/local/bin/rcon \
-            && rm -rf /tmp/*
+RUN         bash -lc 'set -euo pipefail; cd /tmp/; \
+            TAG=$(curl -sSL https://api.github.com/repos/gorcon/rcon-cli/releases/latest | jq -r ".tag_name // empty"); \
+            if [ -z "$TAG" ]; then echo "Failed to get rcon latest tag" >&2; exit 1; fi; \
+            V=${TAG#v}; \
+            URL="https://github.com/gorcon/rcon-cli/releases/download/${TAG}/rcon-${V}-amd64_linux.tar.gz"; \
+            echo "Downloading rcon from ${URL}"; \
+            curl --fail -L "$URL" -o rcon.tar.gz; \
+            tar xzf rcon.tar.gz; \
+            mv rcon-${V}-amd64_linux/rcon /usr/local/bin/; \
+            chmod +x /usr/local/bin/rcon; \
+            rm -rf /tmp/*'
 
 ## install mono official repo and packages
-RUN set -euo pipefail \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends dirmngr ca-certificates gnupg \
-    && mkdir -p /usr/share/keyrings \
-    && gpg --homedir /tmp --no-default-keyring --keyring /tmp/mono-temp-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF \
-    && gpg --homedir /tmp --no-default-keyring --keyring /tmp/mono-temp-keyring.gpg --export --output /usr/share/keyrings/mono-official-archive-keyring.gpg \
-    && chmod +r /usr/share/keyrings/mono-official-archive-keyring.gpg \
-    && echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/debian stable-buster main" > /etc/apt/sources.list.d/mono-official-stable.list \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends mono-complete \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/*
+RUN bash -lc 'set -euo pipefail; \
+    apt-get update && apt-get install -y --no-install-recommends dirmngr ca-certificates gnupg; \
+    mkdir -p /usr/share/keyrings; \
+    gpg --homedir /tmp --no-default-keyring --keyring /tmp/mono-temp-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF; \
+    gpg --homedir /tmp --no-default-keyring --keyring /tmp/mono-temp-keyring.gpg --export --output /usr/share/keyrings/mono-official-archive-keyring.gpg; \
+    chmod +r /usr/share/keyrings/mono-official-archive-keyring.gpg; \
+    echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/debian stable-buster main" > /etc/apt/sources.list.d/mono-official-stable.list; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends mono-complete; \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/* /tmp/*'
 
 # Set the locale
 RUN        	sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \

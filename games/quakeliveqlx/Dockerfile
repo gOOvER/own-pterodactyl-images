@@ -32,7 +32,6 @@ RUN         apt install -y \
                 netcat-openbsd \
                 psmisc \
                 sed \
-                software-properties-common \
                 speex:i386 \
                 tar \
                 telnet \
@@ -60,7 +59,6 @@ RUN         apt install -y \
                 libfontconfig \
                 libgcc-s1 \
                 libgcc1 \
-                libgconf-2-4 \
                 libgdiplus \
                 libgtk2.0-0:i386 \
                 libjemalloc2 \
@@ -93,25 +91,25 @@ RUN         apt install -y \
                 libxtst6
 
 ## install dotnet to support STEAM dotnet games
-RUN         set -euo pipefail \
-            && curl -sSL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh \
-            && chmod +x /tmp/dotnet-install.sh \
-            && /tmp/dotnet-install.sh -i /usr/share \
-            && ln -s /usr/share/dotnet /usr/bin/dotnet \
-            && rm -f /tmp/dotnet-install.sh
+RUN         bash -lc 'set -euo pipefail; \
+            curl -sSL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh && \
+            chmod +x /tmp/dotnet-install.sh && \
+            /tmp/dotnet-install.sh -i /usr/share && \
+            ln -s /usr/share/dotnet /usr/bin/dotnet && \
+            rm -f /tmp/dotnet-install.sh'
 
 ## install rcon (download latest release from GitHub)
-RUN         set -euo pipefail && cd /tmp/ \
-            && TAG=$(curl -sSL https://api.github.com/repos/gorcon/rcon-cli/releases/latest | jq -r '.tag_name // empty') \
-            && if [ -z "$TAG" ]; then echo "Failed to get rcon latest tag" >&2; exit 1; fi \
-            && V=${TAG#v} \
-            && URL="https://github.com/gorcon/rcon-cli/releases/download/${TAG}/rcon-${V}-amd64_linux.tar.gz" \
-            && echo "Downloading rcon from ${URL}" \
-            && curl --fail -L "$URL" -o rcon.tar.gz \
-            && tar xzf rcon.tar.gz \
-            && mv rcon-${V}-amd64_linux/rcon /usr/local/bin/ \
-            && chmod +x /usr/local/bin/rcon \
-            && rm -rf /tmp/*
+RUN         bash -lc 'set -euo pipefail; cd /tmp/; \
+            TAG=$(curl -sSL https://api.github.com/repos/gorcon/rcon-cli/releases/latest | jq -r ".tag_name // empty"); \
+            if [ -z "$TAG" ]; then echo "Failed to get rcon latest tag" >&2; exit 1; fi; \
+            V=${TAG#v}; \
+            URL="https://github.com/gorcon/rcon-cli/releases/download/${TAG}/rcon-${V}-amd64_linux.tar.gz"; \
+            echo "Downloading rcon from ${URL}"; \
+            curl --fail -L "$URL" -o rcon.tar.gz; \
+            tar xzf rcon.tar.gz; \
+            mv rcon-${V}-amd64_linux/rcon /usr/local/bin/; \
+            chmod +x /usr/local/bin/rcon; \
+            rm -rf /tmp/*'
 
 ##python deps
 RUN         wget https://github.com/MinoMino/minqlx-plugins/raw/master/requirements.txt
@@ -120,9 +118,9 @@ RUN         pip install -r requirements.txt --break-system-packages
 # Set the locale
 RUN         sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
             locale-gen
-ENV         LANG en_US.UTF-8
-ENV         LANGUAGE en_US:en
-ENV         LC_ALL en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
 
 ## Setup user and working directory
 RUN         useradd -m -d /home/container -s /bin/bash container
