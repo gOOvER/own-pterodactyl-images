@@ -91,11 +91,12 @@ RUN         apt install -y \
                 libxtst6
 
 ## install dotnet to support STEAM dotnet games
-RUN         curl -sSL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh && \
-            chmod +x /tmp/dotnet-install.sh && \
-            /tmp/dotnet-install.sh -i /usr/share && \
-            ln -s /usr/share/dotnet /usr/bin/dotnet && \
-            rm -f /tmp/dotnet-install.sh'
+RUN curl -sSL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh && \
+    chmod +x /tmp/dotnet-install.sh && \
+    /tmp/dotnet-install.sh -i /usr/share && \
+    ln -s /usr/share/dotnet /usr/bin/dotnet && \
+    rm -f /tmp/dotnet-install.sh
+
 
 ## install rcon (download latest release from GitHub)
 RUN         cd /tmp/; \
