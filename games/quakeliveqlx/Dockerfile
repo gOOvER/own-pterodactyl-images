@@ -109,7 +109,7 @@ RUN         cd /tmp/; \
             tar xzf rcon.tar.gz; \
             mv rcon-${V}-amd64_linux/rcon /usr/local/bin/; \
             chmod +x /usr/local/bin/rcon; \
-            rm -rf /tmp/*'
+            rm -rf /tmp/*
 
 ##python deps
 RUN         wget https://github.com/MinoMino/minqlx-plugins/raw/master/requirements.txt

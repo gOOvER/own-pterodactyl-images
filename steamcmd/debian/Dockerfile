@@ -112,7 +112,7 @@ RUN         cd /tmp/; \
             tar xzf rcon.tar.gz; \
             mv rcon-${V}-amd64_linux/rcon /usr/local/bin/; \
             chmod +x /usr/local/bin/rcon; \
-            rm -rf /tmp/*'
+            rm -rf /tmp/*
 
 # Set the locale
 RUN        	sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
