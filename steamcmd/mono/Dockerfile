@@ -94,9 +94,15 @@ RUN         bash -lc 'set -euo pipefail; \
         && apt-get clean \
         && rm -rf /var/lib/apt/lists/*
 
+## install dotnet to support STEAM dotnet games
+RUN         curl -sSL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh && \
+            chmod +x /tmp/dotnet-install.sh && \
+            /tmp/dotnet-install.sh -i /usr/share && \
+            ln -s /usr/share/dotnet /usr/bin/dotnet && \
+            rm -f /tmp/dotnet-install.sh'
+
 ## install rcon (download latest release from GitHub)
-RUN         bash -lc 'set -euo pipefail; cd /tmp/; \
-            command -v curl >/dev/null 2>&1 || (apt-get update && apt-get install -y --no-install-recommends curl); \
+RUN         cd /tmp/; \
             TAG=$(curl -sSL https://api.github.com/repos/gorcon/rcon-cli/releases/latest | jq -r ".tag_name // empty"); \
             if [ -z "$TAG" ]; then echo "Failed to get rcon latest tag" >&2; exit 1; fi; \
             V=${TAG#v}; \
@@ -109,8 +115,7 @@ RUN         bash -lc 'set -euo pipefail; cd /tmp/; \
             rm -rf /tmp/*'
 
 ## install mono official repo and packages
-RUN bash -lc 'set -euo pipefail; \
-    apt-get update && apt-get install -y --no-install-recommends dirmngr ca-certificates gnupg; \
+RUN apt-get update && apt-get install -y --no-install-recommends dirmngr ca-certificates gnupg; \
     mkdir -p /usr/share/keyrings; \
     gpg --homedir /tmp --no-default-keyring --keyring /tmp/mono-temp-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF; \
     gpg --homedir /tmp --no-default-keyring --keyring /tmp/mono-temp-keyring.gpg --export --output /usr/share/keyrings/mono-official-archive-keyring.gpg; \
