@@ -6,11 +6,11 @@ LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
 LABEL       org.opencontainers.image.description="Docker image for Pelican Hosting Panel and Pterodactyl"
 
 # Update the repository and install needed packages
-ARG         DEBIAN_FRONTEND=noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
 RUN dpkg --add-architecture i386; \
     apt-get update; \
     apt-get -y upgrade; \
-    apt-get install -y --no-install-recommends' \
+    apt-get install -y --no-install-recommends \
             ca-certificates \
             curl \
             dbus \
