@@ -63,6 +63,8 @@ RUN dpkg --add-architecture i386; \
             libgcc1 \
             libgdiplus \
             libgtk2.0-0:i386 \
+			libicu76 \
+			libicu-dev \
             libjemalloc2 \
             libjemalloc2:i386 \
             libnss-wrapper \
