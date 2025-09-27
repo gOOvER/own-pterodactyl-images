@@ -56,19 +56,17 @@ trap 'echo "$(date +%Y-%m-%d\ %H:%M:%S) - Unexpected error at line $LINENO" | te
 # ----------------------------
 LINUX=$(. /etc/os-release; echo "$PRETTY_NAME")
 TIMEZONE=$(if [ -f /etc/timezone ]; then cat /etc/timezone; else readlink /etc/localtime | sed 's|.*/zoneinfo/||'; fi)
-WINE_VER=$(wine --version 2>/dev/null || echo "Wine not found!")
 
 # ----------------------------
 # Banner
 # ----------------------------
 clear
 line BLUE
-msg YELLOW "Wine Image from gOOvER"
+msg YELLOW "SteamCMD Image from gOOvER"
 msg RED "THIS IMAGE IS LICENSED UNDER AGPLv3"
 line BLUE
 msg YELLOW "Docker Linux Distribution: ${RED}$LINUX"
 msg YELLOW "Current timezone: ${RED}$TIMEZONE"
-msg YELLOW "Wine Version: ${RED}$WINE_VER"
 line BLUE
 
 # ----------------------------
