@@ -35,15 +35,8 @@ line() {
     local sep
     sep=$(printf '%*s' "$term_width" '' | tr ' ' '-')
 
-    case "$color" in
-        RED) COLOR="$RED";;
-        GREEN) COLOR="$GREEN";;
-        YELLOW) COLOR="$YELLOW";;
-        BLUE) COLOR="$BLUE";;
-        CYAN) COLOR="$CYAN";;
-        *) COLOR="$NC";;
-    esac
-    printf "%b\n" "${COLOR}${sep}${NC}"
+    # Use msg helper to print the separator with the requested color
+    msg "$color" "$sep"
 }
 
 # ----------------------------
@@ -56,6 +49,8 @@ trap 'echo "$(date +%Y-%m-%d\ %H:%M:%S) - Unexpected error at line $LINENO" | te
 # ----------------------------
 LINUX=$(. /etc/os-release; echo "$PRETTY_NAME")
 TIMEZONE=$(if [ -f /etc/timezone ]; then cat /etc/timezone; else readlink /etc/localtime | sed 's|.*/zoneinfo/||'; fi)
+# Kernel information from the host (name, release, architecture). Fallback to uname -r or 'unknown'.
+KERNEL_INFO=$(uname -srm 2>/dev/null || uname -r 2>/dev/null || echo 'unknown')
 
 # ----------------------------
 # Banner
@@ -66,6 +61,7 @@ msg YELLOW "SteamCMD Image from gOOvER"
 msg RED "THIS IMAGE IS LICENSED UNDER AGPLv3"
 line BLUE
 msg YELLOW "Docker Linux Distribution: ${RED}$LINUX"
+msg YELLOW "Kernel: ${RED}$KERNEL_INFO"
 msg YELLOW "Current timezone: ${RED}$TIMEZONE"
 line BLUE
 
@@ -82,15 +78,15 @@ mkdir -p "$XDG_RUNTIME_DIR"
 # SteamCMD / DepotDownloader Update
 # ----------------------------
 if [ -f ./DepotDownloader ]; then
-    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-    printf "${YELLOW}Using DepotDownloader for updates${NC}\n"
-    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    line BLUE
+    msg YELLOW "Using DepotDownloader for updates"
+    line BLUE
 
     : "${STEAM_USER:=anonymous}"  # Default anonymous user
     : "${STEAM_PASS:=}"
     : "${STEAM_AUTH:=}"
 
-    printf "${YELLOW}Steam user: ${GREEN}%s${NC}\n" "$STEAM_USER"
+    msg YELLOW "Steam user: ${GREEN}$STEAM_USER"
 
     dd_args=( -dir . -username "$STEAM_USER" -password "$STEAM_PASS" -remember-password )
     if [ "${WINDOWS_INSTALL:-0}" = "1" ]; then
@@ -114,15 +110,15 @@ if [ -f ./DepotDownloader ]; then
 
     chmod +x "$HOME"/*
 else
-    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
-    printf "${YELLOW}Using SteamCMD for updates${NC}\n"
-    printf "${BLUE}---------------------------------------------------------------------${NC}\n"
+    line BLUE
+    msg YELLOW "Using SteamCMD for updates"
+    line BLUE
 
     : "${STEAM_USER:=anonymous}"  # Default anonymous user
     : "${STEAM_PASS:=}"
     : "${STEAM_AUTH:=}"
 
-    printf "${YELLOW}Steam user: ${GREEN}%s${NC}\n" "$STEAM_USER"
+    msg YELLOW "Steam user: ${GREEN}$STEAM_USER"
 
     sc_args=( +force_install_dir /home/container +login "$STEAM_USER" "$STEAM_PASS" "$STEAM_AUTH" )
     if [ "${WINDOWS_INSTALL:-0}" = "1" ]; then
@@ -146,7 +142,7 @@ else
         sc_args+=( validate )
     fi
     sc_args+=( +quit )
-    ./steamcmd/steamcmd.sh "${sc_args[@]}" || printf "${RED:-}SteamCMD faile${NC:-}C}\n"
+    ./steamcmd/steamcmd.sh "${sc_args[@]}" || msg RED "SteamCMD failed"
 fi
 
 
