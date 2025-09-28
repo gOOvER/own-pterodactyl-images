@@ -144,6 +144,13 @@ mkdir -p "$XDG_RUNTIME_DIR"
 export WINEPREFIX="${WINEPREFIX:-/home/container/.wine}"
 # Default to 64-bit Wine prefixes unless explicitly overridden
 export WINEARCH="${WINEARCH:-win64}"
+# Ensure X virtual framebuffer is always enabled for winetricks GUI needs
+export XVFB=1
+# Default DISPLAY and screen geometry
+export DISPLAY="${DISPLAY:-:0}"
+export DISPLAY_WIDTH="${DISPLAY_WIDTH:-1024}"
+export DISPLAY_HEIGHT="${DISPLAY_HEIGHT:-768}"
+export DISPLAY_DEPTH="${DISPLAY_DEPTH:-24}"
 
 # Rotate any existing large logs at startup to avoid immediate disk blowup
 rotate_log "$WINEPREFIX/dotnet_direct_install.log" 5242880 3 || true
@@ -154,7 +161,7 @@ rotate_log "$WINEPREFIX/install_error.log" 5242880 3 || true
 # ----------------------------
 # Required tools check
 # ----------------------------
-for tool in wget wine cabextract; do
+for tool in wget wine cabextract Xvfb xdpyinfo; do
     if ! command -v "$tool" &>/dev/null; then
         msg RED "Error: Required tool '$tool' is not installed."
         exit 1
@@ -164,11 +171,26 @@ done
 cd /home/container || { msg RED "Failed to change directory to /home/container."; exit 1; }
 
 # ----------------------------
-# Xvfb
+# Xvfb (always enabled)
 # ----------------------------
-if [[ $XVFB == 1 ]]; then
-    Xvfb :0 -screen 0 ${DISPLAY_WIDTH:-1024}x${DISPLAY_HEIGHT:-768}x${DISPLAY_DEPTH:-24} &
-    sleep 2
+mkdir -p "$WINEPREFIX/logs"
+XVFB_LOG="$WINEPREFIX/logs/xvfb.log"
+# If an X server is already available on $DISPLAY, don't start a new one
+if ! xdpyinfo -display "$DISPLAY" &>/dev/null; then
+    msg YELLOW "Starting Xvfb on $DISPLAY (${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_DEPTH})"
+    Xvfb "$DISPLAY" -screen 0 ${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x${DISPLAY_DEPTH} &> "$XVFB_LOG" &
+    XVFB_PID=$!
+    sleep 1
+    if ! kill -0 "$XVFB_PID" 2>/dev/null; then
+        msg RED "Xvfb failed to start; check $XVFB_LOG"
+        exit 1
+    fi
+    msg GREEN "Xvfb started (pid $XVFB_PID), log: $XVFB_LOG"
+    # Ensure Xvfb is killed on exit
+    trap 'if [ -n "${XVFB_PID:-}" ] && kill -0 "$XVFB_PID" 2>/dev/null; then kill "$XVFB_PID" || true; fi' EXIT
+    else
+        msg YELLOW "Display $DISPLAY already available; not starting Xvfb"
+    fi
 fi
 
 # ----------------------------
@@ -283,33 +305,19 @@ if [[ "$WINETRICKS_RUN" =~ mono ]]; then
 fi
 
 # ----------------------------
-# vcrun2022 64bit DLL extraction
+# vcrun2022 via winetricks
 # ----------------------------
 if [[ "$WINETRICKS_RUN" =~ vcrun2022 ]]; then
     line BLUE
-    msg YELLOW "Downloading vcrun2022 (Visual C++ Redistributable 2022, 64bit)"
+    msg YELLOW "Installing vcrun2022 via winetricks"
     line BLUE
-    VCRUN_URL="https://aka.ms/vs/17/release/vc_redist.x64.exe"
-    VCRUN_FILE="$WINEPREFIX/vc_redist.x64.exe"
-    DLL_DEST="$WINEPREFIX/drive_c/windows/system32"
-
-    rm -f "$VCRUN_FILE"
-    wget -q -O "$VCRUN_FILE" "$VCRUN_URL"
-    if [ -f "$VCRUN_FILE" ]; then
-        msg YELLOW "Extracting DLLs from installer..."
-        mkdir -p "$DLL_DEST"
-        cabextract -d "$DLL_DEST" "$VCRUN_FILE" || { msg RED "cabextract failed!"; exit 1; }
-        DLLS=("msvcp140.dll" "vcruntime140.dll")
-        for dll in "${DLLS[@]}"; do
-            if [ -f "$DLL_DEST/$dll" ]; then
-                msg GREEN "$dll successfully extracted to system32."
-            else
-                msg RED "$dll not found after extraction."
-                exit 1
-            fi
-        done
+    mkdir -p "$WINEPREFIX/logs"
+    VCRUN_LOG="$WINEPREFIX/logs/winetricks-vcrun2022.log"
+    rotate_log "$VCRUN_LOG" 5242880 5 || true
+    if winetricks -q vcrun2022 &> "$VCRUN_LOG"; then
+        msg GREEN "vcrun2022 installed via winetricks (log: $VCRUN_LOG)"
     else
-        msg RED "Failed to download vcrun2022 x64."
+        msg RED "winetricks vcrun2022 failed! See $VCRUN_LOG"
         exit 1
     fi
     WINETRICKS_RUN=$(remove_token_from_list "$WINETRICKS_RUN" vcrun2022)

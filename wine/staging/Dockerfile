@@ -45,6 +45,7 @@ RUN dpkg --add-architecture i386 && \
         unzip \
         wget \
         winbind \
+		x11-utils \
         xauth \
         xvfb \
         xz-utils \
