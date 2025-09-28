@@ -316,8 +316,24 @@ if [[ "$WINETRICKS_RUN" =~ vcrun2022 ]]; then
     if winetricks -q vcrun2022 &> "$VCRUN_LOG"; then
         msg GREEN "vcrun2022 installed via winetricks (log: $VCRUN_LOG)"
     else
-        msg RED "winetricks vcrun2022 failed! See $VCRUN_LOG"
-        exit 1
+        # If winetricks returned non-zero (cabextract warnings etc.) but the
+        # actual runtime DLLs exist in the prefix, allow startup to continue.
+        msg YELLOW "winetricks vcrun2022 returned non-zero; verifying required DLLs..."
+        missing_dll=0
+        for dll in msvcp140.dll vcruntime140.dll; do
+            if [ -f "$WINEPREFIX/drive_c/windows/system32/$dll" ] || [ -f "$WINEPREFIX/drive_c/windows/syswow64/$dll" ]; then
+                msg YELLOW "Found $dll in prefix"
+            else
+                msg RED "Missing $dll in prefix"
+                missing_dll=1
+            fi
+        done
+        if [ "$missing_dll" -eq 0 ]; then
+            msg GREEN "Required vcrun2022 DLLs present; continuing despite winetricks warnings. (See $VCRUN_LOG for details)"
+        else
+            msg RED "winetricks vcrun2022 failed and required DLLs are missing; see $VCRUN_LOG"
+            exit 1
+        fi
     fi
     WINETRICKS_RUN=$(remove_token_from_list "$WINETRICKS_RUN" vcrun2022)
 fi
