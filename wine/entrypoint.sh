@@ -28,6 +28,53 @@ msg() {
     fi
 }
 
+# Rotate/compress large logs to avoid unbounded growth
+rotate_log() {
+    local logfile="$1"
+    local max_bytes=${2:-5242880} # default 5 MiB
+    local keep=${3:-3}
+    if [ -z "$logfile" ]; then
+        return 0
+    fi
+    if [ -f "$logfile" ]; then
+        local size
+        size=$(stat -c%s "$logfile" 2>/dev/null || wc -c <"$logfile" 2>/dev/null || echo 0)
+        if [ "$size" -ge "$max_bytes" ]; then
+            local ts
+            ts=$(date +%s)
+            local archive="${logfile}.${ts}.gz"
+            msg YELLOW "Rotating large log $logfile -> $archive (size=${size})"
+            # move then compress to avoid holding both uncompressed on disk
+            if mv "$logfile" "${logfile}.${ts}" 2>/dev/null; then
+                if command -v gzip &>/dev/null; then
+                    gzip -9 "${logfile}.${ts}" && msg YELLOW "Compressed rotated log to ${archive}"
+                else
+                    msg YELLOW "gzip not available; leaving rotated file uncompressed: ${logfile}.${ts}"
+                fi
+            else
+                # fallback: truncate the file to avoid disk full
+                : > "$logfile"
+                msg YELLOW "Failed to rotate; truncated $logfile"
+            fi
+            # optionally clean up old archives
+            if command -v ls &>/dev/null; then
+                local files
+                files=$(ls -1t ${logfile}.*.gz 2>/dev/null || true)
+                if [ -n "$files" ]; then
+                    local idx=0
+                    for f in $files; do
+                        idx=$((idx+1))
+                        if [ $idx -gt $keep ]; then
+                            rm -f "$f" || true
+                            msg YELLOW "Removed old rotated log $f"
+                        fi
+                    done
+                fi
+            fi
+        fi
+    fi
+}
+
 # Helper: remove a token (word) from a space-separated list variable
 remove_token_from_list() {
     local var_value="$1"
@@ -97,6 +144,12 @@ mkdir -p "$XDG_RUNTIME_DIR"
 export WINEPREFIX="${WINEPREFIX:-/home/container/.wine}"
 # Default to 64-bit Wine prefixes unless explicitly overridden
 export WINEARCH="${WINEARCH:-win64}"
+
+# Rotate any existing large logs at startup to avoid immediate disk blowup
+rotate_log "$WINEPREFIX/dotnet_direct_install.log" 5242880 3 || true
+rotate_log "$WINEPREFIX/mono_install.log" 5242880 3 || true
+rotate_log "$WINEPREFIX/wineboot_init.log" 5242880 3 || true
+rotate_log "$WINEPREFIX/install_error.log" 5242880 3 || true
 
 # ----------------------------
 # Required tools check
@@ -279,14 +332,22 @@ if [ -n "${WINETRICKS_RUN// }" ]; then
             line BLUE
             mkdir -p "$WINEPREFIX/logs"
             LOGFILE="$WINEPREFIX/logs/winetricks-${trick//[^a-zA-Z0-9_.-]/_}.log"
+            rotate_log "$LOGFILE" 5242880 5 || true
                 # Special-case diagnostics and fallbacks for dotnet installers
                 if [[ "$trick" =~ dotnet ]]; then
-                    msg YELLOW "Detected dotnet trick: running verbose winetricks for diagnostics (WINEDEBUG=all)"
-                    # First try verbose non-interactive winetricks to capture detailed wine output
-                    if WINEDEBUG=all winetricks -q "$trick" &> "$LOGFILE"; then
+                    msg YELLOW "Detected dotnet trick: running winetricks for diagnostics"
+                    # Choose WINEDEBUG level: full 'all' only when DEBUG_DOTNET=1 is set by user
+                    WINEDEBUG_LEVEL=${DEBUG_DOTNET:-0}
+                    if [ "$WINEDEBUG_LEVEL" -eq 1 ]; then
+                        DBG_ENV="WINEDEBUG=all"
+                    else
+                        DBG_ENV="WINEDEBUG=warn"
+                    fi
+                    # First try non-interactive winetricks with chosen debug level
+                    if eval "$DBG_ENV winetricks -q \"$trick\" &> \"$LOGFILE\""; then
                         msg GREEN "Winetricks: $trick installed successfully (log: $LOGFILE)"
                     else
-                        msg YELLOW "Verbose winetricks failed for $trick; attempting direct installer from winetricks cache"
+                        msg YELLOW "Winetricks failed for $trick; attempting direct installer from winetricks cache"
                         CACHE_DIR="/home/container/.cache/winetricks/$trick"
                         INSTALLER=""
                         if [ -d "$CACHE_DIR" ]; then
@@ -294,16 +355,26 @@ if [ -n "${WINETRICKS_RUN// }" ]; then
                         fi
                         if [ -n "$INSTALLER" ]; then
                             DIRECT_LOG="$WINEPREFIX/dotnet_direct_install.log"
-                            msg YELLOW "Found cached installer: $INSTALLER — attempting direct wine execution (WINEDEBUG=all)"
+                            # Use stricter rotation/truncation for direct dotnet logs (1 MiB)
+                            rotate_log "$DIRECT_LOG" 1048576 5 || true
+                            msg YELLOW "Found cached installer: $INSTALLER — attempting direct wine execution"
+                            # Choose debug env for direct installer as well
+                            if [ "$WINEDEBUG_LEVEL" -eq 1 ]; then
+                                DIRECT_DBG_ENV="WINEDEBUG=all"
+                            else
+                                DIRECT_DBG_ENV="WINEDEBUG=warn"
+                            fi
                             # Try quiet install first
-                            if WINEDEBUG=all wine "$INSTALLER" /quiet &>> "$DIRECT_LOG"; then
+                            if eval "$DIRECT_DBG_ENV wine \"$INSTALLER\" /quiet &>> \"$DIRECT_LOG\""; then
                                 msg GREEN "Direct dotnet installer (/quiet) succeeded (log: $DIRECT_LOG)"
                             else
                                 msg YELLOW "Direct dotnet installer (/quiet) failed, trying interactive run (no /quiet)"
-                                if WINEDEBUG=all wine "$INSTALLER" &>> "$DIRECT_LOG"; then
+                                if eval "$DIRECT_DBG_ENV wine \"$INSTALLER\" &>> \"$DIRECT_LOG\""; then
                                     msg GREEN "Direct dotnet installer (interactive) succeeded (log: $DIRECT_LOG)"
                                 else
                                     msg RED "Direct dotnet installer failed; see $DIRECT_LOG and $LOGFILE for details"
+                                    # Truncate direct log to last 2000 lines to avoid giant files
+                                    tail -n 2000 "$DIRECT_LOG" > "${DIRECT_LOG}.tmp" && mv "${DIRECT_LOG}.tmp" "$DIRECT_LOG" || true
                                     exit 1
                                 fi
                             fi
