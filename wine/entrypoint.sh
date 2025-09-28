@@ -95,6 +95,8 @@ export XDG_RUNTIME_DIR="/home/container/.config/xdg"
 mkdir -p "$XDG_RUNTIME_DIR"
 # Ensure a sane default WINEPREFIX and export it so wine/winetricks use it
 export WINEPREFIX="${WINEPREFIX:-/home/container/.wine}"
+# Default to 64-bit Wine prefixes unless explicitly overridden
+export WINEARCH="${WINEARCH:-win64}"
 
 # ----------------------------
 # Required tools check
@@ -128,44 +130,7 @@ if [ ! -d "$WINEPREFIX/drive_c" ]; then
     wineboot --init || { msg RED "wineboot failed!"; exit 1; }
 fi
 
-# Auto-detect common 32-bit installers (like dotnet) and enforce a 32-bit WINEPREFIX
-if echo " ${WINETRICKS_RUN:-} " | grep -qE '\bdotnet\b|\bdotnet7\b|\bdotnet-runtime\b'; then
-    if [ "${WINEARCH:-}" != "win32" ]; then
-        msg YELLOW "Detected 32-bit dotnet installer requested; enforcing 32-bit WINEPREFIX (WINEARCH=win32)."
-        export FORCE_WINEARCH=win32
-        export WINEARCH=win32
-        msg YELLOW "WINEPREFIX=${WINEPREFIX} WINEARCH=${WINEARCH} (before changes)"
-        # Detect whether existing prefix appears 32- or 64-bit (presence of syswow64 -> 64-bit)
-        if [ -d "${WINEPREFIX}/drive_c/windows/syswow64" ]; then
-            msg YELLOW "Existing WINEPREFIX looks like a 64-bit prefix (syswow64 present)."
-        elif [ -d "${WINEPREFIX}/drive_c" ]; then
-            msg YELLOW "Existing WINEPREFIX looks like a 32-bit prefix (no syswow64)."
-        else
-            msg YELLOW "No existing WINEPREFIX content detected at ${WINEPREFIX}"
-        fi
-        # If an existing prefix exists, back it up to avoid data loss
-        if [ -d "$WINEPREFIX" ] && [ "$(ls -A "$WINEPREFIX" 2>/dev/null)" != "" ]; then
-            BACKUP_PREFIX="${WINEPREFIX}-backup-$(date +%s)"
-            msg YELLOW "Backing up existing WINEPREFIX to $BACKUP_PREFIX"
-            mv "$WINEPREFIX" "$BACKUP_PREFIX" || msg RED "Failed to backup existing WINEPREFIX"
-        fi
-        rm -rf "$WINEPREFIX"
-        mkdir -p "$WINEPREFIX"
-        # create a fresh 32-bit prefix and capture output for debugging
-        msg YELLOW "Initializing fresh 32-bit WINEPREFIX (this may take a while)..."
-        if ! WINEDEBUG=all wineboot --init &>"$WINEPREFIX/wineboot_init.log"; then
-            msg YELLOW "wineboot returned non-zero while creating 32-bit prefix; see $WINEPREFIX/wineboot_init.log"
-        fi
-        # Verify prefix bitness
-        if [ -d "${WINEPREFIX}/drive_c/windows/syswow64" ]; then
-            msg RED "After initialization: prefix still appears 64-bit (syswow64 present). This may cause 32-bit installers to fail. Check $WINEPREFIX/wineboot_init.log"
-        else
-            msg GREEN "Created new 32-bit WINEPREFIX at $WINEPREFIX"
-        fi
-    else
-        msg YELLOW "dotnet install requested and WINEARCH already set to win32."
-    fi
-fi
+# NOTE: 64-bit is the default (WINEARCH=win64). No automatic 32-bit enforcement is performed.
 
 # ----------------------------
 # Wine Gecko Installation
@@ -202,11 +167,13 @@ if [[ $WINETRICKS_RUN =~ gecko ]]; then
         wine msiexec /i "$WINEPREFIX/gecko_x86.msi" /qn /norestart /log "$WINEPREFIX/gecko_x86_install.log" || msg RED "Wine Gecko x86 installation failed! See $WINEPREFIX/gecko_x86_install.log"
     else
         msg RED "Gecko x86 MSI missing or empty: $WINEPREFIX/gecko_x86.msi"
+        exit 1
     fi
     if [ -s "$WINEPREFIX/gecko_x86_64.msi" ]; then
         wine msiexec /i "$WINEPREFIX/gecko_x86_64.msi" /qn /norestart /log "$WINEPREFIX/gecko_x86_64_install.log" || msg RED "Wine Gecko x64 installation failed! See $WINEPREFIX/gecko_x86_64_install.log"
     else
         msg RED "Gecko x64 MSI missing or empty: $WINEPREFIX/gecko_x86_64.msi"
+        exit 1
     fi
 fi
 
@@ -249,12 +216,13 @@ if [[ "$WINETRICKS_RUN" =~ mono ]]; then
                     msg GREEN "Wine Mono installed successfully on attempt $attempts"
                     break
                 else
-                    msg YELLOW "Wine Mono installer failed on attempt $attempts (see $WINEPREFIX/mono_install.log)"
+                        msg YELLOW "Wine Mono installer failed on attempt $attempts (see $WINEPREFIX/mono_install.log)"
                     sleep 3
                 fi
             done
             if [ $rc -ne 0 ]; then
-                msg RED "Wine Mono installation failed after $max_attempts attempts. See $WINEPREFIX/mono_install.log"
+                    msg RED "Wine Mono installation failed after $max_attempts attempts. See $WINEPREFIX/mono_install.log"
+                    exit 1
             fi
         fi
     fi
@@ -284,10 +252,12 @@ if [[ "$WINETRICKS_RUN" =~ vcrun2022 ]]; then
                 msg GREEN "$dll successfully extracted to system32."
             else
                 msg RED "$dll not found after extraction."
+                exit 1
             fi
         done
     else
         msg RED "Failed to download vcrun2022 x64."
+        exit 1
     fi
     WINETRICKS_RUN=$(remove_token_from_list "$WINETRICKS_RUN" vcrun2022)
 fi
@@ -309,17 +279,53 @@ if [ -n "${WINETRICKS_RUN// }" ]; then
             line BLUE
             mkdir -p "$WINEPREFIX/logs"
             LOGFILE="$WINEPREFIX/logs/winetricks-${trick//[^a-zA-Z0-9_.-]/_}.log"
-            # Try a non-interactive install where supported (-q), fall back if not
-            if winetricks -q "$trick" &> "$LOGFILE"; then
-                msg GREEN "Winetricks: $trick installed successfully (log: $LOGFILE)"
-            else
-                # Try without -q in case the option is not supported
-                if winetricks "$trick" &>> "$LOGFILE"; then
-                    msg GREEN "Winetricks: $trick installed successfully (log: $LOGFILE)"
+                # Special-case diagnostics and fallbacks for dotnet installers
+                if [[ "$trick" =~ dotnet ]]; then
+                    msg YELLOW "Detected dotnet trick: running verbose winetricks for diagnostics (WINEDEBUG=all)"
+                    # First try verbose non-interactive winetricks to capture detailed wine output
+                    if WINEDEBUG=all winetricks -q "$trick" &> "$LOGFILE"; then
+                        msg GREEN "Winetricks: $trick installed successfully (log: $LOGFILE)"
+                    else
+                        msg YELLOW "Verbose winetricks failed for $trick; attempting direct installer from winetricks cache"
+                        CACHE_DIR="/home/container/.cache/winetricks/$trick"
+                        INSTALLER=""
+                        if [ -d "$CACHE_DIR" ]; then
+                            INSTALLER=$(ls -1 "$CACHE_DIR"/*.exe 2>/dev/null | tail -n1 || true)
+                        fi
+                        if [ -n "$INSTALLER" ]; then
+                            DIRECT_LOG="$WINEPREFIX/dotnet_direct_install.log"
+                            msg YELLOW "Found cached installer: $INSTALLER — attempting direct wine execution (WINEDEBUG=all)"
+                            # Try quiet install first
+                            if WINEDEBUG=all wine "$INSTALLER" /quiet &>> "$DIRECT_LOG"; then
+                                msg GREEN "Direct dotnet installer (/quiet) succeeded (log: $DIRECT_LOG)"
+                            else
+                                msg YELLOW "Direct dotnet installer (/quiet) failed, trying interactive run (no /quiet)"
+                                if WINEDEBUG=all wine "$INSTALLER" &>> "$DIRECT_LOG"; then
+                                    msg GREEN "Direct dotnet installer (interactive) succeeded (log: $DIRECT_LOG)"
+                                else
+                                    msg RED "Direct dotnet installer failed; see $DIRECT_LOG and $LOGFILE for details"
+                                    exit 1
+                                fi
+                            fi
+                        else
+                            msg RED "No cached dotnet installer found in $CACHE_DIR. See $LOGFILE for winetricks details."
+                            exit 1
+                        fi
+                    fi
                 else
-                    msg RED "Winetricks installation for $trick failed! See $LOGFILE"
+                    # Try a non-interactive install where supported (-q), fall back if not
+                    if winetricks -q "$trick" &> "$LOGFILE"; then
+                        msg GREEN "Winetricks: $trick installed successfully (log: $LOGFILE)"
+                    else
+                        # Try without -q in case the option is not supported
+                        if winetricks "$trick" &>> "$LOGFILE"; then
+                            msg GREEN "Winetricks: $trick installed successfully (log: $LOGFILE)"
+                        else
+                            msg RED "Winetricks installation for $trick failed! See $LOGFILE"
+                            exit 1
+                        fi
+                    fi
                 fi
-            fi
         done
     fi
 fi
