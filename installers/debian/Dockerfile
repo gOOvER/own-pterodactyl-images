@@ -9,7 +9,7 @@ LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
 ARG         DEBIAN_FRONTEND noninteractive
 RUN        	dpkg --add-architecture i386
 RUN         apt update \
-            && apt -y upgrade
+			&& apt -y upgrade
 
 RUN		 	apt install -y --no-install-recommends \
 				build-essential \
@@ -32,8 +32,17 @@ RUN		 	apt install -y --no-install-recommends \
 				libcurl4-gnutls-dev \
 				libsdl2-2.0-0
 
+## generate locale so setlocale('en_US.UTF-8') works
+RUN    		sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen && \
+			locale-gen en_US.UTF-8 && \
+			update-locale LANG=en_US.UTF-8
+
+ENV 		LANG=en_US.UTF-8 \
+    		LANGUAGE=en_US:en \
+    		LC_ALL=en_US.UTF-8
+
 ## download lastest 7zip for archives
-RUN 	wget https://www.7-zip.org/a/7z2409-linux-x64.tar.xz \
-			&& tar xf 7z2409-linux-x64.tar.xz \
-			&& mv 7zz /usr/local/bin \
-			&& rm -f 7z2409-linux-x64.tar.xz
+RUN 		wget https://www.7-zip.org/a/7z2501-linux-x64.tar.xz \
+				&& tar xf 7z2501-linux-x64.tar.xz \
+				&& mv 7zz /usr/local/bin \
+				&& rm -f 7z2501-linux-x64.tar.xz
