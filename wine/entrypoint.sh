@@ -93,6 +93,8 @@ internal_ip=$(ip route get 1 | awk '{print $(NF-2);exit}' 2>/dev/null || echo "1
 export INTERNAL_IP="$internal_ip"
 export XDG_RUNTIME_DIR="/home/container/.config/xdg"
 mkdir -p "$XDG_RUNTIME_DIR"
+# Ensure a sane default WINEPREFIX and export it so wine/winetricks use it
+export WINEPREFIX="${WINEPREFIX:-/home/container/.wine}"
 
 # ----------------------------
 # Required tools check
@@ -132,6 +134,15 @@ if echo " ${WINETRICKS_RUN:-} " | grep -qE '\bdotnet\b|\bdotnet7\b|\bdotnet-runt
         msg YELLOW "Detected 32-bit dotnet installer requested; enforcing 32-bit WINEPREFIX (WINEARCH=win32)."
         export FORCE_WINEARCH=win32
         export WINEARCH=win32
+        msg YELLOW "WINEPREFIX=${WINEPREFIX} WINEARCH=${WINEARCH} (before changes)"
+        # Detect whether existing prefix appears 32- or 64-bit (presence of syswow64 -> 64-bit)
+        if [ -d "${WINEPREFIX}/drive_c/windows/syswow64" ]; then
+            msg YELLOW "Existing WINEPREFIX looks like a 64-bit prefix (syswow64 present)."
+        elif [ -d "${WINEPREFIX}/drive_c" ]; then
+            msg YELLOW "Existing WINEPREFIX looks like a 32-bit prefix (no syswow64)."
+        else
+            msg YELLOW "No existing WINEPREFIX content detected at ${WINEPREFIX}"
+        fi
         # If an existing prefix exists, back it up to avoid data loss
         if [ -d "$WINEPREFIX" ] && [ "$(ls -A "$WINEPREFIX" 2>/dev/null)" != "" ]; then
             BACKUP_PREFIX="${WINEPREFIX}-backup-$(date +%s)"
@@ -140,9 +151,17 @@ if echo " ${WINETRICKS_RUN:-} " | grep -qE '\bdotnet\b|\bdotnet7\b|\bdotnet-runt
         fi
         rm -rf "$WINEPREFIX"
         mkdir -p "$WINEPREFIX"
-        # create a fresh 32-bit prefix
-        WINEDEBUG=all wineboot --init &>/dev/null || msg YELLOW "wineboot returned non-zero while creating 32-bit prefix (this may be okay)."
-        msg GREEN "Created new 32-bit WINEPREFIX at $WINEPREFIX"
+        # create a fresh 32-bit prefix and capture output for debugging
+        msg YELLOW "Initializing fresh 32-bit WINEPREFIX (this may take a while)..."
+        if ! WINEDEBUG=all wineboot --init &>"$WINEPREFIX/wineboot_init.log"; then
+            msg YELLOW "wineboot returned non-zero while creating 32-bit prefix; see $WINEPREFIX/wineboot_init.log"
+        fi
+        # Verify prefix bitness
+        if [ -d "${WINEPREFIX}/drive_c/windows/syswow64" ]; then
+            msg RED "After initialization: prefix still appears 64-bit (syswow64 present). This may cause 32-bit installers to fail. Check $WINEPREFIX/wineboot_init.log"
+        else
+            msg GREEN "Created new 32-bit WINEPREFIX at $WINEPREFIX"
+        fi
     else
         msg YELLOW "dotnet install requested and WINEARCH already set to win32."
     fi
