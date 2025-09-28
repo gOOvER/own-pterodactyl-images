@@ -28,6 +28,20 @@ msg() {
     fi
 }
 
+# Helper: remove a token (word) from a space-separated list variable
+remove_token_from_list() {
+    local var_value="$1"
+    local token="$2"
+    local out=""
+    read -r -a parts <<<"$var_value"
+    for p in "${parts[@]}"; do
+        if [ "$p" != "$token" ]; then
+            out="${out}${out:+ }${p}"
+        fi
+    done
+    printf '%s' "$out"
+}
+
 line() {
     local color="${1:-BLUE}"
     local term_width
@@ -119,15 +133,40 @@ if [[ $WINETRICKS_RUN =~ gecko ]]; then
     line BLUE
     msg YELLOW "Installing Wine Gecko"
     line BLUE
-    WINETRICKS_RUN=$(echo "$WINETRICKS_RUN" | sed 's/\bgecko\b//g')
+    WINETRICKS_RUN=$(remove_token_from_list "$WINETRICKS_RUN" gecko)
 
     # Dynamische Version
     GECKO_VERSION=$(curl -s https://api.github.com/repos/wine-mirror/wine/releases/latest | grep -Po '"tag_name": "\K.*?(?=")' || echo "2.47.4")
-    [ ! -f "$WINEPREFIX/gecko_x86.msi" ] && wget -q -O "$WINEPREFIX/gecko_x86.msi" "http://dl.winehq.org/wine/wine-gecko/${GECKO_VERSION:-}/wine_geck${GECKO_VERSION:-}N}-x86.msi"
-    [ ! -f "$WINEPREFIX/gecko_x86_64.msi" ] && wget -q -O "$WINEPREFIX/gecko_x86_64.msi" "http://dl.winehq.org/wine/wine-ge${GECKO_VERSION:-}ION}/wine_${GECKO_VERSION:-}RSION}-x86_64.msi"
+    GECKO_BASE="https://dl.winehq.org/wine/wine-gecko/${GECKO_VERSION}"
+    GECKO_X86="$GECKO_BASE/wine-gecko-${GECKO_VERSION}-x86.msi"
+    GECKO_X64="$GECKO_BASE/wine-gecko-${GECKO_VERSION}-x86_64.msi"
 
-    wine msiexec /i "$WINEPREFIX/gecko_x86.msi" /qn /quiet /norestart /log "$WINEPREFIX/gecko_x86_install.log" || msg RED "Wine Gecko x86 installation failed!"
-    wine msiexec /i "$WINEPREFIX/gecko_x86_64.msi" /qn /quiet /norestart /log "$WINEPREFIX/gecko_x86_64_install.log" || msg RED "Wine Gecko x64 installation failed!"
+    # download with retries and size check
+    mkdir -p "$WINEPREFIX"
+    if [ ! -s "$WINEPREFIX/gecko_x86.msi" ]; then
+        msg YELLOW "Downloading Gecko x86 from ${GECKO_X86}"
+        if ! wget -q --tries=3 --timeout=30 -O "$WINEPREFIX/gecko_x86.msi" "$GECKO_X86"; then
+            msg RED "Failed to download Gecko x86 from $GECKO_X86"
+        fi
+    fi
+    if [ ! -s "$WINEPREFIX/gecko_x86_64.msi" ]; then
+        msg YELLOW "Downloading Gecko x64 from ${GECKO_X64}"
+        if ! wget -q --tries=3 --timeout=30 -O "$WINEPREFIX/gecko_x86_64.msi" "$GECKO_X64"; then
+            msg RED "Failed to download Gecko x64 from $GECKO_X64"
+        fi
+    fi
+
+    # verify files and install
+    if [ -s "$WINEPREFIX/gecko_x86.msi" ]; then
+        wine msiexec /i "$WINEPREFIX/gecko_x86.msi" /qn /norestart /log "$WINEPREFIX/gecko_x86_install.log" || msg RED "Wine Gecko x86 installation failed! See $WINEPREFIX/gecko_x86_install.log"
+    else
+        msg RED "Gecko x86 MSI missing or empty: $WINEPREFIX/gecko_x86.msi"
+    fi
+    if [ -s "$WINEPREFIX/gecko_x86_64.msi" ]; then
+        wine msiexec /i "$WINEPREFIX/gecko_x86_64.msi" /qn /norestart /log "$WINEPREFIX/gecko_x86_64_install.log" || msg RED "Wine Gecko x64 installation failed! See $WINEPREFIX/gecko_x86_64_install.log"
+    else
+        msg RED "Gecko x64 MSI missing or empty: $WINEPREFIX/gecko_x86_64.msi"
+    fi
 fi
 
 # ----------------------------
@@ -137,22 +176,48 @@ if [[ "$WINETRICKS_RUN" =~ mono ]]; then
     line BLUE
     msg YELLOW "Installing latest Wine Mono"
     line BLUE
+    # Optionally force WINEARCH (e.g. win32) via env FORCE_WINEARCH=win32
+    if [ -n "${FORCE_WINEARCH:-}" ]; then
+        export WINEARCH="${FORCE_WINEARCH}"
+        msg YELLOW "Forcing WINEARCH=$WINEARCH"
+        # recreate prefix if necessary
+        if [ ! -d "$WINEPREFIX" ]; then
+            wineboot --init || true
+        fi
+    fi
+
     MONO_VERSION=$(curl -s https://api.github.com/repos/wine-mono/wine-mono/releases/latest | grep -Po '"tag_name": "\K.*?(?=")')
     if [ -z "$MONO_VERSION" ]; then
         msg RED "Failed to fetch latest Wine Mono version."
     else
         MONO_URL="https://github.com/wine-mono/wine-mono/releases/download/${MONO_VERSION}/wine-mono-${MONO_VERSION#wine-mono-}-x86.msi"
         rm -f "$WINEPREFIX/mono.msi"
-        wget -q -O "$WINEPREFIX/mono.msi" "$MONO_URL"
-        if [ -f "$WINEPREFIX/mono.msi" ]; then
-            wine msiexec /i "$WINEPREFIX/mono.msi" /qn /quiet /norestart /log "$WINEPREFIX/mono_install.log" \
-                && msg GREEN "Wine Mono installed successfully!" \
-                || msg RED "Wine Mono installation failed!"
+        msg YELLOW "Downloading Wine Mono from $MONO_URL"
+        if ! wget -q --tries=3 --timeout=30 -O "$WINEPREFIX/mono.msi" "$MONO_URL"; then
+            msg RED "Failed to download Wine Mono MSI from $MONO_URL"
         else
-            msg RED "Failed to download Wine Mono MSI."
+            # install with retries and logging
+            attempts=0
+            max_attempts=3
+            rc=1
+            while [ $attempts -lt $max_attempts ]; do
+                attempts=$((attempts+1))
+                msg YELLOW "Attempt $attempts to install Wine Mono..."
+                if wine msiexec /i "$WINEPREFIX/mono.msi" /qn /norestart /log "$WINEPREFIX/mono_install.log"; then
+                    rc=0
+                    msg GREEN "Wine Mono installed successfully on attempt $attempts"
+                    break
+                else
+                    msg YELLOW "Wine Mono installer failed on attempt $attempts (see $WINEPREFIX/mono_install.log)"
+                    sleep 3
+                fi
+            done
+            if [ $rc -ne 0 ]; then
+                msg RED "Wine Mono installation failed after $max_attempts attempts. See $WINEPREFIX/mono_install.log"
+            fi
         fi
     fi
-    WINETRICKS_RUN=$(echo "$WINETRICKS_RUN" | sed 's/\bmono\b//g')
+    WINETRICKS_RUN=$(remove_token_from_list "$WINETRICKS_RUN" mono)
 fi
 
 # ----------------------------
@@ -183,18 +248,40 @@ if [[ "$WINETRICKS_RUN" =~ vcrun2022 ]]; then
     else
         msg RED "Failed to download vcrun2022 x64."
     fi
-    WINETRICKS_RUN=$(echo "$WINETRICKS_RUN" | sed 's/\bvcrun2022\b//g')
+    WINETRICKS_RUN=$(remove_token_from_list "$WINETRICKS_RUN" vcrun2022)
 fi
 
 # ----------------------------
-# Install additional Winetricks packages
+# Install additional Winetricks packages (robust)
 # ----------------------------
-for trick in $WINETRICKS_RUN; do
-    line BLUE
-    msg YELLOW "Installing: ${GREEN}$trick"
-    line BLUE
-    winetricks "$trick" || msg RED "Winetricks installation for $trick failed!"
-done
+# Ensure WINETRICKS_RUN is not empty and trim whitespace
+if [ -n "${WINETRICKS_RUN// }" ]; then
+    # Ensure winetricks command exists
+    if ! command -v winetricks &>/dev/null; then
+        msg RED "winetricks not found but WINETRICKS_RUN is set. Please install winetricks or unset WINETRICKS_RUN."
+    else
+        # Split into array on whitespace (preserves quoted args if any)
+        read -r -a _tricks <<<"$WINETRICKS_RUN"
+        for trick in "${_tricks[@]}"; do
+            line BLUE
+            msg YELLOW "Installing: ${GREEN}$trick"
+            line BLUE
+            mkdir -p "$WINEPREFIX/logs"
+            LOGFILE="$WINEPREFIX/logs/winetricks-${trick//[^a-zA-Z0-9_.-]/_}.log"
+            # Try a non-interactive install where supported (-q), fall back if not
+            if winetricks -q "$trick" &> "$LOGFILE"; then
+                msg GREEN "Winetricks: $trick installed successfully (log: $LOGFILE)"
+            else
+                # Try without -q in case the option is not supported
+                if winetricks "$trick" &>> "$LOGFILE"; then
+                    msg GREEN "Winetricks: $trick installed successfully (log: $LOGFILE)"
+                else
+                    msg RED "Winetricks installation for $trick failed! See $LOGFILE"
+                fi
+            fi
+        done
+    fi
+fi
 
 # ----------------------------
 # SteamCMD / DepotDownloader Update
