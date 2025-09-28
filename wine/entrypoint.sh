@@ -188,9 +188,8 @@ if ! xdpyinfo -display "$DISPLAY" &>/dev/null; then
     msg GREEN "Xvfb started (pid $XVFB_PID), log: $XVFB_LOG"
     # Ensure Xvfb is killed on exit
     trap 'if [ -n "${XVFB_PID:-}" ] && kill -0 "$XVFB_PID" 2>/dev/null; then kill "$XVFB_PID" || true; fi' EXIT
-    else
-        msg YELLOW "Display $DISPLAY already available; not starting Xvfb"
-    fi
+else
+    msg YELLOW "Display $DISPLAY already available; not starting Xvfb"
 fi
 
 # ----------------------------
