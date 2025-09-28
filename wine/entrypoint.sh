@@ -126,6 +126,28 @@ if [ ! -d "$WINEPREFIX/drive_c" ]; then
     wineboot --init || { msg RED "wineboot failed!"; exit 1; }
 fi
 
+# Auto-detect common 32-bit installers (like dotnet) and enforce a 32-bit WINEPREFIX
+if echo " ${WINETRICKS_RUN:-} " | grep -qE '\bdotnet\b|\bdotnet7\b|\bdotnet-runtime\b'; then
+    if [ "${WINEARCH:-}" != "win32" ]; then
+        msg YELLOW "Detected 32-bit dotnet installer requested; enforcing 32-bit WINEPREFIX (WINEARCH=win32)."
+        export FORCE_WINEARCH=win32
+        export WINEARCH=win32
+        # If an existing prefix exists, back it up to avoid data loss
+        if [ -d "$WINEPREFIX" ] && [ "$(ls -A "$WINEPREFIX" 2>/dev/null)" != "" ]; then
+            BACKUP_PREFIX="${WINEPREFIX}-backup-$(date +%s)"
+            msg YELLOW "Backing up existing WINEPREFIX to $BACKUP_PREFIX"
+            mv "$WINEPREFIX" "$BACKUP_PREFIX" || msg RED "Failed to backup existing WINEPREFIX"
+        fi
+        rm -rf "$WINEPREFIX"
+        mkdir -p "$WINEPREFIX"
+        # create a fresh 32-bit prefix
+        WINEDEBUG=all wineboot --init &>/dev/null || msg YELLOW "wineboot returned non-zero while creating 32-bit prefix (this may be okay)."
+        msg GREEN "Created new 32-bit WINEPREFIX at $WINEPREFIX"
+    else
+        msg YELLOW "dotnet install requested and WINEARCH already set to win32."
+    fi
+fi
+
 # ----------------------------
 # Wine Gecko Installation
 # ----------------------------
