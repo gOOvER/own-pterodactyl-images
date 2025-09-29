@@ -45,6 +45,7 @@ RUN dpkg --add-architecture i386 && \
         unzip \
         wget \
         winbind \
+		x11-utils \
         xauth \
         xvfb \
         xz-utils \
@@ -76,7 +77,7 @@ RUN dpkg --add-architecture i386 && \
     rm -rf /var/lib/apt/lists/*
 
 # Install Wine (choose branch via WINE_BRANCH env) and Winetricks
-ENV WINE_BRANCH=staging
+ENV WINE_BRANCH=stable
 RUN mkdir -pm755 /etc/apt/keyrings && \
     wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key && \
     wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/trixie/winehq-trixie.sources && \
