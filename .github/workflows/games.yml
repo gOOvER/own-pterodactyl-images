@@ -11,6 +11,10 @@ on:
     paths:
       - games/**
 
+permissions:
+  contents: read
+  packages: write
+
 env:
   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
@@ -18,12 +22,16 @@ jobs:
   push:
     name: "games:${{ matrix.game }}"
     runs-on: ubuntu-22.04
+    concurrency:
+      group: games-build-${{ github.ref }}
+      cancel-in-progress: true
     strategy:
       fail-fast: false
       matrix:
         game:
           - aloft
           - aloft-proton
+          - arma3
           - interstellarrift
           - mtsa
           - quakeliveqlx
@@ -48,11 +56,19 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: docker/build-push-action@v6
+      - name: Build and push image (with build cache)
+        uses: docker/build-push-action@v6
+        id: build
         with:
           context: ./games/${{ matrix.game }}
           file: ./games/${{ matrix.game }}/Dockerfile
           platforms: linux/amd64
           push: true
           tags: |
-             ghcr.io/goover/games:${{ matrix.game }}
+            ghcr.io/${{ github.repository_owner }}/games:${{ matrix.game }}
+            ghcr.io/${{ github.repository_owner }}/games:${{ matrix.game }}-${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          # (progress option removed — not supported by this action version)
+        # Timeout safeguard for the step
+        timeout-minutes: 60
