@@ -23,7 +23,7 @@ jobs:
     name: "games:${{ matrix.game }}"
     runs-on: ubuntu-22.04
     concurrency:
-      group: games-build-${{ github.ref }}
+      group: games-build-${{ github.ref }}-${{ matrix.game }}
       cancel-in-progress: true
     strategy:
       fail-fast: false
