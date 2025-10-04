@@ -269,6 +269,9 @@ else
     rm -rf "$TMPDIR" >/dev/null 2>&1 || true
 fi
 
+    # Ensure we are back in the container home directory so relative paths used later still work
+    cd /home/container || true
+
 # NOTE: 64-bit is the default (WINEARCH=win64). No automatic 32-bit enforcement is performed.
 
 # ----------------------------
