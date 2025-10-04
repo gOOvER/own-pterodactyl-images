@@ -56,6 +56,10 @@ NC='\033[0m' # No Color
 : "${PARAM_LOADMISSIONTOMEMORY:=0}"
 : "${PARAM_LIMITFPS:=0}"
 
+# NSS wrapper defaults (must match Dockerfile behavior — avoid treating these as secrets)
+: "${NSS_WRAPPER_PASSWD:=/tmp/passwd}"
+: "${NSS_WRAPPER_GROUP:=/tmp/group}"
+
 ## === DEFINE FUNCTIONS ===
 
 # Runs SteamCMD with specified variables and performs error handling.

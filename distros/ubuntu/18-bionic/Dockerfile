@@ -63,7 +63,9 @@ RUN             apt install -y \
                     libzip4
 
 ## configure locale
-RUN             update-locale lang=en_US.UTF-8 \
+RUN             sed -i 's/^# *\(en_US.UTF-8 UTF-8\)/\1/' /etc/locale.gen \
+                && localedef -i en_US -f UTF-8 en_US.UTF-8 || true \
+                && export LANG=en_US.UTF-8 \
                 && dpkg-reconfigure --frontend noninteractive locales
 
 ## Setup user and working directory

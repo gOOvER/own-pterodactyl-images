@@ -36,7 +36,9 @@ RUN		 	apt install -y --no-install-recommends \
 ## generate locale so setlocale('en_US.UTF-8') works
 RUN    		sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen && \
 			locale-gen en_US.UTF-8 && \
-			update-locale LANG=en_US.UTF-8
+			sed -i 's/^# *\(en_US.UTF-8 UTF-8\)/\1/' /etc/locale.gen \
+			&& localedef -i en_US -f UTF-8 en_US.UTF-8 || true \
+			&& export LANG=en_US.UTF-8
 
 ENV 		LANG=en_US.UTF-8 \
     		LANGUAGE=en_US:en \

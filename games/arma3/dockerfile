@@ -1,12 +1,10 @@
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 LABEL author="David Wolfe (Red-Thirten)" \
       maintainer="red_thirten@yahoo.com"
 LABEL org.opencontainers.image.source="https://github.com/pelican-eggs/yolks"
 
-ENV DEBIAN_FRONTEND=noninteractive \
-    NSS_WRAPPER_PASSWD=/tmp/passwd \
-    NSS_WRAPPER_GROUP=/tmp/group
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install runtime dependencies in a single layer to improve caching and reduce image size.
 RUN dpkg --add-architecture i386 \
@@ -30,15 +28,17 @@ RUN dpkg --add-architecture i386 \
     libtbbmalloc2 \
     libtbbmalloc2:i386 \
     tini \
- && locale-gen en_US.UTF-8 \
- && update-locale LANG=en_US.UTF-8 \
+ && sed -i 's/^# *\(en_US.UTF-8 UTF-8\)/\1/' /etc/locale.gen \
+ && localedef -i en_US -f UTF-8 en_US.UTF-8 || true \
  && rm -rf /var/lib/apt/lists/*
+
+ENV LANG=en_US.UTF-8
 
 # Copy passwd template and prepare NSS wrapper files (root-owned operations)
 COPY passwd.template /passwd.template
-RUN touch "${NSS_WRAPPER_PASSWD}" "${NSS_WRAPPER_GROUP}" \
- && chgrp 0 "${NSS_WRAPPER_PASSWD}" "${NSS_WRAPPER_GROUP}" \
- && chmod g+rw "${NSS_WRAPPER_PASSWD}" "${NSS_WRAPPER_GROUP}"
+RUN touch /tmp/passwd /tmp/group \
+ && chgrp 0 /tmp/passwd /tmp/group \
+ && chmod g+rw /tmp/passwd /tmp/group
 
 # Create an unprivileged user and set working directory
 RUN useradd -m -d /home/container -s /bin/bash container

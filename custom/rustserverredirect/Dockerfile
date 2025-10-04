@@ -121,10 +121,9 @@ ENV         LANGUAGE en_US:en
 ENV         LC_ALL en_US.UTF-8
 
 ## Prepare NSS Wrapper for the entrypoint as a workaround for games requiring a valid UID
-ENV         NSS_WRAPPER_PASSWD=/tmp/passwd NSS_WRAPPER_GROUP=/tmp/group
-RUN         touch ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
-            && chgrp 0 ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP} \
-            && chmod g+rw ${NSS_WRAPPER_PASSWD} ${NSS_WRAPPER_GROUP}
+RUN         touch /tmp/passwd /tmp/group \
+            && chgrp 0 /tmp/passwd /tmp/group \
+            && chmod g+rw /tmp/passwd /tmp/group
 ADD         passwd.template /passwd.template
 
 ## Setup user and working directory
