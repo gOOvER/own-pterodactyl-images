@@ -139,6 +139,18 @@ if [ -n "${STEAM_APPID:-}" ]; then
         mkdir -p "$WINEPREFIX" 2>/dev/null || true
         export WINEPREFIX
         msg GREEN "WINEPREFIX set to $WINEPREFIX"
+
+        # Ensure XDG_CONFIG_HOME is defined and protonfixes config directory exists.
+        # ProtonFixes expects "$HOME/.config/protonfixes" by default; create it
+        # here so ProtonFixes doesn't abort with a missing parent directory.
+        if [ -z "${XDG_CONFIG_HOME:-}" ]; then
+            export XDG_CONFIG_HOME="$HOME/.config"
+        fi
+        # Create parent and protonfixes dir if absent. Be tolerant for root/non-root users.
+        mkdir -p "$XDG_CONFIG_HOME/protonfixes" 2>/dev/null || true
+        # Ensure basic permissions so the runtime user can write to it.
+        chmod 700 "$XDG_CONFIG_HOME" 2>/dev/null || true
+        chmod 700 "$XDG_CONFIG_HOME/protonfixes" 2>/dev/null || true
     fi
 
     # If ProtonGE is installed system-wide under /opt/ProtonGE, create a
