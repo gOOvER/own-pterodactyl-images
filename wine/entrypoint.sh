@@ -216,36 +216,57 @@ TMPDIR=$(mktemp -d 2>/dev/null || mktemp -d -t winecerts 2>/dev/null || true)
 if [ -z "$TMPDIR" ] || [ ! -d "$TMPDIR" ]; then
     msg RED "Failed to create temporary working directory for certificate import; skipping import"
 else
-    # Ensure cleanup on exit or error
-    _old_pwd=$(pwd 2>/dev/null || true)
-    trap 'rm -rf "$TMPDIR" >/dev/null 2>&1 || true; cd "${_old_pwd:-/}"' RETURN
+    # Perform the entire import in a subshell so we never change the parent cwd
+    (
+        set -e
+        cd "$TMPDIR"
+        msg YELLOW "Downloading latest CA bundle..."
+        if ! curl -fsSLo cacert.pem https://curl.se/ca/cacert.pem >>"$CERT_LOG" 2>&1; then
+            msg RED "Failed to download CA bundle; see $CERT_LOG"
+            exit 0
+        fi
 
-    cd "$TMPDIR" || true
-    msg YELLOW "Downloading latest CA bundle..."
-    if ! curl -fsSLo cacert.pem https://curl.se/ca/cacert.pem >>"$CERT_LOG" 2>&1; then
-        msg RED "Failed to download CA bundle; see $CERT_LOG"
-    else
-        msg YELLOW "Splitting PEM bundle into individual cert files..."
-        awk '/BEGIN CERTIFICATE/{n++}{print > "cert" n ".pem"}' cacert.pem 2>>"$CERT_LOG" || true
+        # sanity check: file non-empty
+        if [ ! -s cacert.pem ]; then
+            msg RED "Downloaded CA bundle is empty; aborting import (see $CERT_LOG)"
+            exit 0
+        fi
 
-        msg YELLOW "Converting PEM to DER (.cer) and importing into Wine's root store..."
+        # normalize CRLF if dos2unix is available, otherwise use sed fallback
+        if command -v dos2unix >/dev/null 2>&1; then
+            dos2unix -q cacert.pem >>"$CERT_LOG" 2>&1 || true
+        else
+            sed -i 's/\r$//' cacert.pem || true
+        fi
+
+        msg YELLOW "Splitting PEM bundle into individual cert files (robust split)..."
+        awk 'BEGIN{n=0} /-----BEGIN CERTIFICATE-----/{n++; fname=sprintf("cert%04d.pem",n)} {print > fname}' cacert.pem 2>>"$CERT_LOG" || true
+        find . -maxdepth 1 -type f -name 'cert*.pem' -size 0 -delete
+
+        msg YELLOW "Converting valid PEM files to DER (.cer) and importing into Wine's root store..."
         for pem in cert*.pem; do
             [ -f "$pem" ] || continue
+            if ! grep -q '-----BEGIN CERTIFICATE-----' "$pem" 2>>"$CERT_LOG"; then
+                msg YELLOW "Skipping $pem: missing BEGIN CERTIFICATE marker"
+                continue
+            fi
             cer="${pem%.pem}.cer"
-            if openssl x509 -in "$pem" -out "$cer" -outform DER >>"$CERT_LOG" 2>&1; then
-                # Use rundll32 to add certificate; tolerate non-zero exit codes
+            if openssl x509 -inform PEM -in "$pem" -outform DER -out "$cer" >>"$CERT_LOG" 2>&1; then
                 if wine rundll32.exe cryptext.dll,CryptExtAddCer "$(pwd)/$cer" >>"$CERT_LOG" 2>&1; then
                     msg GREEN "Imported certificate: $cer"
                 else
                     msg YELLOW "rundll32 reported non-zero for $cer; continuing (see $CERT_LOG)"
                 fi
             else
-                msg YELLOW "Failed to convert $pem to DER; skipping (see $CERT_LOG)"
+                msg RED "Failed to convert $pem to DER; see $CERT_LOG"
             fi
         done
         msg GREEN "Certificate import finished (logs: $CERT_LOG)"
-    fi
-    # cleanup handled by trap
+        # cleanup inside subshell
+        rm -rf "$TMPDIR" || true
+    )
+    # ensure TMPDIR removed in case subshell exited early
+    rm -rf "$TMPDIR" >/dev/null 2>&1 || true
 fi
 
 # NOTE: 64-bit is the default (WINEARCH=win64). No automatic 32-bit enforcement is performed.
