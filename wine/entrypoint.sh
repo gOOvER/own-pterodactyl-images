@@ -161,7 +161,7 @@ rotate_log "$WINEPREFIX/install_error.log" 5242880 3 || true
 # ----------------------------
 # Required tools check
 # ----------------------------
-for tool in wget wine cabextract Xvfb xdpyinfo; do
+for tool in wget curl openssl wine cabextract Xvfb xdpyinfo; do
     if ! command -v "$tool" &>/dev/null; then
         msg RED "Error: Required tool '$tool' is not installed."
         exit 1
@@ -202,6 +202,50 @@ line BLUE
 mkdir -p "$WINEPREFIX"
 if [ ! -d "$WINEPREFIX/drive_c" ]; then
     wineboot --init || { msg RED "wineboot failed!"; exit 1; }
+fi
+
+line BLUE
+msg YELLOW "Importing system root CA certificates into Wine (this may take a few minutes)"
+line BLUE
+
+mkdir -p "$WINEPREFIX/logs"
+CERT_LOG="$WINEPREFIX/logs/certs_import.log"
+rotate_log "$CERT_LOG" 5242880 3 || true
+
+TMPDIR=$(mktemp -d 2>/dev/null || mktemp -d -t winecerts 2>/dev/null || true)
+if [ -z "$TMPDIR" ] || [ ! -d "$TMPDIR" ]; then
+    msg RED "Failed to create temporary working directory for certificate import; skipping import"
+else
+    # Ensure cleanup on exit or error
+    _old_pwd=$(pwd 2>/dev/null || true)
+    trap 'rm -rf "$TMPDIR" >/dev/null 2>&1 || true; cd "${_old_pwd:-/}"' RETURN
+
+    cd "$TMPDIR" || true
+    msg YELLOW "Downloading latest CA bundle..."
+    if ! curl -fsSLo cacert.pem https://curl.se/ca/cacert.pem >>"$CERT_LOG" 2>&1; then
+        msg RED "Failed to download CA bundle; see $CERT_LOG"
+    else
+        msg YELLOW "Splitting PEM bundle into individual cert files..."
+        awk '/BEGIN CERTIFICATE/{n++}{print > "cert" n ".pem"}' cacert.pem 2>>"$CERT_LOG" || true
+
+        msg YELLOW "Converting PEM to DER (.cer) and importing into Wine's root store..."
+        for pem in cert*.pem; do
+            [ -f "$pem" ] || continue
+            cer="${pem%.pem}.cer"
+            if openssl x509 -in "$pem" -out "$cer" -outform DER >>"$CERT_LOG" 2>&1; then
+                # Use rundll32 to add certificate; tolerate non-zero exit codes
+                if wine rundll32.exe cryptext.dll,CryptExtAddCer "$(pwd)/$cer" >>"$CERT_LOG" 2>&1; then
+                    msg GREEN "Imported certificate: $cer"
+                else
+                    msg YELLOW "rundll32 reported non-zero for $cer; continuing (see $CERT_LOG)"
+                fi
+            else
+                msg YELLOW "Failed to convert $pem to DER; skipping (see $CERT_LOG)"
+            fi
+        done
+        msg GREEN "Certificate import finished (logs: $CERT_LOG)"
+    fi
+    # cleanup handled by trap
 fi
 
 # NOTE: 64-bit is the default (WINEARCH=win64). No automatic 32-bit enforcement is performed.

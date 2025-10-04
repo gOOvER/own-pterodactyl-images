@@ -16,7 +16,8 @@ RUN dpkg --add-architecture i386 && \
         binutils \
         ca-certificates \
         cabextract \
-        curl \
+    curl \
+    openssl \
         dos2unix \
         file \
         ffmpeg \
