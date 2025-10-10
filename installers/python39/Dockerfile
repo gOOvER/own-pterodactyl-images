@@ -1,31 +1,53 @@
-FROM        --platform=$BUILDPLATFORM python:3.9-slim-bookworm
+FROM        --platform=$TARGETOS/$TARGETARCH python:3.9-slim
 
 LABEL       org.opencontainers.image.authors="Torsten Widmann - gOOvER - info@goover.de"
 LABEL       org.opencontainers.image.source="https://github.com/gOOvER/own-pterodactyl-images"
 LABEL       org.opencontainers.image.description="Docker image for Pelican, Jexactyl & Pterodactyl"
 LABEL       org.opencontainers.image.licenses=AGPL-3.0-or-later
 
-## update base packages
-ARG         DEBIAN_FRONTEND noninteractive
-RUN         dpkg --add-architecture i386
-RUN         apt update \
-           		&& apt -y upgrade
+ARG 		DEBIAN_FRONTEND=noninteractive
 
-RUN		 	apt install -y --no-install-recommends \
-				build-essential \
-				ca-certificates \
-				curl \
-				git \
-				git-lfs \
+RUN         apt update \
+		        && apt -y upgrade
+
+RUN         apt -y install --no-install-recommends \
+                build-essential \
+                ca-certificates \
+                curl \
+                default-libmysqlclient-dev \
+                dnsutils \
+                ffmpeg \
+				file \
+                g++ \
+                gcc \
+                git \
+                iproute2 \
 				jq \
-				locales \
-				tar \
+				libtool \
+                llvm \
+                locales \
+                make \
+                openjdk-21-jre-headless \
+				pipx \
+                procps \
+				python3-pip \
+                tk-dev \
+                uuid-dev \
 				unzip \
-				wget \
-				lib32gcc-s1 \
-				libcurl4 \
-				libcurl4:i386 \
-				libcurl4-gnutls-dev \
-				libcurl4-gnutls-dev:i386 \
-				libsdl2-2.0-0 \
-				libsdl2-2.0-0:i386
+                wget \
+                xz-utils \
+                zlib1g-dev \
+                libbz2-dev \
+                libffi-dev \
+                libgdbm-dev \
+                liblzma-dev \
+                libncurses5-dev \
+                libreadline-dev \
+                libsqlite3-dev \
+                libssl-dev \
+                libxml2-dev \
+                libxmlsec1-dev && \
+            apt clean && \
+            rm -rf /var/lib/apt/lists/*
+
+RUN         python -m pip install --upgrade pip
