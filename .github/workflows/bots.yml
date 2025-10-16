@@ -32,9 +32,7 @@ jobs:
           - athenabot
           - bastion
           - championbots
-          #- bunmongo
           - nodemongo
-          - nodemongo18
           - parkertron
           - sogebot
 
