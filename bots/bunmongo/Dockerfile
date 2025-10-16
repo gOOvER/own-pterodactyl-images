@@ -46,13 +46,16 @@ RUN apt-get update && apt-get -y upgrade && \
     && export BUN_INSTALL=/usr/local/bun \
     && curl -fsSL https://bun.sh/install | bash \
     && ln -sf /usr/local/bun/bin/bun /usr/local/bin/bun \
+    # Ensure Node.js (from NodeSource) is present before using npm
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
     # NPM + PNPM
     && npm install -g npm@latest \
     && npm install -g json5 tsc typescript ts-node @types/node corepack@latest \
     && corepack enable pnpm \
     # Locale
     && sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen \
-    # CleanUp: Build-Dependencies entfernen
+    # CleanUp: remove Build-Dependencies
     && apt-get purge -y --auto-remove \
         autoconf \
         automake \

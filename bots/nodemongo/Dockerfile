@@ -54,6 +54,22 @@ RUN apt-get update && apt-get -y upgrade && \
     && npm install -g npm@latest \
     && npm install -g json5 tsc typescript ts-node @types/node corepack@latest \
     && corepack enable pnpm \
+	# Install Bun (latest) globally using BUN_INSTALL to a shared location
+    && export BUN_INSTALL=/usr/local/bun \
+    && curl -fsSL https://bun.sh/install | bash \
+    && ln -sf /usr/local/bun/bin/bun /usr/local/bin/bun \
+    # Locale
+    && sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen \
+    # CleanUp: Build-Dependencies entfernen
+    && apt-get purge -y --auto-remove \
+        autoconf \
+        automake \
+        build-essential \
+        g++ \
+        libtool \
+        software-properties-common \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
     # Locale
     && sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen \
     # Aufräumen: Build-Dependencies entfernen

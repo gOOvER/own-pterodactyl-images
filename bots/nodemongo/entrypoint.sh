@@ -70,6 +70,7 @@ msg YELLOW "Running on: ${RED}$(. /etc/os-release ; echo $NAME $VERSION)"
 msg YELLOW "Current timezone: ${RED}$(cat /etc/timezone)"
 line BLUE
 msg YELLOW "NodeJS Version: ${RED}$(node -v)"
+msg YELLOW "BUN Version: ${RED}$(bun --version)"
 msg YELLOW "npm Version: ${RED}$(npm -v)"
 msg YELLOW "MongoDB Version: ${RED}$(mongod --version | head -n 1)"
 line BLUE
