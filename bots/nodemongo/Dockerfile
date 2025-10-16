@@ -70,18 +70,6 @@ RUN apt-get update && apt-get -y upgrade && \
         software-properties-common \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-    # Locale
-    && sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen \
-    # Aufräumen: Build-Dependencies entfernen
-    && apt-get purge -y --auto-remove \
-        autoconf \
-        automake \
-        build-essential \
-        g++ \
-        libtool \
-        software-properties-common \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
 
 ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
