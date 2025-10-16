@@ -63,7 +63,7 @@ jobs:
         with:
           context: ./bots/${{ matrix.tag }}
           file: ./bots/${{ matrix.tag }}/Dockerfile
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           push: true
           cache-from: type=gha,scope=bots-${{ matrix.tag }}
           cache-to: type=gha,scope=bots-${{ matrix.tag }},mode=max
