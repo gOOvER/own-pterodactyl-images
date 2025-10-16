@@ -63,13 +63,13 @@ export INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 # ----------------------------
 clear
 line BLUE
-msg RED "NodeJS & MongoDB Image by gOOvER - https://discord.goover.dev"
+msg RED "BUN & MongoDB Image by gOOvER - https://discord.goover.dev"
 msg RED "This Image is licencend under AGPLv3"
 line BLUE
 msg YELLOW "Running on: ${RED}$(. /etc/os-release ; echo $NAME $VERSION)"
 msg YELLOW "Current timezone: ${RED}$(cat /etc/timezone)"
 line BLUE
-msg YELLOW "NodeJS Version: ${RED}$(node -v)"
+msg YELLOW "BUN Version: ${RED}$(bun --version)"
 msg YELLOW "npm Version: ${RED}$(npm -v)"
 msg YELLOW "MongoDB Version: ${RED}$(mongod --version | head -n 1)"
 line BLUE

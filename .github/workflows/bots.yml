@@ -14,10 +14,17 @@ on:
 env:
   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   push:
     name: "bot:${{ matrix.tag }}"
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.tag }}
+      cancel-in-progress: true
     strategy:
       fail-fast: false
       matrix:
@@ -25,13 +32,10 @@ jobs:
           - athenabot
           - bastion
           - championbots
-          #- corvin
-          - multibot
+          - bunmongo
           - nodemongo
           - nodemongo18
           - parkertron
-          #- red
-          #- sinusbot
           - sogebot
 
     steps:
@@ -42,6 +46,12 @@ jobs:
       - uses: docker/setup-buildx-action@v3
         with:
           buildkitd-flags: --debug
+
+      - name: Compute lowercase owner
+        id: vars
+        shell: bash
+        run: |
+          echo "owner=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
 
       - uses: docker/login-action@v3
         with:
@@ -55,4 +65,8 @@ jobs:
           file: ./bots/${{ matrix.tag }}/Dockerfile
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/goover/bot:${{ matrix.tag }}
+          cache-from: type=gha,scope=bots-${{ matrix.tag }}
+          cache-to: type=gha,scope=bots-${{ matrix.tag }},mode=max
+          tags: |
+            ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}
+            ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-${{ github.sha }}
