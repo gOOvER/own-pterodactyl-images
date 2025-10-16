@@ -25,6 +25,7 @@ RUN apt-get update && apt-get -y upgrade && \
         sqlite3 \
         tini \
         tzdata \
+		unzip \
         zip \
         libcairo2-dev \
         libgif-dev \
