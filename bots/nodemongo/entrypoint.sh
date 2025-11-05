@@ -86,12 +86,6 @@ msg YELLOW "MongoDB Version: ${RED}$(mongod --version | head -n 1)"
 line BLUE
 
 # ----------------------------
-# Startup Command
-# ----------------------------
-MODIFIED_STARTUP=$(echo -e "$(echo -e "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')")
-msg YELLOW ":/home/container ${RED}${MODIFIED_STARTUP}"
-
-# ----------------------------
 # Start MongoDB
 # ----------------------------
 line BLUE
@@ -112,35 +106,18 @@ line BLUE
 msg YELLOW "Starting Bot..."
 line BLUE
 
-# Set MongoDB connection environment variables for the bot
-export MONGO_URL="mongodb://127.0.0.1:27017"
-export MONGODB_URI="mongodb://127.0.0.1:27017"
-export DB_HOST="127.0.0.1"
-export DB_PORT="27017"
-
 msg CYAN "MongoDB connection info:"
 msg YELLOW "  MONGO_URL: ${MONGO_URL}"
 msg YELLOW "  Host: 127.0.0.1:27017"
 
-# Debug startup command
-msg CYAN "Raw STARTUP variable: '${STARTUP}'"
-msg CYAN "Processed MODIFIED_STARTUP: '${MODIFIED_STARTUP}'"
+# ----------------------------
+# Startup command
+# ----------------------------
+MODIFIED_STARTUP=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')
+msg CYAN ":/home/container$ $MODIFIED_STARTUP"
 
-# Validate startup command
-if [ -z "$STARTUP" ]; then
-    msg RED "STARTUP environment variable is not set!"
-    msg YELLOW "Please set the STARTUP variable in your container configuration."
-    exit 1
-fi
-
-if [ -z "$MODIFIED_STARTUP" ]; then
-    msg RED "STARTUP command is empty after processing!"
-    msg YELLOW "Raw STARTUP: '${STARTUP}'"
-    exit 1
-fi
-
-msg CYAN "Executing: $MODIFIED_STARTUP"
-eval ${MODIFIED_STARTUP}
+# exec bash -c für komplexe Shell-Kommandos
+exec bash -c "$MODIFIED_STARTUP"
 
 # stop mongo
 mongod --shutdown
