@@ -60,18 +60,12 @@ jobs:
               IMAGE_NAME=$(echo "$dir" | cut -d'/' -f2- | tr '/' '-')
               
               MATRIX=$(echo "$MATRIX" | jq --arg dir "$dir" --arg type "$IMAGE_TYPE" --arg name "$IMAGE_NAME" \
-                '. += [{
-                  "context": $dir,
-                  "dockerfile": ($dir + "/Dockerfile"),
-                  "image_type": $type,
-                  "image_name": $name,
-                  "full_name": ($type + "-" + $name)
-                }]')
+                '. += [{"context": $dir, "dockerfile": ($dir + "/Dockerfile"), "image_type": $type, "image_name": $name, "full_name": ($type + "-" + $name)}]')
             fi
           done
           
           echo "Build matrix: $MATRIX"
-          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+          echo "matrix=$(echo "$MATRIX" | jq -c .)" >> $GITHUB_OUTPUT
 
   build-test:
     name: 🏗️ Build & Test
