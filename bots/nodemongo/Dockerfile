@@ -7,8 +7,9 @@ LABEL org.opencontainers.image.authors="info@goover.de" \
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Install dependencies, Node.js, Yarn & cleanup build deps
-RUN apt-get update && apt-get -y upgrade && \
+# Install dependencies, Node.js, Yarn & cleanup build deps (optimized for CI)
+RUN apt-get update && \
+    # Skip upgrade in container builds to save time
     apt-get install -y --no-install-recommends \
         ca-certificates \
         curl \
@@ -53,9 +54,10 @@ RUN apt-get update && apt-get -y upgrade && \
     && echo "deb [signed-by=/etc/apt/keyrings/yarn.gpg] https://dl.yarnpkg.com/debian stable main" \
          > /etc/apt/sources.list.d/yarn.list \
     && apt-get update && apt-get install -y nodejs yarn \
-    # NPM + Essential packages (reduced for faster builds)
-    && npm install -g npm@latest corepack@latest \
-    && npm install -g json5 tsc typescript ts-node @types/node --no-audit --no-fund \
+    # NPM + Essential packages (minimal installation)
+    && npm install -g npm@latest --no-audit --no-fund --silent \
+    && npm install -g corepack@latest --no-audit --no-fund --silent \
+    && npm install -g json5 tsc typescript ts-node @types/node --no-audit --no-fund --silent \
     && corepack enable pnpm \
 	# Install Bun (latest) - optimized for multi-arch
     && export BUN_INSTALL=/usr/local/bun \
@@ -63,7 +65,7 @@ RUN apt-get update && apt-get -y upgrade && \
     && ln -sf /usr/local/bun/bin/bun /usr/local/bin/bun \
     # Locale configuration
     && sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen \
-    # CleanUp: Build-Dependencies entfernen (optimiert)
+    # CleanUp: Build-Dependencies entfernen (aggressive cleanup)
     && apt-get purge -y --auto-remove \
         autoconf \
         automake \
@@ -72,7 +74,7 @@ RUN apt-get update && apt-get -y upgrade && \
         libtool \
         software-properties-common \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* ~/.npm
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* ~/.npm ~/.cache
 
 ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
