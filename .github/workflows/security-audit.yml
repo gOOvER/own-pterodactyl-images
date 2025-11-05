@@ -1,0 +1,409 @@
+name: 🔒 Security & Quality Audit
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run every Monday at 06:00 UTC
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  detect-changes:
+    name: 🔍 Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      dockerfiles: ${{ steps.changes.outputs.dockerfiles }}
+      scripts: ${{ steps.changes.outputs.scripts }}
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed files
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            dockerfiles:
+              - '**/Dockerfile'
+              - '**/dockerfile'
+              - '**/Dockerfile.*'
+            scripts:
+              - '**/entrypoint.sh'
+              - '**/*.sh'
+
+      - name: Create build matrix
+        id: matrix
+        run: |
+          # Find all Dockerfiles and create matrix
+          DOCKERFILES=$(find . -name "Dockerfile" -o -name "dockerfile" | head -20)
+
+          if [ -z "$DOCKERFILES" ]; then
+            echo "matrix=[]" >> $GITHUB_OUTPUT
+          else
+            MATRIX=$(echo "$DOCKERFILES" | jq -R -s -c 'split("\n")[:-1] | map({dockerfile: ., context: (. | split("/")[:-1] | join("/") // ".")})')
+            echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+          fi
+
+  shellcheck-audit:
+    name: 🐚 ShellCheck Audit
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.scripts == 'true' || github.event_name == 'schedule'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: '.'
+          format: gcc
+          severity: error
+        env:
+          SHELLCHECK_OPTS: -e SC1091 -e SC2034
+
+      - name: Advanced Shell Script Analysis
+        run: |
+          echo "🔍 Running advanced shell script analysis..."
+
+          # Find all shell scripts
+          find . -name "*.sh" -type f | while read -r script; do
+            echo "📄 Analyzing: $script"
+
+            # Check for common security issues
+            echo "  🔒 Security checks:"
+
+            # Check for hardcoded secrets/passwords
+            if grep -i -E "(password|secret|token|key).*=" "$script" | grep -v "STEAM_PASS" | grep -v "\$\{.*\}"; then
+              echo "  ⚠️  Potential hardcoded secrets found in $script"
+            fi
+
+            # Check for unsafe command execution
+            if grep -E "(eval|exec.*\$|system\()" "$script"; then
+              echo "  ⚠️  Potentially unsafe command execution in $script"
+            fi
+
+            # Check for missing input validation
+            if grep -E "rm.*\$|mv.*\$|cp.*\$" "$script" | grep -v "\"\$"; then
+              echo "  ⚠️  Potentially unsafe file operations in $script"
+            fi
+
+            # Check for proper error handling
+            if ! grep -q "set -e\|set -euo pipefail" "$script"; then
+              echo "  ℹ️  Consider adding 'set -e' for better error handling in $script"
+            fi
+
+            echo ""
+          done
+
+  dockerfile-audit:
+    name: 🐳 Dockerfile Security Audit
+    runs-on: ubuntu-latest
+    needs: [detect-changes]
+    if: needs.detect-changes.outputs.dockerfiles == 'true' || github.event_name == 'schedule'
+    strategy:
+      matrix:
+        include: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Hadolint (Dockerfile Linter)
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: ${{ matrix.dockerfile }}
+          format: sarif
+          output-file: hadolint-${{ matrix.dockerfile | replace('/', '-') }}.sarif
+          no-color: true
+          failure-threshold: warning
+
+      - name: Upload Hadolint SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: hadolint-${{ matrix.dockerfile | replace('/', '-') }}.sarif
+
+      - name: Custom Dockerfile Security Checks
+        run: |
+          DOCKERFILE="${{ matrix.dockerfile }}"
+          echo "🔍 Analyzing Dockerfile: $DOCKERFILE"
+
+          # Check for security best practices
+          echo "🔒 Security Analysis:"
+
+          # Check if running as non-root
+          if ! grep -q "USER.*[^0]" "$DOCKERFILE"; then
+            echo "⚠️  Consider running as non-root user"
+          fi
+
+          # Check for latest tags
+          if grep -i "FROM.*:latest" "$DOCKERFILE"; then
+            echo "⚠️  Using ':latest' tags detected - consider pinning versions"
+          fi
+
+          # Check for ADD instead of COPY
+          if grep -q "^ADD " "$DOCKERFILE"; then
+            echo "⚠️  Consider using COPY instead of ADD for better security"
+          fi
+
+          # Check for --privileged or --cap-add
+          if grep -E "(privileged|cap-add)" "$DOCKERFILE"; then
+            echo "⚠️  Privileged containers or capability additions detected"
+          fi
+
+          # Check for package manager cache cleanup
+          if grep -E "(apt-get|apk|yum)" "$DOCKERFILE" && ! grep -E "(rm.*cache|clean)" "$DOCKERFILE"; then
+            echo "ℹ️  Consider cleaning package manager cache to reduce image size"
+          fi
+
+          # Check for secrets in Dockerfile
+          if grep -i -E "(password|secret|token|key).*=" "$DOCKERFILE"; then
+            echo "⚠️  Potential secrets found in Dockerfile"
+          fi
+
+  vulnerability-scan:
+    name: 🛡️ Vulnerability Scanning
+    runs-on: ubuntu-latest
+    needs: [detect-changes]
+    if: needs.detect-changes.outputs.dockerfiles == 'true' || github.event_name == 'schedule'
+    strategy:
+      matrix:
+        include: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Docker image for scanning
+        run: |
+          DOCKERFILE="${{ matrix.dockerfile }}"
+          CONTEXT="${{ matrix.context }}"
+          IMAGE_TAG="scan-$(echo $DOCKERFILE | tr '/' '-' | tr '.' '-'):${{ github.sha }}"
+
+          echo "Building image: $IMAGE_TAG"
+          echo "Context: $CONTEXT"
+          echo "Dockerfile: $DOCKERFILE"
+
+          docker build -f "$DOCKERFILE" -t "$IMAGE_TAG" "$CONTEXT" || {
+            echo "❌ Build failed for $DOCKERFILE"
+            exit 1
+          }
+
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.IMAGE_TAG }}
+          format: 'sarif'
+          output: 'trivy-${{ matrix.dockerfile | replace("/", "-") }}.sarif'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-${{ matrix.dockerfile | replace("/", "-") }}.sarif'
+
+      - name: Run Trivy for human-readable output
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.IMAGE_TAG }}
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0'
+
+  package-updates:
+    name: 📦 Package Update Check
+    runs-on: ubuntu-latest
+    needs: [detect-changes]
+    if: needs.detect-changes.outputs.dockerfiles == 'true' || github.event_name == 'schedule'
+    strategy:
+      matrix:
+        include: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for outdated packages
+        run: |
+          DOCKERFILE="${{ matrix.dockerfile }}"
+          echo "📦 Checking package versions in: $DOCKERFILE"
+
+          # Extract base image
+          BASE_IMAGE=$(grep -E "^FROM " "$DOCKERFILE" | head -1 | awk '{print $2}')
+          echo "Base image: $BASE_IMAGE"
+
+          # Check if base image has updates available
+          if [[ "$BASE_IMAGE" == *":"* ]] && [[ "$BASE_IMAGE" != *":latest"* ]]; then
+            echo "ℹ️  Base image uses specific version tag: $BASE_IMAGE"
+
+            # Try to check for newer versions (basic implementation)
+            IMAGE_NAME=$(echo "$BASE_IMAGE" | cut -d':' -f1)
+            CURRENT_TAG=$(echo "$BASE_IMAGE" | cut -d':' -f2)
+            echo "Checking for updates for $IMAGE_NAME:$CURRENT_TAG"
+          fi
+
+          # Check for specific package managers and versions
+          if grep -q "apt-get\|apt " "$DOCKERFILE"; then
+            echo "📦 Debian/Ubuntu packages detected"
+            grep -E "(apt-get install|apt install)" "$DOCKERFILE" | while read -r line; do
+              echo "  Package line: $line"
+              if [[ "$line" == *"="* ]]; then
+                echo "  ✅ Pinned version detected"
+              else
+                echo "  ⚠️  Consider pinning package versions"
+              fi
+            done
+          fi
+
+          if grep -q "apk " "$DOCKERFILE"; then
+            echo "📦 Alpine packages detected"
+            grep "apk " "$DOCKERFILE" | while read -r line; do
+              echo "  Package line: $line"
+              if [[ "$line" == *"="* ]]; then
+                echo "  ✅ Pinned version detected"
+              else
+                echo "  ⚠️  Consider pinning package versions"
+              fi
+            done
+          fi
+
+  pelican-specific-checks:
+    name: 🎮 Pelican GamePanel Specific Checks
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: always()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Pelican GamePanel Compatibility Check
+        run: |
+          echo "🎮 Running Pelican GamePanel specific checks..."
+
+          # Check for common Pelican requirements
+          echo "📋 Checking Pelican requirements..."
+
+          # Check for entrypoint scripts
+          find . -name "entrypoint.sh" | while read -r script; do
+            echo "📄 Checking entrypoint: $script"
+
+            # Check for required environment variables
+            if grep -q "STARTUP" "$script"; then
+              echo "  ✅ STARTUP variable handling found"
+            else
+              echo "  ⚠️  STARTUP variable handling missing"
+            fi
+
+            # Check for proper user switching
+            if grep -q "container" "$script"; then
+              echo "  ✅ Container user references found"
+            fi
+
+            # Check for home directory setup
+            if grep -q "/home/container" "$script"; then
+              echo "  ✅ Container home directory setup found"
+            fi
+
+            # Check for proper signal handling
+            if grep -q "exec" "$script"; then
+              echo "  ✅ Proper exec usage found"
+            else
+              echo "  ⚠️  Consider using exec for proper signal handling"
+            fi
+          done
+
+          # Check Dockerfiles for Pelican compatibility
+          find . -name "Dockerfile" | while read -r dockerfile; do
+            echo "🐳 Checking Dockerfile: $dockerfile"
+
+            # Check for container user
+            if grep -q "container" "$dockerfile"; then
+              echo "  ✅ Container user setup found"
+            else
+              echo "  ⚠️  Consider adding container user for Pelican compatibility"
+            fi
+
+            # Check for proper WORKDIR
+            if grep -q "WORKDIR.*container" "$dockerfile"; then
+              echo "  ✅ Proper workdir setup found"
+            fi
+
+            # Check for entrypoint
+            if grep -q "ENTRYPOINT\|CMD.*entrypoint" "$dockerfile"; then
+              echo "  ✅ Entrypoint configuration found"
+            fi
+          done
+
+  generate-report:
+    name: 📊 Generate Security Report
+    runs-on: ubuntu-latest
+    needs: [shellcheck-audit, dockerfile-audit, vulnerability-scan, package-updates, pelican-specific-checks]
+    if: always()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate Summary Report
+        run: |
+          echo "# 🔒 Security & Quality Audit Report" > security-report.md
+          echo "" >> security-report.md
+          echo "**Date:** $(date)" >> security-report.md
+          echo "**Commit:** ${{ github.sha }}" >> security-report.md
+          echo "" >> security-report.md
+
+          echo "## 📊 Job Status" >> security-report.md
+          echo "| Job | Status |" >> security-report.md
+          echo "|-----|--------|" >> security-report.md
+          echo "| ShellCheck Audit | ${{ needs.shellcheck-audit.result }} |" >> security-report.md
+          echo "| Dockerfile Audit | ${{ needs.dockerfile-audit.result }} |" >> security-report.md
+          echo "| Vulnerability Scan | ${{ needs.vulnerability-scan.result }} |" >> security-report.md
+          echo "| Package Updates | ${{ needs.package-updates.result }} |" >> security-report.md
+          echo "| Pelican Checks | ${{ needs.pelican-specific-checks.result }} |" >> security-report.md
+          echo "" >> security-report.md
+
+          echo "## 🎯 Recommendations" >> security-report.md
+          echo "- 🔄 Regularly update base images and packages" >> security-report.md
+          echo "- 🔒 Pin package versions for reproducible builds" >> security-report.md
+          echo "- 👤 Run containers as non-root users when possible" >> security-report.md
+          echo "- 🧹 Clean package manager caches to reduce image size" >> security-report.md
+          echo "- 📝 Use proper error handling in shell scripts" >> security-report.md
+          echo "" >> security-report.md
+
+          echo "Generated security report:"
+          cat security-report.md
+
+      - name: Upload Security Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report-${{ github.sha }}
+          path: security-report.md
+          retention-days: 30
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('security-report.md', 'utf8');
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: report
+            });

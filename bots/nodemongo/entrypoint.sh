@@ -106,6 +106,55 @@ line BLUE
 mkdir -p /home/container/mongodb
 chown -R container:container /home/container/mongodb 2>/dev/null || true
 
+# Create MongoDB configuration file optimized for MongoDB 8 in containers
+cat > /home/container/mongodb/mongod.conf << 'EOF'
+# MongoDB 8 configuration for container environment
+storage:
+  dbPath: /home/container/mongodb
+  journal:
+    enabled: false  # Disable journal for better performance in containers
+  engine: wiredTiger
+  wiredTiger:
+    engineConfig:
+      cacheSizeGB: 0.25  # Limit cache for container environment
+    collectionConfig:
+      blockCompressor: snappy  # Better compression
+    indexConfig:
+      prefixCompression: true
+
+systemLog:
+  destination: file
+  path: /home/container/mongod.log
+  logRotate: reopen
+  logAppend: true
+  verbosity: 1  # Reduced verbosity for containers
+
+net:
+  port: 27017
+  bindIp: 127.0.0.1
+  maxIncomingConnections: 100  # Limit connections for containers
+
+processManagement:
+  fork: true
+
+# Optimizations for MongoDB 8 in containers
+security:
+  authorization: disabled
+
+operationProfiling:
+  mode: off
+
+# Disable features not needed in game server containers
+auditLog:
+  destination: console
+  format: JSON
+
+# Memory and performance optimizations
+setParameter:
+  maxIndexBuildMemoryUsageMegabytes: 50
+  cursorTimeoutMillis: 600000
+EOF
+
 # Check if MongoDB is already running
 if pgrep mongod > /dev/null; then
     msg GREEN "MongoDB is already running"
@@ -113,15 +162,19 @@ else
     # Kill any stale lock files
     rm -f /home/container/mongodb/mongod.lock
 
-    # Start MongoDB with better error handling
-    if ! mongod --fork --dbpath /home/container/mongodb/ --port 27017 \
-                --logpath /home/container/mongod.log --logRotate reopen --logappend \
-                --nojournal --smallfiles; then
+    # Get MongoDB version for logging
+    MONGO_VERSION=$(mongod --version | head -n 1 | grep -oE '[0-9]+\.[0-9]+' | head -1)
+    msg CYAN "Using MongoDB version: $MONGO_VERSION"
+
+    # Start MongoDB 8 with configuration file
+    if ! mongod --config /home/container/mongodb/mongod.conf; then
         msg RED "Failed to start MongoDB. Check log:"
         if [ -f /home/container/mongod.log ]; then
             tail -20 /home/container/mongod.log | tee -a "$ERROR_LOG"
         fi
         exit 1
+    else
+        msg GREEN "MongoDB started successfully"
     fi
 fi
 
