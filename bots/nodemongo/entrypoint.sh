@@ -97,7 +97,7 @@ mkdir -p /home/container/mongodb
 chown -R container:container /home/container/mongodb 2>/dev/null || true
 
 # MongoDB 8.2 compatible startup (removed --logRotate reopen as it's not supported)
-mongod --dbpath /home/container/mongodb/ --port 27017 --logpath /home/container/mongod.log --logappend && until nc -z -v -w5 127.0.0.1 27017; do echo 'Waiting for mongodb connection...'; sleep 5; done
+mongod --dbpath /home/container/mongodb/ --port 27017 --logpath /home/container/mongod.log --logappend && until nc -z -v -w5 0.0.0.0 27017; do echo 'Waiting for mongodb connection...'; sleep 5; done
 
 # ----------------------------
 # Start Bot
