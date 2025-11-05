@@ -86,17 +86,11 @@ msg YELLOW "MongoDB Version: ${RED}$(mongod --version | head -n 1)"
 line BLUE
 
 # ----------------------------
-# Startup Command
-# ----------------------------
-MODIFIED_STARTUP=$(echo -e "$(echo -e "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')")
-msg YELLOW ":/home/container ${RED}${MODIFIED_STARTUP}"
-
-# ----------------------------
 # Start MongoDB
 # ----------------------------
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${YELLOW}starting MongoDB...${NC}"
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+line BLUE
+msg YELLOW "Starting MongoDB..."
+line BLUE
 
 # Ensure MongoDB directory exists and has correct permissions
 mkdir -p /home/container/mongodb
@@ -108,17 +102,27 @@ mongod --fork --dbpath /home/container/mongodb/ --port 27017 --logpath /home/con
 # ----------------------------
 # Start Bot
 # ----------------------------
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${YELLOW}starting Bot...${NC}"
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+line BLUE
+msg YELLOW "Starting Bot..."
+line BLUE
+msg CYAN "MongoDB connection info:"
+msg YELLOW "  MONGO_URL: ${MONGO_URL}"
+msg YELLOW "  Host: 127.0.0.1:27017"
 
-# Set MongoDB connection environment variables for the bot
-export MONGO_URL="mongodb://127.0.0.1:27017"
-export MONGODB_URI="mongodb://127.0.0.1:27017"
-export DB_HOST="127.0.0.1"
-export DB_PORT="27017"
+# Validate startup command
+if [ -z "$MODIFIED_STARTUP" ]; then
+    msg RED "STARTUP command is empty!"
+    exit 1
+fi
 
-eval ${MODIFIED_STARTUP}
+# ----------------------------
+# Startup command
+# ----------------------------
+MODIFIED_STARTUP=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')
+msg CYAN ":/home/container$ $MODIFIED_STARTUP"
+
+# exec bash -c für komplexe Shell-Kommandos
+exec bash -c "$MODIFIED_STARTUP"
 
 # stop mongo
 mongod --shutdown
