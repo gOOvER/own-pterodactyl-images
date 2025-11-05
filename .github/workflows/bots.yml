@@ -107,14 +107,25 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push multi-platform
+      - name: Build ARM64 and create multi-platform manifest
         uses: docker/build-push-action@v6
         with:
           context: ./bots/${{ matrix.tag }}
           file: ./bots/${{ matrix.tag }}/Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/arm64
           push: true
           tags: |
-            ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}
-            ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-${{ github.sha }}
+            ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-arm64
+            ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-${{ github.sha }}-arm64
         timeout-minutes: 45
+
+      - name: Create and push multi-platform manifest
+        run: |
+          # Create multi-platform manifest using existing AMD64 and new ARM64 images
+          docker buildx imagetools create -t ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }} \
+            ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-amd64 \
+            ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-arm64
+          
+          docker buildx imagetools create -t ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-${{ github.sha }} \
+            ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-${{ github.sha }}-amd64 \
+            ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-${{ github.sha }}-arm64
