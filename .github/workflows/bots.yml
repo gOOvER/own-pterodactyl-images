@@ -63,10 +63,6 @@ jobs:
           file: ./bots/${{ matrix.tag }}/Dockerfile
           platforms: linux/amd64
           push: true
-          cache-from: type=gha,scope=bots-${{ matrix.tag }}-amd64
-          cache-to: type=gha,scope=bots-${{ matrix.tag }}-amd64,mode=max
-          build-args: |
-            BUILDKIT_INLINE_CACHE=1
           tags: |
             ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-amd64
             ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-${{ github.sha }}-amd64
@@ -118,12 +114,6 @@ jobs:
           file: ./bots/${{ matrix.tag }}/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          cache-from: |
-            type=gha,scope=bots-${{ matrix.tag }}-amd64
-            type=gha,scope=bots-${{ matrix.tag }}-multi
-          cache-to: type=gha,scope=bots-${{ matrix.tag }}-multi,mode=max
-          build-args: |
-            BUILDKIT_INLINE_CACHE=1
           tags: |
             ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}
             ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-${{ github.sha }}
