@@ -9,7 +9,7 @@ on:
       force_rebuild:
         description: 'Force rebuild all images'
         required: false
-        default: 'false'
+        default: false
         type: boolean
 
 jobs:
