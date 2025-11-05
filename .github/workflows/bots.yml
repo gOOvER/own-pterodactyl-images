@@ -22,6 +22,7 @@ jobs:
   push:
     name: "bot:${{ matrix.tag }}"
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.tag }}
       cancel-in-progress: true
@@ -65,6 +66,9 @@ jobs:
           push: true
           cache-from: type=gha,scope=bots-${{ matrix.tag }}
           cache-to: type=gha,scope=bots-${{ matrix.tag }},mode=max
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
           tags: |
             ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}
             ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-${{ github.sha }}
+        timeout-minutes: 45

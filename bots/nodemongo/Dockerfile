@@ -42,26 +42,28 @@ RUN apt-get update && apt-get -y upgrade && \
         libtool \
         software-properties-common \
     && mkdir -p /etc/apt/keyrings \
+    # Node.js 24.x installation
     && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
          | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_24.x nodistro main" \
          > /etc/apt/sources.list.d/nodesource.list \
+    # Yarn installation
     && curl -fsSL https://dl.yarnpkg.com/debian/pubkey.gpg \
          | gpg --dearmor -o /etc/apt/keyrings/yarn.gpg \
     && echo "deb [signed-by=/etc/apt/keyrings/yarn.gpg] https://dl.yarnpkg.com/debian stable main" \
          > /etc/apt/sources.list.d/yarn.list \
     && apt-get update && apt-get install -y nodejs yarn \
-    # NPM + PNPM
-    && npm install -g npm@latest \
-    && npm install -g json5 tsc typescript ts-node @types/node corepack@latest \
+    # NPM + Essential packages (reduced for faster builds)
+    && npm install -g npm@latest corepack@latest \
+    && npm install -g json5 tsc typescript ts-node @types/node --no-audit --no-fund \
     && corepack enable pnpm \
-	# Install Bun (latest) globally using BUN_INSTALL to a shared location
+	# Install Bun (latest) - optimized for multi-arch
     && export BUN_INSTALL=/usr/local/bun \
     && curl -fsSL https://bun.sh/install | bash \
     && ln -sf /usr/local/bun/bin/bun /usr/local/bin/bun \
-    # Locale
+    # Locale configuration
     && sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen \
-    # CleanUp: Build-Dependencies entfernen
+    # CleanUp: Build-Dependencies entfernen (optimiert)
     && apt-get purge -y --auto-remove \
         autoconf \
         automake \
@@ -70,7 +72,7 @@ RUN apt-get update && apt-get -y upgrade && \
         libtool \
         software-properties-common \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* ~/.npm
 
 ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
