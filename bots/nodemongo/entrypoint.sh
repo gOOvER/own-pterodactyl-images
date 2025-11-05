@@ -45,18 +45,7 @@ line() {
 
 cleanup() {
     msg YELLOW "Cleaning up..."
-    # Stop MongoDB if we started it
-    if [ -f /home/container/mongodb/mongod.pid ]; then
-        MONGOD_PID=$(cat /home/container/mongodb/mongod.pid)
-        if kill -0 "$MONGOD_PID" 2>/dev/null; then
-            msg YELLOW "Stopping MongoDB (PID: $MONGOD_PID)..."
-            kill "$MONGOD_PID" 2>/dev/null || true
-            rm -f /home/container/mongodb/mongod.pid
-        fi
-    elif pgrep mongod > /dev/null; then
-        msg YELLOW "Stopping MongoDB..."
-        pkill mongod || true
-    fi
+    # Simple cleanup - mongod --shutdown will handle MongoDB
 }
 
 # ----------------------------
@@ -105,101 +94,23 @@ msg YELLOW ":/home/container ${RED}${MODIFIED_STARTUP}"
 # ----------------------------
 # Start MongoDB
 # ----------------------------
-line BLUE
-msg YELLOW "Starting MongoDB..."
-line BLUE
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+echo -e "${YELLOW}starting MongoDB...${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
 # Ensure MongoDB directory exists and has correct permissions
 mkdir -p /home/container/mongodb
 chown -R container:container /home/container/mongodb 2>/dev/null || true
 
-# Create MongoDB configuration file optimized for containers (MongoDB 8.2)
-cat > /home/container/mongodb/mongod.conf << 'EOF'
-# MongoDB 8.2 Container Configuration - Minimal & Robust
-storage:
-  dbPath: /home/container/mongodb
-
-systemLog:
-  destination: file
-  path: /home/container/mongod.log
-  logAppend: true
-  quiet: true
-
-net:
-  port: 27017
-  bindIp: 127.0.0.1
-
-processManagement:
-  fork: false
-
-# Disable problematic features for containers
-setParameter:
-  disabledSecureAllocatorDomains: "*"
-EOF
-
-# Check if MongoDB is already running and accessible
-if nc -z -v -w2 127.0.0.1 27017 2>/dev/null; then
-    msg GREEN "MongoDB is already running and accessible!"
-else
-    # Kill any stale lock files and processes
-    rm -f /home/container/mongodb/mongod.lock
-    rm -f /home/container/mongodb/mongod.pid
-    pkill mongod 2>/dev/null || true
-    sleep 2
-
-    # Get MongoDB version for logging
-    MONGO_VERSION=$(mongod --version | head -n 1 | grep -oE '[0-9]+\.[0-9]+' | head -1)
-    msg CYAN "Using MongoDB version: $MONGO_VERSION"
-
-    # Start MongoDB 8.2 - simplified direct approach
-    msg CYAN "Starting MongoDB 8.2..."
-    
-    # Start MongoDB in background using simple command line (avoid config issues)
-    mongod --dbpath /home/container/mongodb \
-           --logpath /home/container/mongod.log \
-           --port 27017 \
-           --bind_ip 127.0.0.1,0.0.0.0 \
-           --quiet \
-           --logappend \
-           --nojournal > /dev/null 2>&1 &
-    
-    MONGOD_PID=$!
-    echo "$MONGOD_PID" > /home/container/mongodb/mongod.pid
-    msg GREEN "MongoDB started in background (PID: $MONGOD_PID)"
-    
-    # Extended wait for MongoDB to initialize properly
-    sleep 8
-    
-    # More thorough connection test
-    msg CYAN "Testing MongoDB connection..."
-    for i in 1 2 3 4 5; do
-        if nc -z -w3 127.0.0.1 27017 2>/dev/null; then
-            msg GREEN "MongoDB is ready and accepting connections!"
-            # Test actual MongoDB connection
-            if mongo --eval "db.adminCommand('ismaster')" --quiet >/dev/null 2>&1; then
-                msg GREEN "MongoDB is fully operational!"
-                break
-            else
-                msg YELLOW "MongoDB port open but service not ready yet..."
-            fi
-        else
-            msg YELLOW "Waiting for MongoDB to start... (${i}/5)"
-        fi
-        if [ $i -eq 5 ]; then
-            msg YELLOW "MongoDB startup may take longer (this can be normal for first run)"
-            msg CYAN "Bot will continue - MongoDB should be ready soon"
-            break
-        fi
-        sleep 3
-    done
-fi
+# MongoDB 8.2 compatible startup (removed --logRotate reopen as it's not supported)
+mongod --fork --dbpath /home/container/mongodb/ --port 27017 --logpath /home/container/mongod.log --logappend && until nc -z -v -w5 127.0.0.1 27017; do echo 'Waiting for mongodb connection...'; sleep 5; done
 
 # ----------------------------
 # Start Bot
 # ----------------------------
-line BLUE
-msg YELLOW "Starting Bot..."
-line BLUE
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+echo -e "${YELLOW}starting Bot...${NC}"
+echo -e "${BLUE}---------------------------------------------------------------------${NC}"
 
 # Set MongoDB connection environment variables for the bot
 export MONGO_URL="mongodb://127.0.0.1:27017"
@@ -207,18 +118,7 @@ export MONGODB_URI="mongodb://127.0.0.1:27017"
 export DB_HOST="127.0.0.1"
 export DB_PORT="27017"
 
-msg CYAN "MongoDB connection info:"
-msg YELLOW "  MONGO_URL: ${MONGO_URL}"
-msg YELLOW "  Host: 127.0.0.1:27017"
+eval ${MODIFIED_STARTUP}
 
-# Validate startup command
-if [ -z "$MODIFIED_STARTUP" ]; then
-    msg RED "STARTUP command is empty!"
-    exit 1
-fi
-
-# Give MongoDB a final moment to ensure it's ready
-sleep 2
-
-msg CYAN "Executing: $MODIFIED_STARTUP"
-exec bash -lc "$MODIFIED_STARTUP"
+# stop mongo
+mongod --shutdown
