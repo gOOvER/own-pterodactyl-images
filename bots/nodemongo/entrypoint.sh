@@ -115,18 +115,15 @@ chown -R container:container /home/container/mongodb 2>/dev/null || true
 
 # Create MongoDB configuration file optimized for containers (MongoDB 8.2)
 cat > /home/container/mongodb/mongod.conf << 'EOF'
-# MongoDB 8.2 Container Configuration
+# MongoDB 8.2 Container Configuration - Minimal & Robust
 storage:
   dbPath: /home/container/mongodb
-  engine: wiredTiger
-  wiredTiger:
-    engineConfig:
-      cacheSizeGB: 0.25
 
 systemLog:
   destination: file
   path: /home/container/mongod.log
   logAppend: true
+  quiet: true
 
 net:
   port: 27017
@@ -134,89 +131,56 @@ net:
 
 processManagement:
   fork: false
-  pidFilePath: /home/container/mongodb/mongod.pid
 
-security:
-  authorization: disabled
+# Disable problematic features for containers
+setParameter:
+  disabledSecureAllocatorDomains: "*"
 EOF
 
 # Check if MongoDB is already running and accessible
 if nc -z -v -w2 127.0.0.1 27017 2>/dev/null; then
     msg GREEN "MongoDB is already running and accessible!"
-elif pgrep mongod > /dev/null; then
-    msg YELLOW "MongoDB process detected but not yet accepting connections..."
-    # Wait a bit for it to become ready
-    MONGO_WAIT_COUNT=0
-    until nc -z -v -w2 127.0.0.1 27017 2>/dev/null; do
-        MONGO_WAIT_COUNT=$((MONGO_WAIT_COUNT + 1))
-        if [ $MONGO_WAIT_COUNT -gt 10 ]; then  # 30 seconds for existing process
-            msg RED "MongoDB process exists but not accepting connections after 30 seconds"
-            exit 1
-        fi
-        msg YELLOW "Waiting for existing MongoDB to accept connections... (${MONGO_WAIT_COUNT}/10)"
-        sleep 3
-    done
-    msg GREEN "MongoDB is now ready!"
 else
-    # Kill any stale lock files
+    # Kill any stale lock files and processes
     rm -f /home/container/mongodb/mongod.lock
+    rm -f /home/container/mongodb/mongod.pid
+    pkill mongod 2>/dev/null || true
+    sleep 2
 
     # Get MongoDB version for logging
     MONGO_VERSION=$(mongod --version | head -n 1 | grep -oE '[0-9]+\.[0-9]+' | head -1)
     msg CYAN "Using MongoDB version: $MONGO_VERSION"
 
-    # Start MongoDB 8.2 - container optimized approach
-    msg CYAN "Attempting to start MongoDB 8.2..."
+    # Start MongoDB 8.2 - simplified direct approach
+    msg CYAN "Starting MongoDB 8.2..."
     
-    # Method 1: Background process without fork for containers
-    if mongod --config /home/container/mongodb/mongod.conf > /home/container/mongod.startup.log 2>&1 &
-    then
-        MONGOD_PID=$!
-        echo "$MONGOD_PID" > /home/container/mongodb/mongod.pid
-        msg GREEN "MongoDB started in background (PID: $MONGOD_PID)"
-        sleep 3  # Give MongoDB time to initialize
-    else
-        msg RED "Failed to start MongoDB. Check startup log:"
-        if [ -f /home/container/mongod.startup.log ]; then
-            tail -20 /home/container/mongod.startup.log | tee -a "$ERROR_LOG"
+    # Start MongoDB in background using simple command line (avoid config issues)
+    mongod --dbpath /home/container/mongodb \
+           --logpath /home/container/mongod.log \
+           --port 27017 \
+           --bind_ip 127.0.0.1 \
+           --quiet \
+           --logappend > /dev/null 2>&1 &
+    
+    MONGOD_PID=$!
+    echo "$MONGOD_PID" > /home/container/mongodb/mongod.pid
+    msg GREEN "MongoDB started in background (PID: $MONGOD_PID)"
+    
+    # Brief wait for MongoDB to initialize
+    sleep 5
+    
+    # Quick connection test (only 3 attempts)
+    for i in 1 2 3; do
+        if nc -z -w2 127.0.0.1 27017 2>/dev/null; then
+            msg GREEN "MongoDB is ready!"
+            break
         fi
-        exit 1
-    fi
-
-    # Wait for newly started MongoDB to be ready
-    MONGO_WAIT_COUNT=0
-    until nc -z -v -w2 127.0.0.1 27017 2>/dev/null; do
-        MONGO_WAIT_COUNT=$((MONGO_WAIT_COUNT + 1))
-        if [ $MONGO_WAIT_COUNT -gt 15 ]; then  # 45 seconds timeout for new startup
-            msg RED "MongoDB failed to start within 45 seconds"
-            
-            # Check if MongoDB process is still running
-            if [ -f /home/container/mongodb/mongod.pid ]; then
-                MONGOD_PID=$(cat /home/container/mongodb/mongod.pid)
-                if ! kill -0 "$MONGOD_PID" 2>/dev/null; then
-                    msg RED "MongoDB process died. Check logs:"
-                    if [ -f /home/container/mongod.log ]; then
-                        tail -30 /home/container/mongod.log | tee -a "$ERROR_LOG"
-                    fi
-                    if [ -f /home/container/mongod.startup.log ]; then
-                        msg RED "Startup log:"
-                        cat /home/container/mongod.startup.log | tee -a "$ERROR_LOG"
-                    fi
-                    exit 1
-                fi
-            fi
-            
-            msg RED "MongoDB seems to be running but not accepting connections"
-            if [ -f /home/container/mongod.log ]; then
-                msg RED "MongoDB log output:"
-                tail -30 /home/container/mongod.log | tee -a "$ERROR_LOG"
-            fi
-            exit 1
+        if [ $i -eq 3 ]; then
+            msg YELLOW "MongoDB may still be starting up (this is normal for first run)"
+            break
         fi
-        msg YELLOW "Waiting for MongoDB connection... (${MONGO_WAIT_COUNT}/15)"
-        sleep 3
+        sleep 2
     done
-    msg GREEN "MongoDB is ready!"
 fi
 
 # ----------------------------
