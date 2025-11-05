@@ -33,7 +33,8 @@ else
     echo -e "Not updating game server as auto update was set to 0. Starting Server"
 fi
 
-if [[ $XVFB == 1 ]];${DISPLAY_WIDTH:-${DISPLAY_HEIGHT:-${DISPLAY_DEPTH:-}}x${DISPLAY_HEIGHT}x${DISPLAY_DEPTH} &
+if [ "${XVFB:-}" = "1" ]; then
+    Xvfb :0 -screen 0 ${DISPLAY_WIDTH:-1024}x${DISPLAY_HEIGHT:-768}x${DISPLAY_DEPTH:-16} &
 fi
 
 # Install necessary to run packages

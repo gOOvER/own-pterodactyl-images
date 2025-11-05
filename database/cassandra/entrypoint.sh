@@ -17,7 +17,7 @@ java -version
 
 
 # Print Python version
-if command -v python &> /dev/null
+if command -v python >/dev/null 2>&1
 then
 	printf "\033[1m\033[33mcontainer@gameservertech~ \033[0mpython --version\n"
 	python --version

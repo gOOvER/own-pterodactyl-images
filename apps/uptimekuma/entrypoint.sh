@@ -22,19 +22,19 @@ INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 export INTERNAL_IP
 
 # system informations
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${RED}Uptime Kuma Image by gOOvER - https://discord.goover.dev${NC}"
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
-echo -e "${YELLOW}Running on Alpine: ${RED} $(cat /etc/alpine-release)${NC}"
-echo -e "${YELLOW}Current timezone: ${RED} ${TZ} ${NC}"
-echo -e "${YELLOW}NodeJS Version: ${RED} $(node -v) ${NC}"
-echo -e "${YELLOW}Cloudflared Version: ${RED} $(/usr/bin/cloudflared --version) ${NC}"
-echo -e "${BLUE}---------------------------------------------------------------------${NC}"
+printf "%b\n" "${BLUE}---------------------------------------------------------------------${NC}"
+printf "%b\n" "${RED}Uptime Kuma Image by gOOvER - https://discord.goover.dev${NC}"
+printf "%b\n" "${BLUE}---------------------------------------------------------------------${NC}"
+printf "%b\n" "${YELLOW}Running on Alpine: ${RED} $(cat /etc/alpine-release)${NC}"
+printf "%b\n" "${YELLOW}Current timezone: ${RED} ${TZ} ${NC}"
+printf "%b\n" "${YELLOW}NodeJS Version: ${RED} $(node -v) ${NC}"
+printf "%b\n" "${YELLOW}Cloudflared Version: ${RED} $(/usr/bin/cloudflared --version) ${NC}"
+printf "%b\n" "${BLUE}---------------------------------------------------------------------${NC}"
 
 export PATH=$PATH:/root/.local/bin
 
 # Replace Startup Variables
-MODIFIED_STARTUP=$(echo -e ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
+MODIFIED_STARTUP=$(printf "%b\n" ${STARTUP} | sed -e 's/{{/${/g' -e 's/}}/}/g')
 echo ":/home/container$ ${MODIFIED_STARTUP}"
 
 # Run the Server

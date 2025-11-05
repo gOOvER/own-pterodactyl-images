@@ -34,10 +34,10 @@ else
 fi
 
 ## if auto_update is not set or to 1 update
-if [ -${AUTO_UPDATE:-}E} ] ||${AUTO_UPDATE:-}ATE}" == "1" ]; then
+if [ -z "${AUTO_UPDATE:-}" ] || [ "${AUTO_UPDATE:-}" = "1" ]; then
     # Update Source Server
-    if [${STEAM_APPID:-}APPID} ]; then
-        ./steamcmd/steamcmd.sh +force_install_dir /home/container${STEAM_USER:-${STEAM_PASS:-${STEAM_AUTH:-}{STEAM_AUTH${STEAM_APPID:-}${STEAM_${STEAM_BETAID:-} ${STEAM_BETAID} ]] ||${STEAM_BETAID:-}ta ${STEAM_${STEAM_BETAPASS:-}-z ${STEAM_BETAPASS} ]] || pri${STEAM_BETAPASS:-}word ${STEA${HLDS_GAME:-} ) $( [[ -z ${HLDS_GAME} ]] || printf %${HLDS_GAME:-}config 90 m${VALIDATE:-}AME}" ) $( [[ -z ${VALIDATE} ]] || printf %s "validate" ) +quit
+    if [ -n "${STEAM_APPID:-}" ]; then
+        ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER:-} ${STEAM_PASS:-} ${STEAM_AUTH:-} +app_update ${STEAM_APPID:-} $( [[ -z ${STEAM_BETAID:-} ]] || printf "%s" "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS:-} ]] || printf "%s" "-betapassword ${STEAM_BETAPASS}" ) $( [[ -z ${HLDS_GAME:-} ]] || printf "%s" "+app_set_config 90 mod ${HLDS_GAME}" ) $( [[ -z ${VALIDATE:-} ]] || printf "%s" "validate" ) +quit
     else
         echo -e "No appid set. Starting Server"
     fi
