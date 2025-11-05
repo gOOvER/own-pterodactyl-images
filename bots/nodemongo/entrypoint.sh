@@ -97,7 +97,7 @@ mkdir -p /home/container/mongodb
 chown -R container:container /home/container/mongodb 2>/dev/null || true
 
 # MongoDB 8.2 compatible startup (removed --logRotate reopen as it's not supported)
-mongod --fork --dbpath /home/container/mongodb/ --port 27017 --logpath /home/container/mongod.log --logappend && until nc -z -v -w5 127.0.0.1 27017; do echo 'Waiting for mongodb connection...'; sleep 5; done
+mongod --dbpath /home/container/mongodb/ --port 27017 --logpath /home/container/mongod.log --logappend && until nc -z -v -w5 127.0.0.1 27017; do echo 'Waiting for mongodb connection...'; sleep 5; done
 
 # ----------------------------
 # Start Bot
@@ -108,7 +108,7 @@ line BLUE
 
 msg CYAN "MongoDB connection info:"
 msg YELLOW "  MONGO_URL: ${MONGO_URL}"
-msg YELLOW "  Host: 127.0.0.1:27017"
+
 
 # ----------------------------
 # Startup command
