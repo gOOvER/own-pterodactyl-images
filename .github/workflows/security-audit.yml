@@ -33,6 +33,7 @@ jobs:
         id: changes
         with:
           list-files: shell
+          base: ${{ github.event.before || 'HEAD~1' }}
           filters: |
             dockerfiles:
               - '**/Dockerfile'

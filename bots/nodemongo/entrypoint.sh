@@ -140,9 +140,23 @@ security:
   authorization: disabled
 EOF
 
-# Check if MongoDB is already running
-if pgrep mongod > /dev/null; then
-    msg GREEN "MongoDB is already running"
+# Check if MongoDB is already running and accessible
+if nc -z -v -w2 127.0.0.1 27017 2>/dev/null; then
+    msg GREEN "MongoDB is already running and accessible!"
+elif pgrep mongod > /dev/null; then
+    msg YELLOW "MongoDB process detected but not yet accepting connections..."
+    # Wait a bit for it to become ready
+    MONGO_WAIT_COUNT=0
+    until nc -z -v -w2 127.0.0.1 27017 2>/dev/null; do
+        MONGO_WAIT_COUNT=$((MONGO_WAIT_COUNT + 1))
+        if [ $MONGO_WAIT_COUNT -gt 10 ]; then  # 30 seconds for existing process
+            msg RED "MongoDB process exists but not accepting connections after 30 seconds"
+            exit 1
+        fi
+        msg YELLOW "Waiting for existing MongoDB to accept connections... (${MONGO_WAIT_COUNT}/10)"
+        sleep 3
+    done
+    msg GREEN "MongoDB is now ready!"
 else
     # Kill any stale lock files
     rm -f /home/container/mongodb/mongod.lock
@@ -168,43 +182,42 @@ else
         fi
         exit 1
     fi
-fi
 
-# Wait for MongoDB to be ready
-MONGO_WAIT_COUNT=0
-until nc -z -v -w5 127.0.0.1 27017 2>/dev/null; do
-    MONGO_WAIT_COUNT=$((MONGO_WAIT_COUNT + 1))
-    if [ $MONGO_WAIT_COUNT -gt 20 ]; then  # 100 seconds timeout for container startup
-        msg RED "MongoDB failed to start within 100 seconds"
-        
-        # Check if MongoDB process is still running
-        if [ -f /home/container/mongodb/mongod.pid ]; then
-            MONGOD_PID=$(cat /home/container/mongodb/mongod.pid)
-            if ! kill -0 "$MONGOD_PID" 2>/dev/null; then
-                msg RED "MongoDB process died. Check logs:"
-                if [ -f /home/container/mongod.log ]; then
-                    tail -30 /home/container/mongod.log | tee -a "$ERROR_LOG"
+    # Wait for newly started MongoDB to be ready
+    MONGO_WAIT_COUNT=0
+    until nc -z -v -w2 127.0.0.1 27017 2>/dev/null; do
+        MONGO_WAIT_COUNT=$((MONGO_WAIT_COUNT + 1))
+        if [ $MONGO_WAIT_COUNT -gt 15 ]; then  # 45 seconds timeout for new startup
+            msg RED "MongoDB failed to start within 45 seconds"
+            
+            # Check if MongoDB process is still running
+            if [ -f /home/container/mongodb/mongod.pid ]; then
+                MONGOD_PID=$(cat /home/container/mongodb/mongod.pid)
+                if ! kill -0 "$MONGOD_PID" 2>/dev/null; then
+                    msg RED "MongoDB process died. Check logs:"
+                    if [ -f /home/container/mongod.log ]; then
+                        tail -30 /home/container/mongod.log | tee -a "$ERROR_LOG"
+                    fi
+                    if [ -f /home/container/mongod.startup.log ]; then
+                        msg RED "Startup log:"
+                        cat /home/container/mongod.startup.log | tee -a "$ERROR_LOG"
+                    fi
+                    exit 1
                 fi
-                if [ -f /home/container/mongod.startup.log ]; then
-                    msg RED "Startup log:"
-                    cat /home/container/mongod.startup.log | tee -a "$ERROR_LOG"
-                fi
-                exit 1
             fi
+            
+            msg RED "MongoDB seems to be running but not accepting connections"
+            if [ -f /home/container/mongod.log ]; then
+                msg RED "MongoDB log output:"
+                tail -30 /home/container/mongod.log | tee -a "$ERROR_LOG"
+            fi
+            exit 1
         fi
-        
-        msg RED "MongoDB seems to be running but not accepting connections"
-        if [ -f /home/container/mongod.log ]; then
-            msg RED "MongoDB log output:"
-            tail -30 /home/container/mongod.log | tee -a "$ERROR_LOG"
-        fi
-        exit 1
-    fi
-    msg YELLOW "Waiting for MongoDB connection... (${MONGO_WAIT_COUNT}/20)"
-    sleep 5
-done
-
-msg GREEN "MongoDB is ready!"
+        msg YELLOW "Waiting for MongoDB connection... (${MONGO_WAIT_COUNT}/15)"
+        sleep 3
+    done
+    msg GREEN "MongoDB is ready!"
+fi
 
 # ----------------------------
 # Start Bot
