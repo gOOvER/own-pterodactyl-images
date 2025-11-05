@@ -59,7 +59,7 @@ jobs:
         with:
           context: ./bots/${{ matrix.tag }}
           file: ./bots/${{ matrix.tag }}/Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: true
           tags: |
             ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}
