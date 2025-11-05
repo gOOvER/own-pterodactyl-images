@@ -97,23 +97,44 @@ mkdir -p /home/container/mongodb
 chown -R container:container /home/container/mongodb 2>/dev/null || true
 
 # Check for MongoDB version compatibility issues and clean if needed
-if [ -f "/home/container/mongodb/admin/system.version.wt" ]; then
+if [ -f "/home/container/mongodb/_mdb_catalog.wt" ] || [ -f "/home/container/mongodb/WiredTiger.wt" ]; then
     msg YELLOW "Existing MongoDB data detected - checking compatibility..."
-    
-    # Try to extract feature compatibility version if possible
-    if grep -q "featureCompatibilityVersion.*7\." /home/container/mongodb/admin/* 2>/dev/null; then
-        msg RED "MongoDB 7.x data detected but MongoDB 8.2 is running!"
-        msg YELLOW "Backing up and clearing old data for compatibility..."
-        
-        # Create backup directory with timestamp
-        BACKUP_DIR="/home/container/mongodb_backup_$(date +%Y%m%d_%H%M%S)"
-        mkdir -p "$BACKUP_DIR"
-        
-        # Move old data to backup
-        mv /home/container/mongodb/* "$BACKUP_DIR/" 2>/dev/null || true
-        
-        msg GREEN "Old MongoDB data backed up to: $BACKUP_DIR"
-        msg CYAN "Starting fresh with MongoDB 8.2..."
+
+    # Check if this is an older MongoDB version by looking at storage.bson or collection files
+    # MongoDB 7.x uses different internal structure than 8.x
+    if [ -f "/home/container/mongodb/storage.bson" ]; then
+        # Try to detect version incompatibility by attempting a quick mongod check
+        msg YELLOW "Testing MongoDB compatibility..."
+
+        # Start mongod briefly to check for version errors
+        mongod --dbpath /home/container/mongodb/ --port 27018 --logpath /tmp/mongo_test.log --fork 2>/dev/null || true
+        sleep 2
+
+        # Check if the test log contains version compatibility errors
+        if grep -q "Wrong mongod version\|Invalid featureCompatibilityVersion\|featureCompatibilityVersion.*7\." /tmp/mongo_test.log 2>/dev/null; then
+            msg RED "MongoDB version incompatibility detected!"
+            msg YELLOW "Backing up and clearing old data for MongoDB 8.2 compatibility..."
+
+            # Stop the test mongod
+            mongod --shutdown --port 27018 2>/dev/null || pkill -f "mongod.*27018" || true
+
+            # Create backup directory with timestamp
+            BACKUP_DIR="/home/container/mongodb_backup_$(date +%Y%m%d_%H%M%S)"
+            mkdir -p "$BACKUP_DIR"
+
+            # Move old data to backup
+            mv /home/container/mongodb/* "$BACKUP_DIR/" 2>/dev/null || true
+
+            msg GREEN "Old MongoDB data backed up to: $BACKUP_DIR"
+            msg CYAN "Starting fresh with MongoDB 8.2..."
+        else
+            # Stop the test mongod if it started successfully
+            mongod --shutdown --port 27018 2>/dev/null || pkill -f "mongod.*27018" || true
+            msg GREEN "MongoDB data appears compatible, continuing..."
+        fi
+
+        # Clean up test log
+        rm -f /tmp/mongo_test.log
     fi
 fi
 
