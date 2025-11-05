@@ -43,10 +43,20 @@ line() {
     printf "%b\n" "${COLOR}${sep}${NC}"
 }
 
+cleanup() {
+    msg YELLOW "Cleaning up..."
+    # Stop MongoDB if we started it
+    if pgrep mongod > /dev/null; then
+        msg YELLOW "Stopping MongoDB..."
+        mongod --dbpath /home/container/mongodb/ --shutdown || pkill mongod || true
+    fi
+}
+
 # ----------------------------
 # Error trap
 # ----------------------------
-trap 'echo "$(date +%Y-%m-%d %H:%M:%S) - Unexpected error at line $LINENO" | tee -a "$ERROR_LOG" >&2' ERR
+trap 'echo "$(date +"%Y-%m-%d %H:%M:%S") - Unexpected error at line $LINENO" | tee -a "$ERROR_LOG" >&2' ERR
+trap cleanup EXIT
 
 # ----------------------------
 # Environment
@@ -56,7 +66,11 @@ cd /home/container || { msg RED "Failed to change directory to /home/container."
 sleep 1
 
 export TZ=${TZ:-UTC}
-export INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
+
+# Get internal IP with better error handling
+INTERNAL_IP=""
+INTERNAL_IP=$(ip route get 1 2>/dev/null | awk '{print $(NF-2);exit}' || echo "127.0.0.1")
+export INTERNAL_IP
 
 # ----------------------------
 # System Info
@@ -87,13 +101,47 @@ msg YELLOW ":/home/container ${RED}${MODIFIED_STARTUP}"
 line BLUE
 msg YELLOW "Starting MongoDB..."
 line BLUE
-mongod --fork --dbpath /home/container/mongodb/ --port 27017 \
-       --logpath /home/container/mongod.log --logRotate reopen --logappend
 
+# Ensure MongoDB directory exists and has correct permissions
+mkdir -p /home/container/mongodb
+chown -R container:container /home/container/mongodb 2>/dev/null || true
+
+# Check if MongoDB is already running
+if pgrep mongod > /dev/null; then
+    msg GREEN "MongoDB is already running"
+else
+    # Kill any stale lock files
+    rm -f /home/container/mongodb/mongod.lock
+
+    # Start MongoDB with better error handling
+    if ! mongod --fork --dbpath /home/container/mongodb/ --port 27017 \
+                --logpath /home/container/mongod.log --logRotate reopen --logappend \
+                --nojournal --smallfiles; then
+        msg RED "Failed to start MongoDB. Check log:"
+        if [ -f /home/container/mongod.log ]; then
+            tail -20 /home/container/mongod.log | tee -a "$ERROR_LOG"
+        fi
+        exit 1
+    fi
+fi
+
+# Wait for MongoDB to be ready
+MONGO_WAIT_COUNT=0
 until nc -z -v -w5 127.0.0.1 27017; do
-    msg YELLOW "Waiting for MongoDB connection..."
+    MONGO_WAIT_COUNT=$((MONGO_WAIT_COUNT + 1))
+    if [ $MONGO_WAIT_COUNT -gt 12 ]; then  # 60 seconds timeout
+        msg RED "MongoDB failed to start within 60 seconds"
+        if [ -f /home/container/mongod.log ]; then
+            msg RED "MongoDB log output:"
+            tail -20 /home/container/mongod.log | tee -a "$ERROR_LOG"
+        fi
+        exit 1
+    fi
+    msg YELLOW "Waiting for MongoDB connection... (${MONGO_WAIT_COUNT}/12)"
     sleep 5
 done
+
+msg GREEN "MongoDB is ready!"
 
 # ----------------------------
 # Start Bot
@@ -101,4 +149,12 @@ done
 line BLUE
 msg YELLOW "Starting Bot..."
 line BLUE
+
+# Validate startup command
+if [ -z "$MODIFIED_STARTUP" ]; then
+    msg RED "STARTUP command is empty!"
+    exit 1
+fi
+
+msg CYAN "Executing: $MODIFIED_STARTUP"
 exec bash -lc "$MODIFIED_STARTUP"
