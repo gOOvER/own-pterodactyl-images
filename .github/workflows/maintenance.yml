@@ -142,11 +142,11 @@ jobs:
             --exit-code 1 \
             "$IMAGE_TAG" || {
             echo "🚨 Critical or high severity vulnerabilities found!"
-            echo "SECURITY_ISSUES=true" >> $GITHUB_ENV
+            echo "scan-failed=true" >> $GITHUB_OUTPUT
           }
 
       - name: Generate security report
-        if: env.SECURITY_ISSUES == 'true'
+        if: contains(steps.*.outputs.*, 'true')
         run: |
           echo "🚨 Security issues found in ${{ matrix.name }}" >> security-issues.txt
           echo "Dockerfile: ${{ matrix.dockerfile }}" >> security-issues.txt
@@ -154,7 +154,7 @@ jobs:
           echo "---" >> security-issues.txt
 
       - name: Upload security issues
-        if: env.SECURITY_ISSUES == 'true'
+        if: contains(steps.*.outputs.*, 'true')
         uses: actions/upload-artifact@v4
         with:
           name: security-issues-${{ matrix.name }}
