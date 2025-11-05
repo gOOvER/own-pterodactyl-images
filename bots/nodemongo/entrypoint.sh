@@ -96,6 +96,27 @@ line BLUE
 mkdir -p /home/container/mongodb
 chown -R container:container /home/container/mongodb 2>/dev/null || true
 
+# Check for MongoDB version compatibility issues and clean if needed
+if [ -f "/home/container/mongodb/admin/system.version.wt" ]; then
+    msg YELLOW "Existing MongoDB data detected - checking compatibility..."
+    
+    # Try to extract feature compatibility version if possible
+    if grep -q "featureCompatibilityVersion.*7\." /home/container/mongodb/admin/* 2>/dev/null; then
+        msg RED "MongoDB 7.x data detected but MongoDB 8.2 is running!"
+        msg YELLOW "Backing up and clearing old data for compatibility..."
+        
+        # Create backup directory with timestamp
+        BACKUP_DIR="/home/container/mongodb_backup_$(date +%Y%m%d_%H%M%S)"
+        mkdir -p "$BACKUP_DIR"
+        
+        # Move old data to backup
+        mv /home/container/mongodb/* "$BACKUP_DIR/" 2>/dev/null || true
+        
+        msg GREEN "Old MongoDB data backed up to: $BACKUP_DIR"
+        msg CYAN "Starting fresh with MongoDB 8.2..."
+    fi
+fi
+
 # MongoDB 8.2 compatible startup (removed --logRotate reopen as it's not supported)
 mongod --dbpath /home/container/mongodb/ \
        --port 27017 \
