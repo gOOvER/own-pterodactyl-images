@@ -45,14 +45,14 @@ else
 fi
 
 ## if auto_update is not set or to 1 update
-if [ -${AUTO_UPDATE:-}E} ] ||${AUTO_UPDATE:-}ATE}" == "1" ]; then
+if [ -z "${AUTO_UPDATE:-}" ] || [ "${AUTO_UPDATE:-}" = "1" ]; then
     # Update Source Server
-    if [${STEAM_APPID:-}APPID} ]; then
-	  ${STEAM_USER:-}AM_USER}" == "anonymous" ]; then
-            ./steamcmd/steamcmd.sh +force_install_dir /home/contain${STEAM_USER:-${STEAM_PASS:-${STEAM_AUTH:-} ${STE${WINDOWS_INSTALL:-}WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windo${STEAM_APPID:-}ate ${ST${STEAM_BETAID:-}[ -z ${STEAM_BETAID} ]${STEAM_BETAID:-}"-beta ${ST${STEAM_BETAPASS:-} [[ -z ${STEAM_BETAPASS} ]] ||${STEAM_BETAPASS:-}password ${${HLDS_GAME:-}SS}" ) $( [[ -z ${HLDS_GAME} ]] || prin${HLDS_GAME:-}set_config ${VALIDATE:-}DS_GAME}" ) $( [[ -z ${VALIDATE} ]] || printf %s "validate" ) +quit
-	    else
-            numactl --physcpubind=+0 ./steamcmd/steamcmd.sh +force_i${STEAM_USER:-${STEAM_PASS:-${STEAM_AUTH:-}TEAM_U${WINDOWS_INSTALL:-} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCm${STEAM_APPID:-}Type win${STEAM_BETAID:-}date ${STEAM_APPID} $(${STEAM_BETAID:-}BETAID} ]] ${STEAM_BETAPASS:-}ta ${STEAM_BETAID}" ) $( [[ -z${STEAM_BETAPASS:-}} ]] || pri${HLDS_GAME:-}apassword ${STEAM_BETAPASS}" ) $( [[ -z${HLDS_GAME:-}} ]] || pri${VALIDATE:-}p_set_config 90 mod ${HLDS_GAME}" ) $( [[ -z ${VALIDATE} ]] || print${BLUE:-}alidate" ) +quit
-	    fi
+    if [ -n "${STEAM_APPID:-}" ]; then
+        if [ "${STEAM_USER:-}" = "anonymous" ]; then
+            ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER:-} ${STEAM_PASS:-} ${STEAM_AUTH:-} $( [[ "${WINDOWS_INSTALL:-}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +app_update ${STEAM_APPID:-} $( [[ -z ${STEAM_BETAID:-} ]] || printf "%s" "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS:-} ]] || printf "%s" "-betapassword ${STEAM_BETAPASS}" ) $( [[ -z ${HLDS_GAME:-} ]] || printf "%s" "+app_set_config 90 mod ${HLDS_GAME}" ) $( [[ -z ${VALIDATE:-} ]] || printf "%s" "validate" ) +quit
+        else
+            numactl --physcpubind=+0 ./steamcmd/steamcmd.sh +force_install_dir /home/container +login ${STEAM_USER:-} ${STEAM_PASS:-} ${STEAM_AUTH:-} $( [[ "${WINDOWS_INSTALL:-}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +app_update ${STEAM_APPID:-} $( [[ -z ${STEAM_BETAID:-} ]] || printf "%s" "-beta ${STEAM_BETAID}" ) $( [[ -z ${STEAM_BETAPASS:-} ]] || printf "%s" "-betapassword ${STEAM_BETAPASS}" ) $( [[ -z ${HLDS_GAME:-} ]] || printf "%s" "+app_set_config 90 mod ${HLDS_GAME}" ) $( [[ -z ${VALIDATE:-} ]] || printf "%s" "validate" ) +quit
+        fi
     else
         echo -e "${BLUE}---------------------------------------------------------------------${NC}"
         echo -e "${YELLOW}No appid set. Starting Server${NC}"
@@ -70,7 +70,9 @@ if [ "${XVFB:-}" = "1" ]; then
 fi
 
 # Replace Startup Variables
-MODIFIED_STARTUP=$(printf "%b\n" "${STARTUP}" | sed -e 's/{{/$\{/g' -e 's/}}/}/g')
+# Convert {{VARIABLE}} format to ${VARIABLE} format
+MODIFIED_STARTUP="${STARTUP//\{\{/\$\{}"
+MODIFIED_STARTUP="${MODIFIED_STARTUP//\}\}/\}}"
 echo ":/home/container$ ${MODIFIED_STARTUP}"
 
 # Run the Server

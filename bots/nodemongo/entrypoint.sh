@@ -158,28 +158,39 @@ else
     mongod --dbpath /home/container/mongodb \
            --logpath /home/container/mongod.log \
            --port 27017 \
-           --bind_ip 127.0.0.1 \
+           --bind_ip 127.0.0.1,0.0.0.0 \
            --quiet \
-           --logappend > /dev/null 2>&1 &
+           --logappend \
+           --nojournal > /dev/null 2>&1 &
     
     MONGOD_PID=$!
     echo "$MONGOD_PID" > /home/container/mongodb/mongod.pid
     msg GREEN "MongoDB started in background (PID: $MONGOD_PID)"
     
-    # Brief wait for MongoDB to initialize
-    sleep 5
+    # Extended wait for MongoDB to initialize properly
+    sleep 8
     
-    # Quick connection test (only 3 attempts)
-    for i in 1 2 3; do
-        if nc -z -w2 127.0.0.1 27017 2>/dev/null; then
-            msg GREEN "MongoDB is ready!"
+    # More thorough connection test
+    msg CYAN "Testing MongoDB connection..."
+    for i in 1 2 3 4 5; do
+        if nc -z -w3 127.0.0.1 27017 2>/dev/null; then
+            msg GREEN "MongoDB is ready and accepting connections!"
+            # Test actual MongoDB connection
+            if mongo --eval "db.adminCommand('ismaster')" --quiet >/dev/null 2>&1; then
+                msg GREEN "MongoDB is fully operational!"
+                break
+            else
+                msg YELLOW "MongoDB port open but service not ready yet..."
+            fi
+        else
+            msg YELLOW "Waiting for MongoDB to start... (${i}/5)"
+        fi
+        if [ $i -eq 5 ]; then
+            msg YELLOW "MongoDB startup may take longer (this can be normal for first run)"
+            msg CYAN "Bot will continue - MongoDB should be ready soon"
             break
         fi
-        if [ $i -eq 3 ]; then
-            msg YELLOW "MongoDB may still be starting up (this is normal for first run)"
-            break
-        fi
-        sleep 2
+        sleep 3
     done
 fi
 
@@ -190,11 +201,24 @@ line BLUE
 msg YELLOW "Starting Bot..."
 line BLUE
 
+# Set MongoDB connection environment variables for the bot
+export MONGO_URL="mongodb://127.0.0.1:27017"
+export MONGODB_URI="mongodb://127.0.0.1:27017"
+export DB_HOST="127.0.0.1"
+export DB_PORT="27017"
+
+msg CYAN "MongoDB connection info:"
+msg YELLOW "  MONGO_URL: ${MONGO_URL}"
+msg YELLOW "  Host: 127.0.0.1:27017"
+
 # Validate startup command
 if [ -z "$MODIFIED_STARTUP" ]; then
     msg RED "STARTUP command is empty!"
     exit 1
 fi
+
+# Give MongoDB a final moment to ensure it's ready
+sleep 2
 
 msg CYAN "Executing: $MODIFIED_STARTUP"
 exec bash -lc "$MODIFIED_STARTUP"
