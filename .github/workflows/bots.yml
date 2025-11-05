@@ -19,64 +19,12 @@ permissions:
   packages: write
 
 jobs:
-  # First build and test AMD64 only for faster feedback
-  build-amd64:
-    name: "bot:${{ matrix.tag }} (amd64)"
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.tag }}-amd64
-      cancel-in-progress: true
-    strategy:
-      fail-fast: false
-      matrix:
-        tag:
-          - nodemongo
-          - parkertron
-          - sogebot
-
-    steps:
-      - uses: actions/checkout@v5
-
-      - uses: docker/setup-qemu-action@v3
-
-      - uses: docker/setup-buildx-action@v3
-        with:
-          buildkitd-flags: --debug
-
-      - name: Compute lowercase owner
-        id: vars
-        shell: bash
-        run: |
-          echo "owner=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
-
-      - uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and test AMD64
-        uses: docker/build-push-action@v6
-        with:
-          context: ./bots/${{ matrix.tag }}
-          file: ./bots/${{ matrix.tag }}/Dockerfile
-          platforms: linux/amd64
-          push: true
-          tags: |
-            ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-amd64
-            ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-${{ github.sha }}-amd64
-        timeout-minutes: 25
-
-  # Then build multi-platform if AMD64 succeeds
-  build-multiplatform:
-    name: "bot:${{ matrix.tag }} (multi-platform)"
+  push:
+    name: "bot:${{ matrix.tag }}"
     runs-on: ubuntu-latest
     timeout-minutes: 60
-    needs: build-amd64
-    if: success()
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.tag }}-multi
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.tag }}
       cancel-in-progress: true
     strategy:
       fail-fast: false
@@ -107,25 +55,13 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build ARM64 and create multi-platform manifest
-        uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v6
         with:
           context: ./bots/${{ matrix.tag }}
           file: ./bots/${{ matrix.tag }}/Dockerfile
-          platforms: linux/arm64
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-arm64
-            ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-${{ github.sha }}-arm64
+            ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}
+            ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-${{ github.sha }}
         timeout-minutes: 45
-
-      - name: Create and push multi-platform manifest
-        run: |
-          # Create multi-platform manifest using existing AMD64 and new ARM64 images
-          docker buildx imagetools create -t ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }} \
-            ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-amd64 \
-            ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-arm64
-          
-          docker buildx imagetools create -t ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-${{ github.sha }} \
-            ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-${{ github.sha }}-amd64 \
-            ghcr.io/${{ steps.vars.outputs.owner }}/bot:${{ matrix.tag }}-${{ github.sha }}-arm64
