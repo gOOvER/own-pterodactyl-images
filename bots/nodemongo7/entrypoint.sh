@@ -73,7 +73,7 @@ export INTERNAL_IP
 # ----------------------------
 clear
 line BLUE
-msg RED "NodeJS & MongoDB Image by gOOvER - https://discord.goover.dev"
+msg RED "NodeJS & MongoDB 7.x Image by gOOvER - https://discord.goover.dev"
 msg RED "This Image is licencend under AGPLv3"
 line BLUE
 msg YELLOW "Running on: ${RED}$(. /etc/os-release ; echo $NAME $VERSION)"
@@ -86,41 +86,39 @@ msg YELLOW "MongoDB Version: ${RED}$(mongod --version | head -n 1)"
 line BLUE
 
 # ----------------------------
-# Start MongoDB
+# Start MongoDB 7.x
 # ----------------------------
 line BLUE
-msg YELLOW "Starting MongoDB..."
+msg YELLOW "Starting MongoDB 7.x..."
 line BLUE
 
 # Ensure MongoDB directory exists and has correct permissions
 mkdir -p /home/container/mongodb
 chown -R container:container /home/container/mongodb 2>/dev/null || true
 
-# Check for MongoDB version compatibility issues and clean if needed
+# Check for existing MongoDB data and ensure compatibility
 if [ -f "/home/container/mongodb/_mdb_catalog.wt" ] || [ -f "/home/container/mongodb/WiredTiger.wt" ]; then
     line YELLOW
     msg YELLOW "Existing MongoDB data detected - checking compatibility..."
 
-    # Check if this is an older MongoDB version by looking at storage.bson or collection files
-    # MongoDB 7.x uses different internal structure than 8.x
+    # MongoDB 7.x can handle most previous versions better than 8.x
+    # Simple compatibility check for very old data formats
     if [ -f "/home/container/mongodb/storage.bson" ]; then
-        # Try to detect version incompatibility by attempting a quick mongod check
         line CYAN
-        msg YELLOW "Testing MongoDB compatibility..."
+        msg YELLOW "Checking MongoDB 7.x data compatibility..."
 
-        # Start mongod briefly to check for version errors
+        # Quick test startup to verify data integrity
         mongod --dbpath /home/container/mongodb/ --port 27018 --logpath /tmp/mongo_test.log --fork 2>/dev/null || true
         sleep 2
 
-        # Check if the test log contains version compatibility errors
-        if grep -q "Wrong mongod version\|Invalid featureCompatibilityVersion\|featureCompatibilityVersion.*7\." /tmp/mongo_test.log 2>/dev/null; then
+        # Check for major compatibility issues
+        if grep -q "corrupted\|invalid.*format\|unsupported.*version" /tmp/mongo_test.log 2>/dev/null; then
             line RED
-            msg RED "CRITICAL: MongoDB 8.2 cannot upgrade directly from 7.x data!"
+            msg RED "WARNING: MongoDB data may be corrupted or from unsupported version!"
             line RED
-            msg YELLOW "According to MongoDB documentation, 8.2 requires upgrade path: 7.x → 8.0 → 8.2"
-            msg YELLOW "Direct upgrade from featureCompatibilityVersion 7.x to 8.2 is not supported."
+            msg YELLOW "Consider backing up data before proceeding."
+            msg YELLOW "If problems persist, use migration tools or restore from backup."
             line YELLOW
-            msg YELLOW "AUTO-BACKUP: Moving incompatible data to backup directory..."
 
             # Stop the test mongod
             mongod --shutdown --port 27018 2>/dev/null || pkill -f "mongod.*27018" || true
@@ -129,33 +127,36 @@ if [ -f "/home/container/mongodb/_mdb_catalog.wt" ] || [ -f "/home/container/mon
             BACKUP_DIR="/home/container/mongodb_backup_$(date +%Y%m%d_%H%M%S)"
             mkdir -p "$BACKUP_DIR"
 
-            # Move old data to backup
+            # Move problematic data to backup
             mv /home/container/mongodb/* "$BACKUP_DIR/" 2>/dev/null || true
 
             line GREEN
-            msg GREEN "✓ Old MongoDB data safely backed up to: $BACKUP_DIR"
-            msg GREEN "✓ Starting fresh MongoDB 8.2 instance"
-            msg YELLOW "⚠ Use migration tool to restore your data from backup"
+            msg GREEN "✓ Problematic data backed up to: $BACKUP_DIR"
+            msg GREEN "✓ Starting fresh MongoDB 7.x instance"
             line GREEN
         else
             # Stop the test mongod if it started successfully
             mongod --shutdown --port 27018 2>/dev/null || pkill -f "mongod.*27018" || true
             line GREEN
-            msg GREEN "MongoDB data appears compatible, continuing..."
+            msg GREEN "MongoDB 7.x data appears compatible, continuing..."
         fi
 
         # Clean up test log
         rm -f /tmp/mongo_test.log
+    else
+        line GREEN
+        msg GREEN "MongoDB data directory detected, proceeding with 7.x startup..."
     fi
 fi
 
 line BLUE
-# MongoDB 8.2 compatible startup (removed --logRotate reopen as it's not supported)
+# MongoDB 7.x compatible startup with logRotate support
 mongod --dbpath /home/container/mongodb/ \
        --port 27017 \
        --bind_ip_all \
        --logpath /home/container/mongod.log \
-       --logappend &
+       --logappend \
+       --logRotate reopen &
 
 until nc -z -v -w5 127.0.0.1 27017; do
   echo 'Waiting for MongoDB connection...'
