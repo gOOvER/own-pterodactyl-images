@@ -97,15 +97,20 @@ mkdir -p /home/container/mongodb
 chown -R container:container /home/container/mongodb 2>/dev/null || true
 
 # Check for existing MongoDB data and ensure compatibility
+# Only run compatibility check if we haven't already checked (check for marker file)
 if [ -f "/home/container/mongodb/_mdb_catalog.wt" ] || [ -f "/home/container/mongodb/WiredTiger.wt" ]; then
     line YELLOW
     msg YELLOW "Existing MongoDB data detected - checking compatibility..."
 
+    # Check if we've already done a compatibility check (marker file exists)
+    if [ -f "/home/container/mongodb/.mongodb7_checked" ]; then
+        line GREEN
+        msg GREEN "MongoDB 7.x compatibility already verified, skipping check..."
     # MongoDB 7.x can handle most previous versions better than 8.x
     # Simple compatibility check for very old data formats
-    if [ -f "/home/container/mongodb/storage.bson" ]; then
+    elif [ -f "/home/container/mongodb/storage.bson" ]; then
         line CYAN
-        msg YELLOW "Checking MongoDB 7.x data compatibility..."
+        msg YELLOW "Checking MongoDB 7.x data compatibility (one-time check)..."
 
         # Quick test startup to verify data integrity
         mongod --dbpath /home/container/mongodb/ --port 27018 --logpath /tmp/mongo_test.log --fork 2>/dev/null || true
@@ -134,11 +139,17 @@ if [ -f "/home/container/mongodb/_mdb_catalog.wt" ] || [ -f "/home/container/mon
             msg GREEN "✓ Problematic data backed up to: $BACKUP_DIR"
             msg GREEN "✓ Starting fresh MongoDB 7.x instance"
             line GREEN
+
+            # Create marker file to prevent re-check on next restart
+            touch /home/container/mongodb/.mongodb7_checked
         else
             # Stop the test mongod if it started successfully
             mongod --shutdown --port 27018 2>/dev/null || pkill -f "mongod.*27018" || true
             line GREEN
             msg GREEN "MongoDB 7.x data appears compatible, continuing..."
+
+            # Create marker file to skip check on future restarts
+            touch /home/container/mongodb/.mongodb7_checked
         fi
 
         # Clean up test log
@@ -146,6 +157,8 @@ if [ -f "/home/container/mongodb/_mdb_catalog.wt" ] || [ -f "/home/container/mon
     else
         line GREEN
         msg GREEN "MongoDB data directory detected, proceeding with 7.x startup..."
+        # Create marker file for future restarts
+        touch /home/container/mongodb/.mongodb7_checked
     fi
 fi
 
