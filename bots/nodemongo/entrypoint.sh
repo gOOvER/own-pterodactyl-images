@@ -97,16 +97,21 @@ mkdir -p /home/container/mongodb
 chown -R container:container /home/container/mongodb 2>/dev/null || true
 
 # Check for MongoDB version compatibility issues and clean if needed
+# Only run compatibility check if we haven't already migrated (check for marker file)
 if [ -f "/home/container/mongodb/_mdb_catalog.wt" ] || [ -f "/home/container/mongodb/WiredTiger.wt" ]; then
     line YELLOW
     msg YELLOW "Existing MongoDB data detected - checking compatibility..."
 
+    # Check if we've already done a migration (marker file exists)
+    if [ -f "/home/container/mongodb/.mongodb82_migrated" ]; then
+        line GREEN
+        msg GREEN "MongoDB 8.2 migration already completed, skipping compatibility check..."
     # Check if this is an older MongoDB version by looking at storage.bson or collection files
     # MongoDB 7.x uses different internal structure than 8.x
-    if [ -f "/home/container/mongodb/storage.bson" ]; then
+    elif [ -f "/home/container/mongodb/storage.bson" ]; then
         # Try to detect version incompatibility by attempting a quick mongod check
         line CYAN
-        msg YELLOW "Testing MongoDB compatibility..."
+        msg YELLOW "Testing MongoDB compatibility (one-time check)..."
 
         # Start mongod briefly to check for version errors
         mongod --dbpath /home/container/mongodb/ --port 27018 --logpath /tmp/mongo_test.log --fork 2>/dev/null || true
@@ -137,15 +142,27 @@ if [ -f "/home/container/mongodb/_mdb_catalog.wt" ] || [ -f "/home/container/mon
             msg GREEN "✓ Starting fresh MongoDB 8.2 instance"
             msg YELLOW "⚠ Use migration tool to restore your data from backup"
             line GREEN
+
+            # Create marker file to prevent re-migration on next restart
+            touch /home/container/mongodb/.mongodb82_migrated
         else
             # Stop the test mongod if it started successfully
             mongod --shutdown --port 27018 2>/dev/null || pkill -f "mongod.*27018" || true
             line GREEN
             msg GREEN "MongoDB data appears compatible, continuing..."
+
+            # Create marker file to skip check on future restarts
+            touch /home/container/mongodb/.mongodb82_migrated
         fi
 
         # Clean up test log
         rm -f /tmp/mongo_test.log
+    else
+        # Fresh MongoDB 8.2 data or already compatible
+        line GREEN
+        msg GREEN "MongoDB 8.2 data directory ready..."
+        # Create marker file for future restarts
+        touch /home/container/mongodb/.mongodb82_migrated
     fi
 fi
 
