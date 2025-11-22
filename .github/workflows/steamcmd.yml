@@ -23,7 +23,7 @@ jobs:
 
     steps:
       # Checkout repository
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       # Set up Docker Buildx
       - name: Set up Docker Buildx
